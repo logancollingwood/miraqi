@@ -1,0 +1,31 @@
+{
+  "name": "lookup-client",
+  "version": "0.1.0",
+  "private": true,
+  "proxy": "http://localhost:3001/",
+  "devDependencies": {
+    "enzyme": "2.4.1",
+    "react-addons-test-utils": "15.4.0",
+    "react-scripts": "0.8.5"
+  },
+  "dependencies": {
+    "babel-plugin-transform-class-properties": "6.22.0",
+    "moment": "^2.18.1",
+    "react": "15.4.0",
+    "react-bootstrap": "^0.31.3",
+    "react-color": "^2.13.8",
+    "react-dom": "15.4.0",
+    "react-player": "^1.1.2",
+    "react-resizable": "^1.7.4",
+    "react-router": "^4.2.0",
+    "react-router-dom": "^4.2.2",
+    "socket.io-client": "^2.0.4"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject",
+    "docker-build": "cd server && docker build -t meraki ."
+  }
+}
