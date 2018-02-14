@@ -9,13 +9,11 @@ function setup(port) {
 
     // respond with "hello world" when a GET request is made to the homepage
     app.get('/api/hello', function (req, res) {
-
-        res.send(data);
+        res.send("hello");
     });
 
     app.get('/api/room/:id', function (req, res) {
-        var searchId = req.params.id;
-        res.send(db.getRoomById(searchId));
+        res.send(db.getRoomById(req.params.id));
     });
 
     app.listen(port);

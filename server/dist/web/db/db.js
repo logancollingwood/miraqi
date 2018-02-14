@@ -20,7 +20,6 @@ var data = {
 function getRoomById(roomId) {
     console.log("Serving API request to find room with id: " + roomId);
     return data["rooms"].filter(function (i) {
-        console.log(i);
         return i.id == roomId;
     });
 }

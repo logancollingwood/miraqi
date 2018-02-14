@@ -3,10 +3,6 @@ import Chat from "./Chat";
 import ReactPlayer from "react-player";
 import io from "socket.io-client";
 
-const baseHosts = {
-	"youtube": "https://www.youtube.com/watch?v="
-}
-
 function secondsToString(seconds) {
 	return {
 		numyears: Math.floor(seconds / 31536000),

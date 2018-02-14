@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import ChatRoomManager from "../components/ChatRoomManager";
 import Nav from "../Nav.js";
 
 
@@ -9,10 +8,6 @@ class RoomCreate extends Component {
   state = {
     backgroundColorHex: "#000000",
     colorPopupOpen: false,
-  }
-
-  constructor(props) {
-    super(props)
   }
 
   render() {
@@ -25,7 +20,7 @@ class RoomCreate extends Component {
 								<div className="container">
 
 								<div className="card card-container">
-									<img id="profile-img" className="profile-img-card" src="//ssl.gstatic.com/accounts/ui/avatar_2x.png" />
+									<img id="profile-img" alt="profilePic" className="profile-img-card" src="//ssl.gstatic.com/accounts/ui/avatar_2x.png" />
 									<p id="profile-name" className="profile-name-card"></p>
 									<form className="form-signin">
 										<span id="reauth-email" className="reauth-email"></span>

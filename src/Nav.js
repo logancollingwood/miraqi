@@ -11,8 +11,8 @@ class Nav extends React.Component {
     super(props);
     this.state = {
       currentRoom: this.props.currentRoom ? this.props.currentRoom : 1,
-	  date: moment().format(DATE_FORMAT),
-	  time: moment().format(TIME_FORMAT)
+	    date: moment().format(DATE_FORMAT),
+	    time: moment().format(TIME_FORMAT)
     }
   }
 
@@ -29,7 +29,6 @@ class Nav extends React.Component {
   render() {
 	let roomLink = "/rooms/1";
   let isCreate = this.props.isCreate;
-  let isHome = this.props.isHome;
 	let isRoom = this.props.isRoom;
 
     return (
