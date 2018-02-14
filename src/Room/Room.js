@@ -32,7 +32,7 @@ class Room extends Component {
   	console.log(this.props);
     return (
 		<div>
-	    	<Nav isHome={false} currentRoom={this.props.match.params.id}/>
+	    	<Nav isHome={false} isRoom={true} currentRoom={this.props.match.params.id}/>
 				<ChatRoomManager currentRoom={this.props.match.params.id}/>
         </div>
     );

@@ -28,8 +28,9 @@ class Nav extends React.Component {
 
   render() {
 	let roomLink = "/rooms/1";
-	let isCreate = this.props.currentRoom == 'create';
-	let isRoom = this.props.currentRoom != 'create';
+  let isCreate = this.props.isCreate;
+  let isHome = this.props.isHome;
+	let isRoom = this.props.isRoom;
 
     return (
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
