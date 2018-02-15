@@ -6,9 +6,8 @@ export default React.createClass({
     return (
       <div>
         <Nav isHome={true}/>
-        <div className="container-fluid">
-          <div className="row">
-            content babYee
+        <div className="container-fluid h-100 main-content">
+          <div className="row" id="home">
           </div>
         </div>
       </div>

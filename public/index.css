@@ -12,6 +12,15 @@ body {
   min-width: 100%;
   max-width: 100%;
 }
+
+#home {
+    background: url(img/meraki.jpg) no-repeat center center fixed; 
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
 .row {
 	margin-left: 0px;
 	margin-right: 0px;
@@ -46,6 +55,14 @@ body {
   margin: 10px;
   padding: 10px;
   float: left;
+}
+
+.bg-dark {
+    background-color: #424242!important;
+}
+
+.bg-bright {
+    background-color: #BDBDBD!important;
 }
 
 #content {
@@ -132,29 +149,56 @@ nav {
 }
 
 .chatRoom {
-	height: calc(100vh - 65px);
-	background-color: #eee;
+    background-color: #eee;
+    padding-left: 0px;
+    padding-right: 0px;
 
 }
 .chatMessages {
-	min-height: 70%;
+    min-height: 70%;
+    max-height: 70%;
+    padding-left: 10px;
+    padding-right: 10px;
+    overflow-y: scroll;
+    display: flex;
+    flex-direction: column-reverse;
 }
 
 .chatFooter {
-	max-height: 15%;
+    max-height: 15%;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-top: 3vh;
 }
 
 .chatTitle {
-	margin-top: 15px;
-	font-size: 24px;
-	background-color: #eee;
+    font-size: 24px;
+    font-family: 'Raleway';
+	background-color: #dadada;
 	width: 100%;
 	padding: 15px;
-	max-height: 15vh;
+    max-height: 15vh;
+    text-align: center;
 }
 
-.serverMessage {
-	color: #6ed069;
+.message.server {
+	color: #fff;
+}
+
+.message :not(:first-child){
+    padding-bottom: 10px;
+}
+
+.message .author {
+    display: inline;
+    font-family: 'Raleway';
+    font-size: 20px;
+}
+.message .timestamp {
+    font-size: 12px;
+    display: inline;
+    margin-left: 4px;
+    color: #fff;
 }
 
 p {
@@ -172,7 +216,7 @@ button {
 	background-color: #eee
 }
 
-#userNameLabel {
+#NameLabel {
 	font-family: 'Open Sans', sans-serif;
 	font-weight: 200;
 	width: 10%;

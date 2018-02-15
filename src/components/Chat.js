@@ -1,4 +1,8 @@
 import React from "react";
+import moment from "moment";
+import ChatMessage from "./ChatMessage";
+
+let TIME_FORMAT = "MM YY / h:mm:ss a";
 
 class Chat extends React.Component {
 	constructor(props){
@@ -20,10 +24,12 @@ class Chat extends React.Component {
 	componentDidMount() {
 		this.sendMessage = ev => {
 			ev.preventDefault();
+			if(this.state.message === null || this.state.message === '') return;
 			this.socket.emit('SEND_MESSAGE', {
 				author: this.state.username,
 				message: this.state.message,
-				serverMessage: false
+				serverMessage: false,
+				timestamp: moment().format(TIME_FORMAT)
 			});
 			this.setState({message: ''});
 		}
@@ -37,9 +43,7 @@ class Chat extends React.Component {
 		}
 
 		const addMessage = data => {
-			console.log(data);
 			this.setState({messages: [...this.state.messages, data]});
-			console.log(this.state.messages);
 		};
 
 		this.socket.on('RECEIVE_MESSAGE', function(data){
@@ -59,19 +63,20 @@ class Chat extends React.Component {
 
 
     render(){
+		const messagesToRender = this.state.messages.slice(0).reverse().map((message, i) => 
+			<ChatMessage key={i} message={message} />
+		);
+
         return (
-                    <div className="col-md-4 chatRoom">
-                                <div className="chatTitle">Chat Room #{this.props.currentRoom}</div>
+                    <div className="col-md-4 chatRoom h-100 bg-bright">
+                                <div className="chatTitle">{this.props.currentRoom}</div>
                                 <hr/>
                                 <div className="chatMessages">
-									{this.state.messages.map(message => {
-										if (message.serverMessage) {
-											return (<div className="serverMessage">{message.author} {message.message}</div>)
-										} else {
-											return (<div className="userMessage">{message.author}: {message.message}</div>)
-										}
-									})}
+									{
+										messagesToRender
+									}
 								</div>
+								<hr />
                                 <div className="chatFooter">
 
 									<div className={this.state.userNameEntryHidden ? 'hidden' : ''}>
@@ -85,7 +90,7 @@ class Chat extends React.Component {
 										<input id="sendMessageInput" type="text" placeholder="Message" className="form-control" value={this.state.message} onChange={ev => this.setState({message: ev.target.value})}/>
 										<button onClick={this.sendMessage} className="btn btn-primary form-control">Send</button>
 									</div>
-
+	
 									<div className="roomUsers">
 										{this.state.users.length} users connected
 									</div>
