@@ -24,7 +24,7 @@ class DjContainer extends React.Component {
 			},
 			secondsPlayed: 0,
 			totalLength: 0,
-			playing: true,
+			playing: false,
 			marginTop: "35vh",
 		}
 
