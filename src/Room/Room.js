@@ -10,7 +10,7 @@ class Room extends Component {
     return (
 		<div>
 	    	<Nav isHome={false} isRoom={true} currentRoom={this.props.match.params.id}/>
-				<ChatRoomManager currentRoom={this.props.match.params.id}/>
+				<ChatRoomManager roomId={this.props.match.params.id}/>
         </div>
     );
   }

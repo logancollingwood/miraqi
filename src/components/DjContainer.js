@@ -1,5 +1,6 @@
 import React from "react";
 import ReactPlayer from "react-player";
+import Api from "./Api.js";
 
 function secondsToString(seconds) {
 	return {
@@ -16,9 +17,9 @@ class DjContainer extends React.Component {
     constructor(props) {
         super(props);
         console.log("Booting up DjContainer with props:");
-        console.log(this.props);
-        
-        this.state = {
+		console.log(this.props);
+		
+		this.state = {
 			nowPlaying: {
 				url: 'https://youtu.be/pb8vWUDEmxc'
 			},
@@ -26,6 +27,24 @@ class DjContainer extends React.Component {
 			totalLength: 0,
 			playing: false,
 			marginTop: "35vh",
+		}
+		
+		Api.getRoomById(this.props.roomId)
+			.then(room => {
+				console.log("Got room in Manager!");
+				console.log(room);
+			})
+			.catch(error => console.log(error));
+
+
+        this.state = {
+			nowPlaying: {
+				url: 'https://youtu.be/pb8vWUDEmxc'
+			},
+			secondsPlayed: 0,
+			totalLength: 0,
+			playing: false,
+			marginTop: "36vh",
 		}
 
         this.socket = this.props.socket;

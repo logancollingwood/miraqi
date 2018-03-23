@@ -27,7 +27,7 @@ function setup(port) {
             })
             .catch(error => {
                 console.error("API CALL FAILED: Failed to find room with id" + req.params.id);
-                res.sendStatus(500)
+                res.json({});
             });
     });
 
@@ -44,10 +44,59 @@ function setup(port) {
             })
     });
 
+    app.get('/api/user/:id', function(req, res) {
+        db.getUserById(req.params.id)
+            .then(user => {
+                console.log('returning user with id: ' + user._id);
+                res.json(user);
+            })
+            .catch(error => {
+                res.json({});
+            });
+    });
+
+    app.post('/api/user', function(req, res) {
+        console.log(req.body);
+        db.createUser(req.body)
+            .then(user => {
+                console.log('successfully created user with name: ' + user.name);
+                res.json(user);
+            })
+            .catch(error => {
+                console.error("API CALL FAILED: Failed to create user with name" + req.body.name);
+                res.sendStatus(500)
+            })
+    });
+
+
+    app.post('/api/room/adduser', function(req, res) {
+        console.log(req.body);
+        db.addUserToRoom(req.body)
+            .then(response => {
+                console.log('successfully added user with name: ' + response.userName + ' to room: ' + response.roomId);
+                res.json(response);
+            })
+            .catch(error => {
+                console.error("API CALL FAILED: Failed to add user with userid " + req.body.userId + ' to room' + req.body.roomId);
+                res.sendStatus(500)
+            })
+    });
+
+    app.post('/api/room/removeuser', function(req, res) {
+        console.log(req.body);
+        db.removeUserFromRoom(req.body)
+            .then(response => {
+                console.log('successfully removed user with name: ' + response.userName + ' from room: ' + response.roomId);
+                res.json(response);
+            })
+            .catch(error => {
+                console.error("API CALL FAILED: Failed to remove user with userid " + req.body.userId + ' from room' + req.body.roomId);
+                res.sendStatus(500)
+            })
+    });
 
     app.listen(port);
 }
-
 
 module.exports = {
     setup: setup

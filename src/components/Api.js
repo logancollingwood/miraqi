@@ -1,18 +1,21 @@
 import Request from "request-promise";
 
+const API_BASE_URL = 'http://localhost:8003/api/';
+let API_OPTIONS = {
+    uri: API_BASE_URL,
+    headers: {
+        'User-Agent': 'Request-Promise'
+    },
+    json: true
+};
+
 
 let API = {
     getRoomById(id) {
-        var options = {
-            uri: 'http://localhost:8003/api/room/' + id,
-            headers: {
-                'User-Agent': 'Request-Promise'
-            },
-            json: true
-        };
+        API_OPTIONS.uri = API_BASE_URL + 'room/' + id;
 
         return new Promise((resolve, reject) => {
-            Request(options)
+            Request(API_OPTIONS)
             .then(function(response) {
                 resolve(response);
             })

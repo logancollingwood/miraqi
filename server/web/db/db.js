@@ -2,7 +2,7 @@
 
 require('dotenv').config();
 var mongoose = require('mongoose');
-var Room     = require('./models/room');
+var Models     = require('./models/room');
 
 class DataBase {
 
@@ -20,19 +20,43 @@ class DataBase {
     getRoomById(roomId) {
         console.log("Serving API request to find room with id: " + roomId);
         return new Promise((resolve, reject) => {
-            Room.findById(roomId, function(err, room) {
+            Models.Room.findById(roomId, function(err, room) {
                 console.log(err);
                 if (err) reject(err);
-                console.log('found room ' + room);
                 resolve(room);
             })
+        });
+    }
+
+    getUserById(userId) {
+         console.log("Serving API request to find user with id: " + userId);
+        return new Promise((resolve, reject) => {
+            Models.User.findById(userId, function(err, user) {
+                console.log(err);
+                if (err) reject(err);
+                resolve(user);
+            })
+        });
+    }
+
+    createUser(userCreateRequest) {
+        return new Promise((resolve, reject) => {
+            var user = new Models.User({
+                name: userCreateRequest.name, 
+                admin: false,
+                lastLogin: new Date(),
+            });
+            user.save(function(err) {
+                if (err) reject(err);
+            })
+            resolve(user);
         });
     }
 
     createRoom(roomRequest) {
         console.log("Serving API request to create room with name: " + roomRequest.name);
         return new Promise((resolve, reject) => {
-            var room = new Room({
+            var room = new Models.Room({
                 name: roomRequest.name, 
                 description: roomRequest.description
             });
@@ -40,6 +64,58 @@ class DataBase {
                 if (err) reject(err);
             })
             resolve(room);
+        });
+    }
+
+    /**
+     * Adds a user to a room
+     * @param {roomId, userId} addUserToRoomRequest 
+     */
+    addUserToRoom(addUserToRoomRequest) {
+        const roomId = addUserToRoomRequest.roomId;
+        const userId = addUserToRoomRequest.userId;
+        return new Promise((resolve, reject) => {
+            Models.User.findById(userId, function(err, user) {
+                if (err) reject(err);
+                
+                Models.Room.findByIdAndUpdate(
+                    roomId,
+                    { $addToSet: { users: user } },
+                    function(err, model) {
+                        console.log(err);
+                    }
+                );
+                resolve({
+                    userName: user.name,
+                    roomId: roomId
+                });
+            })
+        });
+    }
+
+    /**
+     * Removes a user from a room
+     * @param {roomId, userId} removeUserFromRoomRequest 
+     */
+    removeUserFromRoom(removeUserFromRoomRequest) {
+        const roomId = removeUserFromRoomRequest.roomId;
+        const userId = removeUserFromRoomRequest.userId;
+        return new Promise((resolve, reject) => {
+            Models.User.findById(userId, function(err, user) {
+                if (err) reject(err);
+                
+                Models.Room.findByIdAndUpdate(
+                    roomId,
+                    { $pull: { users: user } },
+                    function(err, model) {
+                        console.log(err);
+                    }
+                );
+                resolve({
+                    userName: user.name,
+                    roomId: roomId
+                });
+            })
         });
     }
 }

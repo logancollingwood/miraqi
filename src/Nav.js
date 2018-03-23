@@ -32,7 +32,7 @@ class Nav extends React.Component {
 	let isRoom = this.props.isRoom;
 
     return (
-        <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+        <nav className="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
 
 		  <Link to="/" className="navbar-brand">eden</Link>
           
