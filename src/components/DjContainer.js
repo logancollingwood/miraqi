@@ -1,6 +1,5 @@
 import React from "react";
 import ReactPlayer from "react-player";
-import Api from "./Api.js";
 
 function secondsToString(seconds) {
 	return {
@@ -28,14 +27,6 @@ class DjContainer extends React.Component {
 			playing: false,
 			marginTop: "35vh",
 		}
-		
-		Api.getRoomById(this.props.roomId)
-			.then(room => {
-				console.log("Got room in Manager!");
-				console.log(room);
-			})
-			.catch(error => console.log(error));
-
 
         this.state = {
 			nowPlaying: {
@@ -92,7 +83,14 @@ class DjContainer extends React.Component {
   render() {
         const nowPlayingBarStyle = {
             marginTop: this.state.marginTop
-        }
+		}
+		if (this.props.loading) {
+			return (
+				<div className="col-md-8 youtubeContainer">
+					Loading...
+				</div>
+			)
+		}
         return (
             <div className="col-md-8 youtubeContainer">
                 <ReactPlayer ref={(input) => { this.playerElement = input; }} 

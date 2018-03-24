@@ -12,24 +12,33 @@ class Nav extends React.Component {
     this.state = {
       currentRoom: this.props.currentRoom ? this.props.currentRoom : 1,
 	    date: moment().format(DATE_FORMAT),
-	    time: moment().format(TIME_FORMAT)
+      time: moment().format(TIME_FORMAT),
+      room: this.props.currentRoom
     }
   }
 
   tick() {
-	this.setState({
-         date: moment().format(DATE_FORMAT),
-		 time: moment().format(TIME_FORMAT)
-    });
+    if (!this.props.loading) {
+       this.setState({
+          date: moment().format(DATE_FORMAT),
+          time: moment().format(TIME_FORMAT)
+      });
+    }
   }
   componentDidMount() {
-	setInterval(function() { this.tick(); }.bind(this), 1);
+	  setInterval(function() { this.tick(); }.bind(this), 1);
   }
 
   render() {
-	let roomLink = "/rooms/1";
+	let roomLink = "/rooms/" + this.state.currentRoom;
   let isCreate = this.props.isCreate;
-	let isRoom = this.props.isRoom;
+  let isRoom = this.props.isRoom;
+  let link = null;
+  if (this.props.currentRoom) {
+    link = <Link className="nav-link" to={roomLink}> Room: {this.props.currentRoom.name}</Link>;
+  } else {
+    link = <Link className="nav-link" to={roomLink}> Room: loading</Link>
+  }
 
     return (
         <nav className="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
@@ -41,10 +50,10 @@ class Nav extends React.Component {
 
             <ul className="navbar-nav mr-auto">
               <li className={ "nav-item  " + (isRoom ? 'active' : '')}>
-				<Link className="nav-link" to={roomLink}> Room: {this.state.currentRoom}</Link>
+				        { link }
               </li>
 			  <li className={ "nav-item  " + (isCreate ? 'active' : '')}>
-				 <Link to="/rooms/" className="nav-link">Get a Room</Link>
+				 <Link to="/" className="nav-link">Get a Room</Link>
 			  </li>
             </ul>
 			<div className="my-2 my-lg-0 white">

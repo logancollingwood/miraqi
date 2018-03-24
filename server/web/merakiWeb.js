@@ -1,13 +1,12 @@
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser')
-let DataBase = require('./db/db.js');
+let db = require('../db/db.js');
 require('dotenv').config()
 
 
 function setup(port) {
     console.log("Meraki Web starting on port:" + port);
-    const db = new DataBase();
     app.use(bodyParser.json());
     app.use(function(req, res, next) {
         res.header("Access-Control-Allow-Origin", "*");
@@ -36,6 +35,7 @@ function setup(port) {
         db.createRoom(req.body)
             .then(room => {
                 console.log('successfully created room with name: ' + room.name);
+                console.log(room);
                 res.json(room);
             })
             .catch(error => {
@@ -91,6 +91,27 @@ function setup(port) {
             })
             .catch(error => {
                 console.error("API CALL FAILED: Failed to remove user with userid " + req.body.userId + ' from room' + req.body.roomId);
+                res.sendStatus(500)
+            })
+    });
+
+    /**
+     * POST: {
+     *  url: url,
+     *  userId: User Id of Requester
+     * }
+     */
+    app.post('/api/room/queue', function(req, res) {
+        console.log('Adding queue item');
+        console.log(req.body);
+        db.addQueueItem(req.body)
+            .then(room => {
+                console.log(room)
+                console.log('successfully added queue item with url ' + room.name + ' to room: ' + room._id);
+                res.json(room);
+            })
+            .catch(error => {
+                console.error("API CALL FAILED: Failed to queue url " + req.body.url + ' to room ' + req.body.roomId);
                 res.sendStatus(500)
             })
     });

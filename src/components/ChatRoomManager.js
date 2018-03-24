@@ -1,4 +1,3 @@
-import Request from "request";
 import React from "react";
 import Chat from "./Chat";
 import io from "socket.io-client";
@@ -10,16 +9,9 @@ class ChatRoomManager extends React.Component {
 	constructor(props) {
 		super(props);
 		this.socket = io(Config.SOCKET_API_HOST);
-		this.state = {
-			messages: [],
-			loaded: true,
-		}
 	}
 
 	componentDidMount() {
-		this.setState({
-			isLoaded: true
-		})
 	}
 
 
@@ -27,8 +19,8 @@ class ChatRoomManager extends React.Component {
         return (
 			<div className="container-fluid">
 				<div className="row justify-content-center main-content">
-					<DjContainer currentRoom={this.props.roomId} socket={this.socket}/>
-					<Chat socket={this.socket} currentRoom={this.props.currentRoom}/>
+					<DjContainer loading={this.props.loading} room={this.props.currentRoom} socket={this.socket}/>
+					<Chat loading={this.props.loading} socket={this.socket} room={this.props.currentRoom}/>
 				</div>
 			</div>
         );

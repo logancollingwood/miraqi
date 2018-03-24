@@ -2,7 +2,7 @@
 
 require('dotenv').config();
 var mongoose = require('mongoose');
-var Models     = require('./models/room');
+var Models     = require('./models/models');
 
 class DataBase {
 
@@ -58,7 +58,8 @@ class DataBase {
         return new Promise((resolve, reject) => {
             var room = new Models.Room({
                 name: roomRequest.name, 
-                description: roomRequest.description
+                description: roomRequest.description,
+                sourceIp: roomRequest.sourceIp
             });
             room.save(function(err) {
                 if (err) reject(err);
@@ -118,6 +119,36 @@ class DataBase {
             })
         });
     }
+
+    /**
+     * 
+     * @param {url, userId, roomId} addQueueItemRequest 
+     */
+    addQueueItem(addQueueItemRequest) {
+        const url = addQueueItemRequest.url;
+        const userId = addQueueItemRequest.userId;
+        const roomId = addQueueItemRequest.roomId;
+        return new Promise((resolve, reject) => {
+            Models.Room.findById(roomId, function(err, room) {
+                if (err) reject(err);
+                
+                var queueItem = new Models.QueueItem({
+                        playUrl: url,
+                        userId: userId,
+                });
+                
+                Models.Room.findByIdAndUpdate(
+                    roomId,
+                    { $push: { queue: queueItem } },
+                    function(err, model) {
+                        if (err) reject(err);
+                        console.log(model);
+                        resolve(model);
+                    }
+                );
+            })
+        });
+    }
 }
 
-module.exports = DataBase;
+module.exports = new DataBase();

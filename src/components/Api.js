@@ -23,6 +23,22 @@ let API = {
                 reject(err);
             });
         });
+    },
+
+    createRoom(roomRequest) {
+        API_OPTIONS.method = 'POST';
+        API_OPTIONS.uri = API_BASE_URL + 'room/';
+        API_OPTIONS.body = roomRequest;
+
+        return new Promise((resolve, reject) => {
+            Request(API_OPTIONS)
+            .then(function(response) {
+                resolve(response);
+            })
+            .catch(function(err) {
+                reject(err);
+            });
+        });
     }
 }
 

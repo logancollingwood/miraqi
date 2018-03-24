@@ -63,38 +63,45 @@ class Chat extends React.Component {
 
 
     render(){
+		if (this.props.loading) {
+			return (
+				<div className="col-md-4 chatRoom h-100 bg-bright">
+					Loading...
+				</div>
+			)
+		}
 		const messagesToRender = this.state.messages.slice(0).reverse().map((message, i) => 
 			<ChatMessage key={i} message={message} />
 		);
 
         return (
                     <div className="col-md-4 chatRoom h-100 bg-bright">
-                                <div className="chatTitle">{this.props.currentRoom}</div>
-                                <hr/>
-                                <div className="chatMessages">
-									{
-										messagesToRender
-									}
-								</div>
-								<hr />
-                                <div className="chatFooter">
+						<div className="chatTitle">{this.props.currentRoom}</div>
+						<hr/>
+						<div className="chatMessages">
+							{
+								messagesToRender
+							}
+						</div>
+						<hr />
+						<div className="chatFooter">
 
-									<div className={this.state.userNameEntryHidden ? 'hidden' : ''}>
-										<input type="text" placeholder="Username" value={this.state.username} onChange={ev => this.setState({username: ev.target.value})} className="form-control"/>
-										<button onClick={this.setUsername} className="btn btn-primary form-control">Set</button>
-									</div>
+							<div className={this.state.userNameEntryHidden ? 'hidden' : ''}>
+								<input type="text" placeholder="Username" value={this.state.username} onChange={ev => this.setState({username: ev.target.value})} className="form-control"/>
+								<button onClick={this.setUsername} className="btn btn-primary form-control">Set</button>
+							</div>
 
 
-									<div className={this.state.chatHidden ? 'hidden' : ''}>
-										<label id="userNameLabel" htmlFor="sendMessageInput">  {this.state.username} </label>
-										<input id="sendMessageInput" type="text" placeholder="Message" className="form-control" value={this.state.message} onChange={ev => this.setState({message: ev.target.value})}/>
-										<button onClick={this.sendMessage} className="btn btn-primary form-control">Send</button>
-									</div>
-	
-									<div className="roomUsers">
-										{this.state.users.length} users connected
-									</div>
-                                </div>
+							<div className={this.state.chatHidden ? 'hidden' : ''}>
+								<label id="userNameLabel" htmlFor="sendMessageInput">  {this.state.username} </label>
+								<input id="sendMessageInput" type="text" placeholder="Message" className="form-control" value={this.state.message} onChange={ev => this.setState({message: ev.target.value})}/>
+								<button onClick={this.sendMessage} className="btn btn-primary form-control">Send</button>
+							</div>
+
+							<div className="roomUsers">
+								{this.props.room.users.length} users connected
+							</div>
+						</div>
                     </div>
         );
     }
