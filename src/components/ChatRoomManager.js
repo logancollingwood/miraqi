@@ -19,8 +19,12 @@ class ChatRoomManager extends React.Component {
         return (
 			<div className="container-fluid">
 				<div className="row justify-content-center main-content">
-					<DjContainer loading={this.props.loading} room={this.props.currentRoom} socket={this.socket}/>
-					<Chat loading={this.props.loading} socket={this.socket} room={this.props.currentRoom}/>
+					<div className="col-md-9 no-padding left-half">
+						<DjContainer loading={this.props.loading} room={this.props.currentRoom} socket={this.socket}/>
+					</div>
+					<div className="col-md-3 no-padding">
+						<Chat loading={this.props.loading} socket={this.socket} room={this.props.currentRoom}/>
+					</div>
 				</div>
 			</div>
         );

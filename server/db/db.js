@@ -39,11 +39,14 @@ class DataBase {
         });
     }
 
-    createUser(userCreateRequest) {
+    createUser(name, isAdmin) {
+        if (name == null || isAdmin == null) {
+            return;
+        }
         return new Promise((resolve, reject) => {
             var user = new Models.User({
-                name: userCreateRequest.name, 
-                admin: false,
+                name: name, 
+                admin: isAdmin,
                 lastLogin: new Date(),
             });
             user.save(function(err) {
@@ -128,26 +131,76 @@ class DataBase {
         const url = addQueueItemRequest.url;
         const userId = addQueueItemRequest.userId;
         const roomId = addQueueItemRequest.roomId;
+
         return new Promise((resolve, reject) => {
-            Models.Room.findById(roomId, function(err, room) {
-                if (err) reject(err);
-                
-                var queueItem = new Models.QueueItem({
-                        playUrl: url,
-                        userId: userId,
-                });
-                
-                Models.Room.findByIdAndUpdate(
-                    roomId,
-                    { $push: { queue: queueItem } },
-                    function(err, model) {
-                        if (err) reject(err);
-                        console.log(model);
-                        resolve(model);
-                    }
-                );
-            })
+
+            var queueItem = new Models.QueueItem({
+                playUrl: url,
+                userId: userId,
+            });
+            Models.Room.findByIdAndUpdate(
+                roomId,
+                { $push: { queue: queueItem } },
+                function(err, model) {
+                    if (err) reject(err);
+                    console.log(model);
+                    resolve(model);
+                }
+            );
         });
+        // return new Promise((resolve, reject) => {
+        //     Models.Room.findById(roomId, function(err, room) {
+        //         if (err) reject(err);
+                
+        //         var queueItem = new Models.QueueItem({
+        //                 playUrl: url,
+        //                 userId: userId,
+        //         });
+                
+        //         Models.Room.findByIdAndUpdate(
+        //             roomId,
+        //             { $push: { queue: queueItem } },
+        //             function(err, model) {
+        //                 if (err) reject(err);
+        //                 console.log(model);
+        //                 resolve(model);
+        //             }
+        //         );
+        //     })
+        // });
+    }
+
+    /**
+     * 
+     * @param {url, userId, roomId} addQueueItemRequest 
+     */
+    addMessageToRoom(roomId, userId, msgString) {
+        if (roomId == null || userId == null || msgString == null) {
+            return new Promise((resolve, reject) => {reject('Validate Params')});
+        };
+
+
+        return new Promise((resolve, reject) => {
+            var messageItem = new Models.Message({
+                message: msgString,
+                userId: userId,
+            });
+            Models.Room.findByIdAndUpdate(
+                roomId,
+                { $push: { messages: messageItem } },
+                function(err, model) {
+                    console.log('error');
+                    console.log(err);
+                    if (err) reject(err);
+                    console.log(model);
+                    resolve(model);
+                }
+            );
+        });
+    }
+
+    clearQueue(roomId, userId) {
+        
     }
 }
 

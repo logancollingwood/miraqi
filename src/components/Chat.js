@@ -15,7 +15,7 @@ class Chat extends React.Component {
 			users: [],
 			userNameEntryHidden: false,
 			chatHidden: true
-        };
+		};
 		
 		this.socket = this.props.socket;
 
@@ -23,23 +23,27 @@ class Chat extends React.Component {
 
 	componentDidMount() {
 		this.sendMessage = ev => {
-			ev.preventDefault();
-			if(this.state.message === null || this.state.message === '') return;
-			this.socket.emit('SEND_MESSAGE', {
-				author: this.state.username,
-				message: this.state.message,
-				serverMessage: false,
-				timestamp: moment().format(TIME_FORMAT)
-			});
-			this.setState({message: ''});
+			if (ev.charCode == 13) {
+				if(this.state.message === null || this.state.message === '') return;
+				this.socket.emit('SEND_MESSAGE', {
+					author: this.state.username,
+					message: this.state.message,
+					serverMessage: false,
+					timestamp: moment().format(TIME_FORMAT)
+				});
+				this.setState({message: ''});
+			}
 		}
 
 		this.setUsername = ev => {
-			this.setState({
-				userNameEntryHidden: true,
-				chatHidden: false
-			})
-			this.socket.emit("subscribe", { room: this.props.currentRoom, username: this.state.username });
+			if(ev.charCode==13){
+				console.log(this.props);
+				this.setState({
+					userNameEntryHidden: true,
+					chatHidden: false
+				})
+				this.socket.emit("subscribe", { room: this.props.room, username: this.state.username });
+			}
 		}
 
 		const addMessage = data => {
@@ -59,7 +63,21 @@ class Chat extends React.Component {
 		this.socket.on('USER_JOINED', function(data) {
 			addUser(data);
 		});
+
+		if (this.props.room != null) {
+			console.log(' room prop is not null');
+			this.setState({messages: this.props.room.messages});
+		}
 	}
+
+	handleKeyPress(target) {
+		console.log('got a key press');
+		if(target.charCode==13){
+				alert('Enter clicked!!!');    
+		}
+
+	}
+
 
 
     render(){
@@ -75,9 +93,7 @@ class Chat extends React.Component {
 		);
 
         return (
-                    <div className="col-md-4 chatRoom h-100 bg-bright">
-						<div className="chatTitle">{this.props.currentRoom}</div>
-						<hr/>
+                    <div className="chatRoom">
 						<div className="chatMessages">
 							{
 								messagesToRender
@@ -86,20 +102,33 @@ class Chat extends React.Component {
 						<hr />
 						<div className="chatFooter">
 
-							<div className={this.state.userNameEntryHidden ? 'hidden' : ''}>
-								<input type="text" placeholder="Username" value={this.state.username} onChange={ev => this.setState({username: ev.target.value})} className="form-control"/>
-								<button onClick={this.setUsername} className="btn btn-primary form-control">Set</button>
+							<div class="chat">
+								{ !this.state.userNameEntryHidden &&
+									<div className="input-group mb-3">
+										<input type="text" placeholder="Username" value={this.state.username} onChange={ev => this.setState({username: ev.target.value})} onKeyPress={this.setUsername} className="form-control"/>
+										<span className="input-group-btn">
+											<button className="btn btn-secondary" type="button" onClick={this.setUsername}>Set</button>
+										</span>
+									</div>
+								}
+
+
+								{ !this.state.chatHidden &&
+									<div className="input-group mb-3">
+											<div className="input-group-prepend">
+												<span className="input-group-text" id="userNameLabel">{this.state.username}</span>
+											</div>
+										<input id="sendMessageInput" type="text" placeholder="Message" className="form-control" aria-describedby="userNameLabel" value={this.state.message} onChange={ev => this.setState({message: ev.target.value})} onKeyPress={this.sendMessage}/>
+										<span className="input-group-btn">
+											<button onClick={this.sendMessage} className="btn btn-secondary">Send</button>
+										</span>
+									</div>
+								}
 							</div>
 
-
-							<div className={this.state.chatHidden ? 'hidden' : ''}>
-								<label id="userNameLabel" htmlFor="sendMessageInput">  {this.state.username} </label>
-								<input id="sendMessageInput" type="text" placeholder="Message" className="form-control" value={this.state.message} onChange={ev => this.setState({message: ev.target.value})}/>
-								<button onClick={this.sendMessage} className="btn btn-primary form-control">Send</button>
-							</div>
-
-							<div className="roomUsers">
-								{this.props.room.users.length} users connected
+							<hr />
+							<div className="roomInfo">
+								{this.props.room.users.length} users connected to room {this.props.room._id}
 							</div>
 						</div>
                     </div>

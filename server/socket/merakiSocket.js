@@ -1,3 +1,4 @@
+const io = require('socket.io')();
 let db = require('../db/db.js');
 
 function ytVidId(url)  {
@@ -7,12 +8,11 @@ function ytVidId(url)  {
 
 let users = [];
 
-function setup(io, port) {
+function setup(port) {
     io.on('connection', (socket) => {
-        console.log(socket.id);
+        socketLog('socketId: ' + socket.id + ' connected.');
 
-        let userName = '';
-        let room = '';
+        let userModel = {}, roomModel = {}, roomSocket = {};
 
         socket.on('SEND_MESSAGE', function(data){
             const message = data.message;
@@ -24,42 +24,76 @@ function setup(io, port) {
                 if (isYoutubeUrl != false)  { // if this returned not false, then we got a youtube ID param back
                     var broadcastMessage = {
                         serverMessage: true,
-                        author: userName,
+                        author: roomModel.name,
                         message: ": queued up: " + playUrl
                     }
-                    io.to(room).emit('RECEIVE_MESSAGE', broadcastMessage);
-                    io.to(room).emit('PLAY_MESSAGE', playUrl);
+                    io.to(roomModel._id).emit('RECEIVE_MESSAGE', broadcastMessage);
+                    io.to(roomModel._id).emit('PLAY_MESSAGE', playUrl);
+                    let queueItem = {
+                        url: playUrl,
+                        userId: userModel._id,
+                        roomId: roomModel._id
+                    }
+                    // db.addQueueItem(queueItem)
+                    //     .then(data => {
+                    //         socketLog('added item to queue db');
+                    //     })
+                    //     .catch(err => console.error);
                 }
             } else {
-                console.log("broadcasting message by user " + data.author + " to room " + room + " :" + data.message);
-                io.to(room).emit('RECEIVE_MESSAGE', data);		
+                socketLog("broadcasting message by user " + data.author + " to room " + roomModel._id + " :" + data.message);
+                io.to(roomModel._id).emit('RECEIVE_MESSAGE', data);		
             }
 
         });
 
         socket.on('subscribe', function(data) { 
+            socketLog(data);
             userName = data.username;
-            room = data.room;
-            console.log("User:" + userName + " connecting to room:" + room);
-            socket.join(data.room);
-            users[room] += 1;
+            roomModel = data.room;
+            socket.join(roomModel._id);
             var broadcastMessage = {
                 serverMessage: true,
                 author: userName,
                 message: " connected to the room."
             }
-            io.to(room).emit('RECEIVE_MESSAGE', broadcastMessage);
-            io.to(room).emit('USER_JOINED', {userName: userName});
+            db.createUser(userName, IsUsernameAdmin(userName))
+                .then(user => {
+                    userModel = user;
+                    let addUserToRoomRequest = {  
+                        roomId: data.room._id,
+                        userId: userModel._id
+                    }
+                    db.addUserToRoom(addUserToRoomRequest)
+                        .then(data => {
+                            socketLog('Successfully created and added user to room: ' +  data);
+                        })
+                        .catch(err => console.error);
+                    
+                })
+                .catch(err => console.error);
+            io.to(roomModel._id).emit('RECEIVE_MESSAGE', broadcastMessage);
+            io.to(roomModel._id).emit('USER_JOINED', {userName: userName});
         })
 
         socket.on('disconnect', function () {
             var broadcastMessage = {
                 serverMessage: true,
-                author: userName,
+                author: userModel.name,
                 message: " signed off"
             }
-            users[room] -= 1;
-            io.to(room).emit('RECEIVE_MESSAGE', broadcastMessage);
+            if (UserRequiresLogoff(userModel, roomModel)) {
+                let removeUserFromRoomRequest = {
+                    userId: userModel._id,
+                    roomId: roomModel._id
+                }
+                console.log('removing user');
+                console.log(removeUserFromRoomRequest);
+                db.removeUserFromRoom(removeUserFromRoomRequest)
+                    .then(data => socketLog)
+                    .catch(err => console.error);
+            }
+            io.to(roomModel._id).emit('RECEIVE_MESSAGE', broadcastMessage);
         });
     });
 
@@ -69,6 +103,22 @@ function setup(io, port) {
 
 }
 
+function UserRequiresLogoff(userModel, roomModel) {
+    return userModel._id != null && roomModel._id != null;
+}
+
+function socketLog(msg) {
+    if (typeof msg == 'string') {
+        console.info('ws: ' + msg);
+    } else {
+        console.info('ws object: ');
+        console.info(msg);
+    }
+}
+
+function IsUsernameAdmin(userName) {
+    return userName.toUpperCase() == 'logan'.toUpperCase();
+}
 
 module.exports = {
     setup: setup

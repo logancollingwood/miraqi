@@ -41,7 +41,7 @@ class Home extends React.Component {
           <div className="content">
             <div className="row justify-content-md-center">
               <div className="col-8">
-                <h1 className="name"> eden </h1>
+                <h1 className="homeName"> eden </h1>
               </div>
             </div>
             <div className="row justify-content-md-center jobs">

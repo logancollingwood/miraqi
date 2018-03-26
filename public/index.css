@@ -1,3 +1,6 @@
+* {
+  border-radius: 0 !important;
+}
 html {
   height: 100%;
 }
@@ -50,7 +53,7 @@ body {
 }
 
 .bg-dark {
-    background-color: #424242!important;
+    background-color: #313131!important;
 }
 
 .bg-bright {
@@ -98,10 +101,6 @@ body {
   margin: 0
 }
 
-.main-content {
-    height: 100vh;
-}
-
 nav {
   min-height: 60px;
   max-height: 60px;
@@ -110,19 +109,49 @@ nav {
 .hidden {
 	display: none;
 }
-
+.no-padding {
+    padding: 0px;
+}
 #sendMessageInput {
 	display: inline-block;
-	width: 90%;
-	margin-left: 10px;
 }
 
 .container-fluid {
 	padding-left: 0px;
-	padding-right: 0px;
+    padding-right: 0px;
+    margin-top: 60px;
 }
 
+.left-half {
+    border-right: 3px solid #b0aba0;
+}
 
+.dj {
+    height: calc(100vh - 60px);
+    display: flex;
+    flex-flow: column;
+}
+
+.dj .row.video {
+  flex: 0 1 auto;
+  height: 50vh;
+}
+
+.dj .row.time {
+  flex: 0 1 auto;
+  text-align: center;
+  background-color: #444444;
+  height: 30px;  
+}
+
+.dj .row.info {
+  flex: 1 1 40px;
+  background-color: #1A1A1D;
+}
+
+.row.info {
+    min-height: 30vh;
+}
 
 .youtubeContainer {
     position: relative;
@@ -140,18 +169,21 @@ nav {
     height: 40vh;
 }
 
+.chat {
+    margin-bottom: 37px;
+}
 .chatRoom {
-    background-color: #eee;
+    background-color: #444;
     padding-left: 0px;
     padding-right: 0px;
-
+    height: calc(100vh - 60px);
 }
 .chatMessages {
-    min-height: 70%;
-    max-height: 70%;
+    min-height: 75vh;
+    max-height: 75vh;
     padding-left: 10px;
     padding-right: 10px;
-    overflow-y: scroll;
+    overflow-y: auto;
     display: flex;
     flex-direction: column-reverse;
 }
@@ -161,6 +193,13 @@ nav {
     padding-left: 10px;
     padding-right: 10px;
     margin-top: 3vh;
+}
+
+.roomInfo {
+    margin-top: 60px;
+    text-align: center;
+    font-size: 12px;
+    color: #aaa;
 }
 
 .chatTitle {
@@ -200,9 +239,6 @@ p {
 .white {
 	color: #fff;
 }
-button {
-	margin-top: 15px;
-}
 
 .footer {
 	background-color: #eee
@@ -214,9 +250,6 @@ button {
 	width: 10%;
 }
 
-#sendMessageInput {
-	width: 85%;
-}
 
 .navbar-brand {
 	font-family: 'Raleway', sans-serif;
@@ -258,140 +291,67 @@ p.time {
 }
 
 .timeRemainingText { 
-	padding-top: 2px;
-	font-family: 'Open Sans', sans-serif;
+	padding-top: 7px;
+    font-family: 'Open Sans', sans-serif;
+    color: #999;
+    font-size: 12px;
+    margin: 0 auto;
+    width: 100%;
 }
 
+.progress {
+    border-radius: 0px;
+    background-color: #444;
+}
+.progress-bar {
+    background-color: #eee;
+}
 
+.progress.timeRemainingBar {
+    width: 100%;
+    color: #ffffff;
+    height: 30px;
+}
 
+.queue {
+    overflow-y: auto;
+}
+.song-queue {
+    padding-top: 15px;
+    padding-left: 0px;
+    color: #ffffff;
+}
 
-/* LOGIN */
-.card-container.card {
-    max-width: 350px;
-    padding: 40px 40px;
+.song-queue li {
+    padding-top: 10px;
+    border-bottom: 2px solid #444;
+    font-family: 'Open Sans';
+    padding-bottom: 10px;
+}
+
+.song-queue li ::after {
+    border-bottom: 1px solid #ffffff;
+}
+
+.queueItem .name {
+    display: inline;
+    font-size: 20px;
+}
+
+.queueItem .type {
+    display: inline;
+}
+
+.queueItem .type a {
+    color: inherit;
+}
+.queueItem .type a:hover {
+    color: #888888;
+}
+.queueItem .link {
+    display: inline;
 }
 
 .btn {
-    font-weight: 700;
-    height: 36px;
-    -moz-user-select: none;
-    -webkit-user-select: none;
-    user-select: none;
-    cursor: default;
-}
-
-/*
- * Card component
- */
-.card {
-    background-color: #F7F7F7;
-    /* just in case there no content*/
-    padding: 20px 25px 30px;
-    margin: 0 auto 25px;
-    margin-top: 50px;
-    /* shadows and rounded borders */
-    -moz-border-radius: 2px;
-    -webkit-border-radius: 2px;
-    border-radius: 2px;
-    -moz-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
-    -webkit-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
-    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
-}
-
-.profile-img-card {
-    width: 96px;
-    height: 96px;
-    margin: 0 auto 10px;
-    display: block;
-    -moz-border-radius: 50%;
-    -webkit-border-radius: 50%;
-    border-radius: 50%;
-}
-
-/*
- * Form styles
- */
-.profile-name-card {
-    font-size: 16px;
-    font-weight: bold;
-    text-align: center;
-    margin: 10px 0 0;
-    min-height: 1em;
-}
-
-.reauth-email {
-    display: block;
-    color: #404040;
-    line-height: 2;
-    margin-bottom: 10px;
-    font-size: 14px;
-    text-align: center;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    -moz-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-}
-
-.form-signin #inputEmail,
-.form-signin #inputPassword {
-    direction: ltr;
-    height: 44px;
-    font-size: 16px;
-}
-
-.form-signin input[type=email],
-.form-signin input[type=password],
-.form-signin input[type=text],
-.form-signin button {
-    width: 100%;
-    display: block;
-    margin-bottom: 10px;
-    z-index: 1;
-    position: relative;
-    -moz-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-}
-
-.form-signin .form-control:focus {
-    border-color: rgb(104, 145, 162);
-    outline: 0;
-    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgb(104, 145, 162);
-    box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgb(104, 145, 162);
-}
-
-.btn.btn-signin {
-    /*background-color: #4d90fe; */
-    background-color: rgb(104, 145, 162);
-    /* background-color: linear-gradient(rgb(104, 145, 162), rgb(12, 97, 33));*/
-    padding: 0px;
-    font-weight: 700;
-    font-size: 14px;
-    height: 36px;
-    -moz-border-radius: 3px;
-    -webkit-border-radius: 3px;
-    border-radius: 3px;
-    border: none;
-    -o-transition: all 0.218s;
-    -moz-transition: all 0.218s;
-    -webkit-transition: all 0.218s;
-    transition: all 0.218s;
-}
-
-.btn.btn-signin:hover,
-.btn.btn-signin:active,
-.btn.btn-signin:focus {
-    background-color: rgb(12, 97, 33);
-}
-
-.forgot-password {
-    color: rgb(104, 145, 162);
-}
-
-.forgot-password:hover,
-.forgot-password:active,
-.forgot-password:focus{
-    color: rgb(12, 97, 33);
+    0 10px 10px 0px;
 }

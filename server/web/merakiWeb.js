@@ -57,7 +57,7 @@ function setup(port) {
 
     app.post('/api/user', function(req, res) {
         console.log(req.body);
-        db.createUser(req.body)
+        db.createUser(req.body.name, false)
             .then(user => {
                 console.log('successfully created user with name: ' + user.name);
                 res.json(user);
@@ -108,6 +108,35 @@ function setup(port) {
             .then(room => {
                 console.log(room)
                 console.log('successfully added queue item with url ' + room.name + ' to room: ' + room._id);
+                res.json(room);
+            })
+            .catch(error => {
+                console.error("API CALL FAILED: Failed to queue url " + req.body.url + ' to room ' + req.body.roomId);
+                res.sendStatus(500)
+            })
+    });
+
+    app.post('/api/room/addMessageToRoom', function(req, res) {
+        console.log('Adding message item');
+        console.log(req.body);
+        const request = req.body;
+        db.addMessageToRoom(request.roomId, request.userId, request.msg)
+            .then(room => {
+                console.log('hi')
+                console.log(room)
+                console.log('successfully added message item with msg ' + req.body.msg + ' to room: ' + room._id);
+                res.json(room);
+            })
+            .catch(error => {
+                console.error("API CALL FAILED: Failed add message " + req.body.msg + ' to room ' + req.body.roomId);
+                res.sendStatus(500)
+            })
+    });
+
+    app.post('/api/room/clearqueue', function(req, res) {
+        console.log('clearing queue for room ' +  req.body.roomId + ' for user ' + req.body.userId);
+        db.clearQueue(req.body.roomId, req.boody.userId)
+            .then(room => {
                 res.json(room);
             })
             .catch(error => {

@@ -1,5 +1,6 @@
 import React from "react";
 import ReactPlayer from "react-player";
+import DjQueue from "./DjQueue";
 
 function secondsToString(seconds) {
 	return {
@@ -33,9 +34,10 @@ class DjContainer extends React.Component {
 				url: 'https://youtu.be/pb8vWUDEmxc'
 			},
 			secondsPlayed: 0,
+			songPlayed: 0, // the amount in seconds that the song has progressed
+			songLength: 0, // the length of the song in seconds
 			totalLength: 0,
-			playing: false,
-			marginTop: "36vh",
+			playing: false
 		}
 
         this.socket = this.props.socket;
@@ -63,27 +65,30 @@ class DjContainer extends React.Component {
 			secondsPlayedString = secondsPlayed.numminutes + "m" + secondsPlayedString;
 		}
 		this.setState({
-			secondsPlayed: secondsPlayedString
+			secondsPlayed: secondsPlayedString,
+			songPlayed: status.playedSeconds
 		});
 	}
 
 	onDuration(seconds) {
 		let timeLeft = secondsToString(seconds.toFixed(0));
 		this.setState({
-			totalLength: timeLeft.numminutes + "m" + timeLeft.numseconds + "s"
+			totalLength: timeLeft.numminutes + "m" + timeLeft.numseconds + "s",
+			songLength: seconds
 		})
 	}
 
 	onPause() {
+		console.log("caught pause event");
+		this.setState({
+			playing: false
+		});
 		this.setState({
 			playing: true
-		})
+		});
 	}
 
   render() {
-        const nowPlayingBarStyle = {
-            marginTop: this.state.marginTop
-		}
 		if (this.props.loading) {
 			return (
 				<div className="col-md-8 youtubeContainer">
@@ -91,20 +96,38 @@ class DjContainer extends React.Component {
 				</div>
 			)
 		}
+		const timeRemainingStyle = {
+			width: (this.state.songPlayed / this.state.songLength) * 100 + '%'
+		}
         return (
-            <div className="col-md-8 youtubeContainer">
-                <ReactPlayer ref={(input) => { this.playerElement = input; }} 
-                            controls={true} 
-                            playing={this.state.playing}
-                            className="youtubeEmbed" 
-                            url={this.state.nowPlaying.url} 
-                            onProgress={this.onProgress.bind(this)} 
-                            onDuration={this.onDuration.bind(this)}
-                            onPause={this.onPause.bind(this)}
-                            width='100%'/>
-                <div className="nowPlayingBar" style={nowPlayingBarStyle}>
-                    <div className="timeRemainingText"> {this.state.secondsPlayed} /  {this.state.totalLength} </div>
+			<div className="dj">
+				<div className="row video">
+					<ReactPlayer ref={(input) => { this.playerElement = input; }} 
+								controls={false} 
+								playing={this.state.playing}
+								className="youtubeEmbed" 
+								url={this.state.nowPlaying.url} 
+								onProgress={this.onProgress.bind(this)} 
+								onDuration={this.onDuration.bind(this)}
+								onPause={this.onPause.bind(this)}
+								height='50vh'
+								width='100%'/>
+				</div>
+                <div className="row time">
+					<div className="progress position-relative timeRemainingBar">
+						<div className="progress-bar" role="progressbar" style={timeRemainingStyle} aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
+						<small className="justify-content-center d-flex position-absolute w-100 timeRemainingText">{this.state.secondsPlayed} /  {this.state.totalLength}</small>
+					</div>
                 </div>
+				<div className="row info">
+					<div className="col-md-6 left-half no-padding queue">
+						<DjQueue queue={this.state.queue} />
+					</div>
+					<div className="col-md-6">
+						<div className="top-queue">
+						</div>
+					</div>
+				</div>
             </div>
         );
   }

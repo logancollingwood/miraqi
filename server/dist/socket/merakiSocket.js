@@ -1,4 +1,5 @@
 'use strict';
+let db = require('../db/db.js');
 
 function ytVidId(url) {
     var p = /^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
@@ -48,6 +49,7 @@ function setup(io, port) {
                 author: userName,
                 message: " connected to the room."
             };
+            db.
             io.to(room).emit('RECEIVE_MESSAGE', broadcastMessage);
             io.to(room).emit('USER_JOINED', { userName: userName });
         });
