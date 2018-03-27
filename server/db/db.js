@@ -52,8 +52,8 @@ class DataBase {
             });
             user.save(function(err) {
                 if (err) reject(err);
+                resolve(user);
             })
-            resolve(user);
         });
     }
 

@@ -70,9 +70,6 @@ function setup(port) {
                     console.log(`created user with id: ${user._id}`)
                     db.addUserToRoom(addUserToRoomRequest)
                         .then(userRoom => {
-                            socketLog('Successfully created and added user to room: ' +  userRoom.room._id);
-                            console.log(`syncing room ${userRoom.room._id}`);
-                            console.log(userRoom.room);
                             roomModel = userRoom.room;
                             io.to(roomId).emit('SYNC_ROOM', userRoom.room);
                             io.to(roomId).emit('RECEIVE_MESSAGE', broadcastMessage);
@@ -101,10 +98,13 @@ function setup(port) {
                     console.log('removing user');
                     console.log(removeUserFromRoomRequest);
                     db.removeUserFromRoom(removeUserFromRoomRequest)
-                        .then(data => socketLog)
+                        .then(userRoom => {
+                            roomModel = userRoom.room;
+                            io.to(roomId).emit('SYNC_ROOM', userRoom.room);
+                            io.to(roomId).emit('RECEIVE_MESSAGE', broadcastMessage);
+                        })
                         .catch(err => console.error);
                 }
-                io.to(roomModel._id).emit('RECEIVE_MESSAGE', broadcastMessage);
             }
         });
     });
