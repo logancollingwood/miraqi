@@ -12,6 +12,7 @@ let API_OPTIONS = {
 
 let API = {
     getRoomById(id) {
+        API_OPTIONS.method = 'GET';
         API_OPTIONS.uri = API_BASE_URL + 'room/' + id;
 
         return new Promise((resolve, reject) => {

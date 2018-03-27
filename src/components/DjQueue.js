@@ -1,5 +1,4 @@
 import React from "react";
-import Config from "../Config.js";
 
 
 class DjQueue extends React.Component {

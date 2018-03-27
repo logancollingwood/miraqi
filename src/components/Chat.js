@@ -14,7 +14,8 @@ class Chat extends React.Component {
             messages: [],
 			users: [],
 			userNameEntryHidden: false,
-			chatHidden: true
+			chatHidden: true,
+			room: this.props.room
 		};
 		
 		this.socket = this.props.socket;
@@ -23,7 +24,7 @@ class Chat extends React.Component {
 
 	componentDidMount() {
 		this.sendMessage = ev => {
-			if (ev.charCode == 13) {
+			if (ev.charCode === 13) {
 				if(this.state.message === null || this.state.message === '') return;
 				this.socket.emit('SEND_MESSAGE', {
 					author: this.state.username,
@@ -36,13 +37,13 @@ class Chat extends React.Component {
 		}
 
 		this.setUsername = ev => {
-			if(ev.charCode==13){
+			if(ev.charCode === 13){
 				console.log(this.props);
 				this.setState({
 					userNameEntryHidden: true,
 					chatHidden: false
 				})
-				this.socket.emit("subscribe", { room: this.props.room, username: this.state.username });
+				this.socket.emit("subscribe", { room: this.props.room._id, username: this.state.username });
 			}
 		}
 
@@ -54,16 +55,6 @@ class Chat extends React.Component {
 			addMessage(data);
 		});
 
-		const addUser = data => {
-			console.log(data);
-			this.setState({users: [...this.state.users, data.userName]});
-			console.log(this.state.users);
-
-		}
-		this.socket.on('USER_JOINED', function(data) {
-			addUser(data);
-		});
-
 		if (this.props.room != null) {
 			console.log(' room prop is not null');
 			this.setState({messages: this.props.room.messages});
@@ -72,13 +63,11 @@ class Chat extends React.Component {
 
 	handleKeyPress(target) {
 		console.log('got a key press');
-		if(target.charCode==13){
+		if(target.charCode === 13){
 				alert('Enter clicked!!!');    
 		}
 
 	}
-
-
 
     render(){
 		if (this.props.loading) {
@@ -102,7 +91,7 @@ class Chat extends React.Component {
 						<hr />
 						<div className="chatFooter">
 
-							<div class="chat">
+							<div>
 								{ !this.state.userNameEntryHidden &&
 									<div className="input-group mb-3">
 										<input type="text" placeholder="Username" value={this.state.username} onChange={ev => this.setState({username: ev.target.value})} onKeyPress={this.setUsername} className="form-control"/>
@@ -128,7 +117,9 @@ class Chat extends React.Component {
 
 							<hr />
 							<div className="roomInfo">
-								{this.props.room.users.length} users connected to room {this.props.room._id}
+								{ this.props.room &&
+									 `${this.props.room.users.length} users connected to room ${this.props.room._id}`
+								}
 							</div>
 						</div>
                     </div>

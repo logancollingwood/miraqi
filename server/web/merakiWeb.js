@@ -31,7 +31,6 @@ function setup(port) {
     });
 
     app.post('/api/room', function(req, res) {
-        console.log(req.body);
         db.createRoom(req.body)
             .then(room => {
                 console.log('successfully created room with name: ' + room.name);
@@ -73,7 +72,7 @@ function setup(port) {
         console.log(req.body);
         db.addUserToRoom(req.body)
             .then(response => {
-                console.log('successfully added user with name: ' + response.userName + ' to room: ' + response.roomId);
+                console.log('successfully added user with name: ' + response.user.name + ' to room: ' + response.room._id);
                 res.json(response);
             })
             .catch(error => {

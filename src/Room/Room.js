@@ -1,31 +1,25 @@
 import React, { Component } from "react";
 import ChatRoomManager from "../components/ChatRoomManager";
 import Nav from "../Nav.js";
-import Api from "../components/Api.js";
+import io from "socket.io-client";
+import Config from "../Config.js";
+
 
 class Room extends Component {
   constructor(props) {
     super(props);
+    this.socket = io(Config.SOCKET_API_HOST);
     this.state = {
-      loading: true,
-      room: null,
+      loading: true
     }
   }
 
-  componentDidMount() {
-     Api.getRoomById(this.props.match.params.id)
-        .then(room => {
-          this.setState({loading: false, room: room});
-        })
-        .catch(error => console.error);
-  }
-
   render() {
-    console.log(this.props);
+    console.log(this.state);
     return (
       <div>
-        <Nav isHome={false} isRoom={true} currentRoom={this.state.room}/>
-        <ChatRoomManager loading={this.state.loading} roomId={this.props.match.params.id} currentRoom={this.state.room}/>
+        <Nav loading={this.state.loading} isHome={false} isRoom={true}/>
+        <ChatRoomManager id={this.props.match.params.id} loading={this.state.loading} socket={this.socket}/>
       </div>
     );
   }

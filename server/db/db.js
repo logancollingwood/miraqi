@@ -23,6 +23,7 @@ class DataBase {
             Models.Room.findById(roomId, function(err, room) {
                 console.log(err);
                 if (err) reject(err);
+                console.log(`found room ${room}`);
                 resolve(room);
             })
         });
@@ -66,8 +67,8 @@ class DataBase {
             });
             room.save(function(err) {
                 if (err) reject(err);
+                resolve(room);
             })
-            resolve(room);
         });
     }
 
@@ -81,18 +82,22 @@ class DataBase {
         return new Promise((resolve, reject) => {
             Models.User.findById(userId, function(err, user) {
                 if (err) reject(err);
-                
+                console.log(`found user ${user.name}`);
                 Models.Room.findByIdAndUpdate(
                     roomId,
                     { $addToSet: { users: user } },
-                    function(err, model) {
-                        console.log(err);
+                    {new: true},
+                    function(err, room) {
+                        if (err) {
+                            reject(err);
+                        }
+                        console.log(`updated room ${room._id} and added user ${user.name}`)
+                        resolve({
+                            user: user,
+                            room: room
+                        });
                     }
                 );
-                resolve({
-                    userName: user.name,
-                    roomId: roomId
-                });
             })
         });
     }
@@ -111,14 +116,16 @@ class DataBase {
                 Models.Room.findByIdAndUpdate(
                     roomId,
                     { $pull: { users: user } },
-                    function(err, model) {
-                        console.log(err);
+                    {new: true},
+                    function(err, room) {
+                        if (err) reject(err)
+                        console.log(`updated room and removed user ${room._id}`)
+                        resolve({
+                            user: user,
+                            room: room
+                        });
                     }
                 );
-                resolve({
-                    userName: user.name,
-                    roomId: roomId
-                });
             })
         });
     }

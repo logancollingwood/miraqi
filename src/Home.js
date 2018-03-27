@@ -2,6 +2,7 @@ import React from 'react';
 import Nav from "./Nav";
 import Api from "./components/Api";
 import {Redirect} from 'react-router';
+import FontAwesome from 'react-fontawesome'
 import ip from 'ip';
 
 class Home extends React.Component {
@@ -11,6 +12,7 @@ class Home extends React.Component {
     this.state = {
       redirect: false,
       redirectRoomId: '',
+      loading: false
     }
   }
 
@@ -23,20 +25,31 @@ class Home extends React.Component {
     Api.createRoom(createRoomRequest)
       .then(roomResponse => {
         console.log(roomResponse);
-        this.setState({redirect: true, redirectRoomId: roomResponse._id});
+        this.setState({loading: true});
+        setTimeout(function() {
+          this.setState({redirect: true, redirectRoomId: roomResponse._id});
+        }.bind(this), 2000);
       })
     .catch(err => console.error)
   }
 
   render() {
-    console.log(this.state);
-     if (this.state.redirect) {
+    let displayDiv;
+    if (this.state.loading) {
+      displayDiv = (<FontAwesome name="spinner" pulse />);
+    } else {
+      displayDiv =  (<div>
+                      <h2 className="title"> get a room </h2>
+                      <button onClick={this.createRoom.bind(this)}> create one. </button> 
+                    </div>);
+    }
+    if (this.state.redirect) {
        console.log("attempting redirect");
-       return <Redirect to={'/rooms/' + this.state.redirectRoomId} push />;
-     }
+       return <Redirect to={'/rooms/' + this.state.redirectRoomId} />;
+    }
     return (
       <div>
-        <Nav isHome={true}/>
+        <Nav isHome={true} loading={this.state.loading}/>
         <div className="container-fluid home">
           <div className="content">
             <div className="row justify-content-md-center">
@@ -44,10 +57,9 @@ class Home extends React.Component {
                 <h1 className="homeName"> eden </h1>
               </div>
             </div>
-            <div className="row justify-content-md-center jobs">
+            <div className="row justify-content-md-center go">
               <div className="col-8">
-                <h2 className="title"> get a room </h2>
-                <button onClick={this.createRoom.bind(this)}> create one. </button> 
+                { displayDiv }
               </div>
             </div>
           </div>

@@ -16,9 +16,7 @@ class DjContainer extends React.Component {
     
     constructor(props) {
         super(props);
-        console.log("Booting up DjContainer with props:");
-		console.log(this.props);
-		
+	
 		this.state = {
 			nowPlaying: {
 				url: 'https://youtu.be/pb8vWUDEmxc'
@@ -44,6 +42,7 @@ class DjContainer extends React.Component {
 
         const playMessage = data => {
 			this.setState({
+				playing: true,
 				nowPlaying: {
 					url: data
 				}
