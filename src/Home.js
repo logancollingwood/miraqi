@@ -18,7 +18,7 @@ class Home extends React.Component {
 
   createRoom() {
     let createRoomRequest = {
-      name: 'Fresh Room', 
+      name: 'Fresh Room2', 
       description: 'Fresh New Room',
       sourceIp: ip.address()
     };

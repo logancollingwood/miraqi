@@ -37,7 +37,7 @@ class Chat extends React.Component {
 		}
 
 		this.setUsername = ev => {
-			if(ev.charCode === 13){
+			if(ev.charCode === 13 || ev == null){
 				console.log(this.props);
 				this.setState({
 					userNameEntryHidden: true,

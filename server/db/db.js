@@ -2,7 +2,7 @@
 
 require('dotenv').config();
 var mongoose = require('mongoose');
-var Models     = require('./models/models');
+var Models = require('./models/models');
 
 class DataBase {
 
@@ -20,7 +20,7 @@ class DataBase {
     getRoomById(roomId) {
         console.log("Serving API request to find room with id: " + roomId);
         return new Promise((resolve, reject) => {
-            Models.Room.findById(roomId, function(err, room) {
+            Models.Room.findById(roomId, function (err, room) {
                 console.log(err);
                 if (err) reject(err);
                 console.log(`found room ${room}`);
@@ -30,9 +30,9 @@ class DataBase {
     }
 
     getUserById(userId) {
-         console.log("Serving API request to find user with id: " + userId);
+        console.log("Serving API request to find user with id: " + userId);
         return new Promise((resolve, reject) => {
-            Models.User.findById(userId, function(err, user) {
+            Models.User.findById(userId, function (err, user) {
                 console.log(err);
                 if (err) reject(err);
                 resolve(user);
@@ -46,11 +46,11 @@ class DataBase {
         }
         return new Promise((resolve, reject) => {
             var user = new Models.User({
-                name: name, 
+                name: name,
                 admin: isAdmin,
                 lastLogin: new Date(),
             });
-            user.save(function(err) {
+            user.save(function (err) {
                 if (err) reject(err);
                 resolve(user);
             })
@@ -61,11 +61,11 @@ class DataBase {
         console.log("Serving API request to create room with name: " + roomRequest.name);
         return new Promise((resolve, reject) => {
             var room = new Models.Room({
-                name: roomRequest.name, 
+                name: roomRequest.name,
                 description: roomRequest.description,
                 sourceIp: roomRequest.sourceIp
             });
-            room.save(function(err) {
+            room.save(function (err) {
                 if (err) reject(err);
                 resolve(room);
             })
@@ -80,14 +80,14 @@ class DataBase {
         const roomId = addUserToRoomRequest.roomId;
         const userId = addUserToRoomRequest.userId;
         return new Promise((resolve, reject) => {
-            Models.User.findById(userId, function(err, user) {
+            Models.User.findById(userId, function (err, user) {
                 if (err) reject(err);
                 console.log(`found user ${user.name}`);
                 Models.Room.findByIdAndUpdate(
                     roomId,
                     { $addToSet: { users: user } },
-                    {new: true},
-                    function(err, room) {
+                    { new: true },
+                    function (err, room) {
                         if (err) {
                             reject(err);
                         }
@@ -110,14 +110,14 @@ class DataBase {
         const roomId = removeUserFromRoomRequest.roomId;
         const userId = removeUserFromRoomRequest.userId;
         return new Promise((resolve, reject) => {
-            Models.User.findById(userId, function(err, user) {
+            Models.User.findById(userId, function (err, user) {
                 if (err) reject(err);
-                
+
                 Models.Room.findByIdAndUpdate(
                     roomId,
                     { $pull: { users: user } },
-                    {new: true},
-                    function(err, room) {
+                    { new: true },
+                    function (err, room) {
                         if (err) reject(err)
                         console.log(`updated room and removed user ${room._id}`)
                         resolve({
@@ -138,32 +138,40 @@ class DataBase {
         const url = addQueueItemRequest.url;
         const userId = addQueueItemRequest.userId;
         const roomId = addQueueItemRequest.roomId;
+        const trackName = addQueueItemRequest.trackName;
+        const type = addQueueItemRequest.type;
 
         return new Promise((resolve, reject) => {
 
             var queueItem = new Models.QueueItem({
                 playUrl: url,
                 userId: userId,
+                trackName: trackName,
+                type: type
             });
             Models.Room.findByIdAndUpdate(
                 roomId,
                 { $push: { queue: queueItem } },
-                function(err, model) {
+                { new: true },
+                function (err, model) {
                     if (err) reject(err);
                     console.log(model);
-                    resolve(model);
+                    resolve({
+                        isFirstSong: model.queue.length == 1,
+                        queueItem: queueItem
+                    });
                 }
             );
         });
         // return new Promise((resolve, reject) => {
         //     Models.Room.findById(roomId, function(err, room) {
         //         if (err) reject(err);
-                
+
         //         var queueItem = new Models.QueueItem({
         //                 playUrl: url,
         //                 userId: userId,
         //         });
-                
+
         //         Models.Room.findByIdAndUpdate(
         //             roomId,
         //             { $push: { queue: queueItem } },
@@ -183,7 +191,7 @@ class DataBase {
      */
     addMessageToRoom(roomId, userId, msgString) {
         if (roomId == null || userId == null || msgString == null) {
-            return new Promise((resolve, reject) => {reject('Validate Params')});
+            return new Promise((resolve, reject) => { reject('Validate Params') });
         };
 
 
@@ -195,7 +203,7 @@ class DataBase {
             Models.Room.findByIdAndUpdate(
                 roomId,
                 { $push: { messages: messageItem } },
-                function(err, model) {
+                function (err, model) {
                     console.log('error');
                     console.log(err);
                     if (err) reject(err);
@@ -207,8 +215,38 @@ class DataBase {
     }
 
     clearQueue(roomId, userId) {
-        
+
     }
+
+    getNextSongForRoom(roomId, currentQueueItemId) {
+        console.log(`db lookup for next track in ${roomId} after ${currentQueueItemId}`);
+        return new Promise((resolve, reject) => {
+            Models.Room.findById(roomId, function (err, room) {
+                console.log(err);
+                if (err) {
+                    reject(err);
+                } else {
+                    const queue = room.queue;
+                    if (currentQueueItemId == null) {
+                        resolve(queue[0]);
+                    } else {
+                        let clearedQueue = queue.filter(queueItem => {
+                            queueItem._id != currentQueueItemId;
+                        });
+                        room.queue = clearedQueue;
+                        room.save(function (err) {
+                            if (err) reject(err);
+                        });
+                        resolve(queue[0]);
+                    }
+                }
+
+                resolve(room);
+            })
+        });
+
+    }
+
 }
 
 module.exports = new DataBase();

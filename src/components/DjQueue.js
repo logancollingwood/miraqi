@@ -3,9 +3,9 @@ import React from "react";
 
 class DjQueue extends React.Component {
 
-	constructor(props) {
-		super(props);
-		let queue = [
+    constructor(props) {
+        super(props);
+        let queue = [
             {
                 name: 'Move Your Still - Feed Me Jack',
                 type: 'yt',
@@ -25,28 +25,31 @@ class DjQueue extends React.Component {
         this.state = {
             queue: queue
         }
-	}
+    }
 
     render() {
-        const queueList = this.state.queue.slice(0).map((queueItem, i) => 
-			<li className="row queueItem" key={i}>
-                <div className="col-md-8">
-                    <div className="name"> {queueItem.name} </div>
-                </div>
-                <div className="col-md-4">
-                    <div className="type"> 
-                        <a href={queueItem.link}>
-                        { queueItem.type === 'yt' ?  <i className="fab fa-youtube fa-2x pull-right"></i> : ''}
-                        </a>
+        let queueList;
+        if (this.props.queue) {
+            queueList = this.props.queue.slice(0).map((queueItem, i) =>
+                <li className="row queueItem" key={i}>
+                    <div className="col-md-8">
+                        <div className="name"> {queueItem.name} </div>
                     </div>
-                </div>
-            </li>
-        );
+                    <div className="col-md-4">
+                        <div className="type">
+                            <a href={queueItem.link}>
+                                {queueItem.type === 'yt' ? <i className="fab fa-youtube fa-2x pull-right"></i> : ''}
+                            </a>
+                        </div>
+                    </div>
+                </li>);
+        }
+
         return (
             <div>
-                    <ul className="song-queue">
-                        {queueList}
-                    </ul>
+                <ul className="song-queue">
+                    {queueList}
+                </ul>
             </div>
         );
     }

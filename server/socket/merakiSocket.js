@@ -1,7 +1,11 @@
 const io = require('socket.io')();
-let db = require('../db/db.js');
+const db = require('../db/db.js');
+const QueueHandler = require('./handler/queueHandler.js');
+const moment = require('moment');
+const getYoutubeTitle = require('get-youtube-title')
 
-function ytVidId(url)  {
+let TIME_FORMAT = "MM YY / h:mm:ss a";
+function ytVidId(url) {
     var p = /^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
     return (url.match(p)) ? RegExp.$1 : false;
 }
@@ -12,44 +16,53 @@ function setup(port) {
     io.on('connection', (socket) => {
         socketLog('socketId: ' + socket.id + ' connected.');
 
-        let userModel, roomId = -1, roomModel, roomSocket;
+        let userModel, roomId = -1, roomModel, roomSocket, queueHandler;
 
-        socket.on('SEND_MESSAGE', function(data){
+        socket.on('SEND_MESSAGE', function (data) {
             const message = data.message;
+
             const isPlayCommand = data.message.startsWith("!play");
 
             if (isPlayCommand) {
                 const playUrl = data.message.split(" ")[1];
-                isYoutubeUrl = ytVidId(playUrl);
-                if (isYoutubeUrl != false)  { // if this returned not false, then we got a youtube ID param back
+                const vidId = ytVidId(playUrl);
+                if (vidId) { // if this returned not false, then we got a youtube ID param back
                     var broadcastMessage = {
                         serverMessage: true,
                         author: roomModel.name,
-                        message: ": queued up: " + playUrl
+                        message: "queued up: " + playUrl,
+                        timestamp: moment().format(TIME_FORMAT)
                     }
                     io.to(roomModel._id).emit('RECEIVE_MESSAGE', broadcastMessage);
-                    io.to(roomModel._id).emit('PLAY_MESSAGE', playUrl);
                     if (userModel && roomModel) {
-                        let queueItem = {
-                            url: playUrl,
-                            userId: userModel._id,
-                            roomId: roomModel._id
-                        }
-                        db.addQueueItem(queueItem)
-                            .then(data => {
-                                socketLog('added item to queue db');
-                            })
-                            .catch(err => console.error);
+                        getYoutubeTitle(vidId, function (err, title) {
+                            let queueItem = {
+                                url: playUrl,
+                                userId: userModel._id,
+                                roomId: roomModel._id,
+                                trackName: title,
+                                type: 'yt',
+                            }
+                            db.addQueueItem(queueItem)
+                                .then(data => {
+                                    socketLog('added item to queue db');
+                                    socketLog(data);
+                                    if (data.isFirstSong) {
+                                        io.to(roomModel._id).emit('PLAY_MESSAGE', playUrl);
+                                    }
+                                })
+                                .catch(err => console.error);
+                        })
                     }
                 }
             } else {
                 socketLog("broadcasting message by user " + data.author + " to room " + roomModel._id + " :" + data.message);
-                io.to(roomModel._id).emit('RECEIVE_MESSAGE', data);		
+                io.to(roomModel._id).emit('RECEIVE_MESSAGE', data);
             }
 
         });
 
-        socket.on('subscribe', function(data) {
+        socket.on('subscribe', function (data) {
             console.log('handling subscribe event');
             socketLog(data);
             userName = data.username;
@@ -63,7 +76,7 @@ function setup(port) {
             db.createUser(userName, IsUsernameAdmin(userName))
                 .then(user => {
                     userModel = user;
-                    let addUserToRoomRequest = {  
+                    let addUserToRoomRequest = {
                         roomId: roomId,
                         userId: user._id
                     }
@@ -75,7 +88,7 @@ function setup(port) {
                             io.to(roomId).emit('RECEIVE_MESSAGE', broadcastMessage);
                         })
                         .catch(err => console.error('failed to add user to room'));
-                    
+
                 })
                 .catch(err => console.error('failed to create user'));
         })

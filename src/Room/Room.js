@@ -9,17 +9,14 @@ class Room extends Component {
   constructor(props) {
     super(props);
     this.socket = io(Config.SOCKET_API_HOST);
-    this.state = {
-      loading: true
-    }
   }
 
   render() {
     console.log(this.state);
     return (
       <div>
-        <Nav loading={this.state.loading} isHome={false} isRoom={true}/>
-        <ChatRoomManager id={this.props.match.params.id} loading={this.state.loading} socket={this.socket}/>
+        <Nav isHome={false} isRoom={true}/>
+        <ChatRoomManager id={this.props.match.params.id} socket={this.socket}/>
       </div>
     );
   }

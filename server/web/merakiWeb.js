@@ -94,13 +94,26 @@ function setup(port) {
             })
     });
 
+    app.post('/api/room/next', function(req, res) {
+        console.log(req.body);
+        db.getNextSongForRoom(req.body.roomId, req.body.currentQueueItemId)
+            .then(queueItem => {
+                console.log('returning queueItem with id: ' + queueItem._id);
+                res.json(queueItem);
+            })
+            .catch(error => {
+                console.error("API CALL FAILED: Failed to find room with id" + req.params.id);
+                res.json({});
+            });
+    });
+
     /**
      * POST: {
      *  url: url,
      *  userId: User Id of Requester
      * }
      */
-    app.post('/api/room/queue', function(req, res) {
+    app.post('/api/room/queueItem', function(req, res) {
         console.log('Adding queue item');
         console.log(req.body);
         db.addQueueItem(req.body)

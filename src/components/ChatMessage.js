@@ -9,7 +9,7 @@ class ChatMessage extends React.Component {
         <div className={ "message  " + (message.serverMessage ? 'server' : '')}>
             <div className="author"> {message.author} </div>
             <div className="timestamp"> {message.timestamp} </div>
-            <div className="message"> {message.message} </div>
+            <div className="data"> {message.message} </div>
         </div>
     );
   }

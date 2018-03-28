@@ -40,6 +40,28 @@ let API = {
                 reject(err);
             });
         });
+    },
+
+    getNextSongForRoom(roomId, currentlyPlayingId) {
+        const body = {
+            roomId: roomId,
+            currentlyPlayingId: currentlyPlayingId
+        }
+
+        API_OPTIONS.method = 'POST';
+        API_OPTIONS.uri = API_BASE_URL + 'room/next';
+        API_OPTIONS.body = body;
+
+        console.log(API_OPTIONS);
+        return new Promise((resolve, reject) => {
+            Request(API_OPTIONS)
+            .then(function(response) {
+                resolve(response);
+            })
+            .catch(function(err) {
+                reject(err);
+            });
+        });
     }
 }
 

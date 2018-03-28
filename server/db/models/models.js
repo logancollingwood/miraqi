@@ -22,6 +22,8 @@ var MessageSchema = new Schema({
 
 var QueueItemSchema = new Schema({
     playUrl: String,
+    trackName: String,
+    type: String,
     userId: mongoose.Schema.Types.ObjectId,
 },
 {
