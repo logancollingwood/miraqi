@@ -19,17 +19,23 @@ class DjContainer extends React.Component {
 	constructor(props) {
 		super(props);
 
+		let nowPlayingUrl = null;
+		const room = this.props.room ? this.props.room :  null;
+		if (room) {
+			nowPlayingUrl = room.queue ? room.queue[0] : null;
+		}
+
 		this.state = {
 			nowPlaying: {
 				currentlyPlayingId: null,
-				url: null
+				url: nowPlayingUrl
 			},
 			secondsPlayed: 0,
 			songPlayed: 0, // the amount in seconds that the song has progressed
 			songLength: 0, // the length of the song in seconds
 			totalLength: 0,
 			volume: 0.5,
-			playing: false
+			playing: true
 		}
 
 		this.socket = this.props.socket;
@@ -43,12 +49,21 @@ class DjContainer extends React.Component {
 			});
 		}
 
-		this.socket.on('PLAY_MESSAGE', function (data) {
+		this.socket.on('play', function (data) {
 			console.log("PLAYING ");
 			console.log(data);
 			playMessage(data);
 		});
 
+	}
+
+	getNowPlayingUrl(optionalRoom) {
+		let nowPlayingUrl = null;
+		const room = optionalRoom ? optionalRoom : null;
+		if (room) {
+			nowPlayingUrl = room.queue[0] ? room.queue[0].playUrl : null;
+		}
+		return nowPlayingUrl;
 	}
 
 	onProgress(status) {
@@ -82,31 +97,31 @@ class DjContainer extends React.Component {
 	}
 
 	onEnded() {
-		Api.getNextSongForRoom(this.props.room._id, this.state.currentlyPlayingId)
-			.then(queueItem => {
-				console.log('client got queueItem next');
-				console.log(queueItem);
-				this.setState({
-					nowPlaying: {
-						currentlyPlayingId: queueItem._id,
-						url: queueItem.playUrl
-					}
-				});
-			})
-			.catch((err) => console.log);
+		this.socket.emit('get next track', {});
 	}
 
 	render() {
 		if (this.props.loading) {
 			return (
 				<div className="col-md-8 youtubeContainer">
-					Loading...
+					<div className="loading">Loading...</div>
 				</div>
 			)
 		}
+
 		const timeRemainingStyle = {
 			width: (this.state.songPlayed / this.state.songLength) * 100 + '%'
 		}
+		
+		// let nowPlayingUrl = null;
+		// const room = this.state.nowPlaying.url ? this.props.room :  null;
+		// if (room) {
+		// 	let nowPlaying = room.queue ? room.queue[0] : null;
+		// 	if (nowPlaying) {
+		// 		nowPlayingUrl = nowPlaying.playUrl;
+		// 	}
+		// }
+
 		const playerOrNothing = this.state.nowPlaying.url ?
 			<ReactPlayer ref={(input) => { this.playerElement = input; }}
 						controls={true}
@@ -121,7 +136,7 @@ class DjContainer extends React.Component {
 						height='50vh'
 						width='100%' />
 			: 
-				<div> Nothing playing </div>
+				<div className="nothing-playing"> Nothing playing </div>
 			;
 		let queue = this.props.room ? this.props.room.queue : null;
 		return (
@@ -137,7 +152,7 @@ class DjContainer extends React.Component {
 				</div>
 				<div className="row info">
 					<div className="col-md-6 left-half no-padding queue">
-						<DjQueue queue={queue} />
+						<DjQueue socket={this.socket} queue={queue} />
 					</div>
 					<div className="col-md-6">
 						<div className="top-queue">

@@ -2,7 +2,9 @@ const io = require('socket.io')();
 const db = require('../db/db.js');
 const QueueHandler = require('./handler/queueHandler.js');
 const moment = require('moment');
-const getYoutubeTitle = require('get-youtube-title')
+
+const MerakiApi = require("../controllers/MerakiApi");
+const SocketSession = require("./socketSession");
 
 let TIME_FORMAT = "MM YY / h:mm:ss a";
 function ytVidId(url) {
@@ -14,114 +16,116 @@ let users = [];
 
 function setup(port) {
     io.on('connection', (socket) => {
+
+        let socketSession = null;
+
         socketLog('socketId: ' + socket.id + ' connected.');
 
         let userModel, roomId = -1, roomModel, roomSocket, queueHandler;
 
         socket.on('SEND_MESSAGE', function (data) {
             const message = data.message;
+            const user = socketSession.getUser();
+            const room = socketSession.getRoom();
 
-            const isPlayCommand = data.message.startsWith("!play");
-
-            if (isPlayCommand) {
-                const playUrl = data.message.split(" ")[1];
-                const vidId = ytVidId(playUrl);
-                if (vidId) { // if this returned not false, then we got a youtube ID param back
-                    var broadcastMessage = {
-                        serverMessage: true,
-                        author: roomModel.name,
-                        message: "queued up: " + playUrl,
-                        timestamp: moment().format(TIME_FORMAT)
+            MerakiApi.sendMessageToRoom(room._id, user._id, message)
+                .then(data => {
+                    if (data.isPlay) {
+                        if (data.first) {
+                            socketSession.emitToRoom('play', data.playUrl);
+                        }
+                        socketSession.emitToRoom('new queue', data.queue);
+                    } else {
+                        var broadcastMessage = {
+                            serverMessage: false,
+                            author: user.name,
+                            message: message,
+                            timestamp: moment().format(TIME_FORMAT)
+                        }
+                        socketSession.emitToRoom('RECEIVE_MESSAGE', broadcastMessage);
                     }
-                    io.to(roomModel._id).emit('RECEIVE_MESSAGE', broadcastMessage);
-                    if (userModel && roomModel) {
-                        getYoutubeTitle(vidId, function (err, title) {
-                            let queueItem = {
-                                url: playUrl,
-                                userId: userModel._id,
-                                roomId: roomModel._id,
-                                trackName: title,
-                                type: 'yt',
-                            }
-                            db.addQueueItem(queueItem)
-                                .then(data => {
-                                    socketLog('added item to queue db');
-                                    socketLog(data);
-                                    if (data.isFirstSong) {
-                                        io.to(roomModel._id).emit('PLAY_MESSAGE', playUrl);
-                                    }
-                                })
-                                .catch(err => console.error);
-                        })
-                    }
-                }
-            } else {
-                socketLog("broadcasting message by user " + data.author + " to room " + roomModel._id + " :" + data.message);
-                io.to(roomModel._id).emit('RECEIVE_MESSAGE', data);
-            }
+                })
+                .catch(error => { });
 
         });
 
         socket.on('subscribe', function (data) {
-            console.log('handling subscribe event');
-            socketLog(data);
-            userName = data.username;
-            roomId = data.room;
-            socket.join(roomId);
-            var broadcastMessage = {
-                serverMessage: true,
-                author: userName,
-                message: " connected to the room."
-            }
-            db.createUser(userName, IsUsernameAdmin(userName))
-                .then(user => {
-                    userModel = user;
-                    let addUserToRoomRequest = {
-                        roomId: roomId,
-                        userId: user._id
-                    }
-                    console.log(`created user with id: ${user._id}`)
-                    db.addUserToRoom(addUserToRoomRequest)
-                        .then(userRoom => {
-                            roomModel = userRoom.room;
-                            io.to(roomId).emit('SYNC_ROOM', userRoom.room);
-                            io.to(roomId).emit('RECEIVE_MESSAGE', broadcastMessage);
-                        })
-                        .catch(err => console.error('failed to add user to room'));
-
-                })
-                .catch(err => console.error('failed to create user'));
+            let user = socketSession.getUser();
+            MerakiApi.setSocketUserName(user._id, data.username)
+            .then(user => {
+                var broadcastMessage = {
+                    serverMessage: true,
+                    author: user.name,
+                    message: "has joined the room"
+                }
+                socketSession.user = user;
+                socketSession.emitToRoom('RECEIVE_MESSAGE', broadcastMessage);
+            })
         })
 
         socket.on('disconnect', function () {
             console.log('ws: got disconnect event');
-            console.log(userModel);
-            if (userModel != null) {
-                console.log('unsubscribing from channel');
-                var broadcastMessage = {
-                    serverMessage: true,
-                    author: userModel.name,
-                    message: " signed off"
-                }
-                if (UserRequiresLogoff(userModel, roomModel)) {
-                    let removeUserFromRoomRequest = {
-                        userId: userModel._id,
-                        roomId: roomModel._id
-                    }
-                    console.log('removing user');
-                    console.log(removeUserFromRoomRequest);
-                    db.removeUserFromRoom(removeUserFromRoomRequest)
-                        .then(userRoom => {
-                            roomModel = userRoom.room;
-                            io.to(roomId).emit('SYNC_ROOM', userRoom.room);
-                            io.to(roomId).emit('RECEIVE_MESSAGE', broadcastMessage);
-                        })
-                        .catch(err => console.error);
-                }
+            if (socketSession == null) {
+                return;
             }
+            const user = socketSession.getUser();
+            const room = socketSession.getRoom();
+
+            var broadcastMessage = {
+                serverMessage: true,
+                author: 'no author',
+                message: " signed off"
+            }
+
+            if (user.name == null) {
+                broadcastMessage.author = user._id
+            } else {
+                broadcastMessage.author = user.name;
+            }
+
+            MerakiApi.removeUserFromRoom(user._id, room._id)
+                .then(usersLeftInRoom => {
+                    socketSession.emitToRoom('users', usersLeftInRoom);
+                    socketSession.emitToRoom('RECEIVE_MESSAGE', broadcastMessage);
+                })
+                .catch(err => console.log(err));
+
+        });
+
+        socket.on('get next track', function (data) {
+            console.log(`ws: got get next track event in room ${data.roomId}, from user ${data.userId}`);
+            if (roomModel != null) {
+                publishNextSongForRoomId(roomModel._id);
+            }
+        });
+
+
+        socket.on('user joined', function (data) {
+            let roomId = data.roomId;
+            console.log(`ws: user joined room: ${roomId}`);
+            MerakiApi.createSocketUserAndAddToRoom(socket.id, roomId)
+                .then(userRoom => {
+                    let { user, room } = userRoom;
+                    socketSession = new SocketSession(user, room, socket, io);
+                    socketSession.emitToRoom('users', room.users);
+                })
+                .catch(err => console.log(err));
         });
     });
 
+    function publishNextSongForRoomId(roomId) {
+        db.getNextSongForRoom(roomId)
+            .then(nextSongInfo => {
+                io.to(roomModel._id).emit('PLAY_MESSAGE', nextSongInfo.playUrl);
+            })
+            .catch(err => console.log(err));
+    }
+
+    function getNextTrackCallBack(queueItem, roomId) {
+        console.log(`executing next track in room: ${roomId}`);
+        console.log(queueItem);
+        io.to(roomId).emit('PLAY_MESSAGE', queueItem.playUrl);
+    }
 
     io.listen(port);
     console.log("Socket server listening on port:" + port);

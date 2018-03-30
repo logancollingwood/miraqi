@@ -23,7 +23,6 @@ class DataBase {
             Models.Room.findById(roomId, function (err, room) {
                 console.log(err);
                 if (err) reject(err);
-                console.log(`found room ${room}`);
                 resolve(room);
             })
         });
@@ -40,21 +39,47 @@ class DataBase {
         });
     }
 
-    createUser(name, isAdmin) {
-        if (name == null || isAdmin == null) {
-            return;
+    createUser(socketId, isAdmin) {
+        if (isAdmin == null) {
+            isAdmin = false;
         }
         return new Promise((resolve, reject) => {
-            var user = new Models.User({
-                name: name,
-                admin: isAdmin,
-                lastLogin: new Date(),
+            Models.User.findOneAndUpdate({socketId: socketId}, {expire: new Date()}, { upsert: true }, function(error, result) {
+                if (!result) {
+                    var user = new Models.User({
+                        admin: isAdmin,
+                        socketId: socketId,
+                        lastLogin: new Date(),
+                    });
+                } else {
+                    user = result;
+                }
+
+                user.save(function (err) {
+                    if (err) reject(err);
+                    resolve(user);
+                });
             });
-            user.save(function (err) {
-                if (err) reject(err);
-                resolve(user);
-            })
         });
+    }
+
+    updateUserName(userId, name) {
+        return new Promise((resolve, reject) => {
+            Models.User.findByIdAndUpdate(
+                userId,
+                { name: name },
+                { new: true },
+                function (err, user) {
+                    if (err) {
+                        console.log(`failed to update user with id: ${userId}`);
+                        reject(err);
+                    }
+                    console.log(`updated user ${user._id}, set name:${user.name}`);
+                    resolve(user);
+                }
+            );
+        });
+
     }
 
     createRoom(roomRequest) {
@@ -76,13 +101,15 @@ class DataBase {
      * Adds a user to a room
      * @param {roomId, userId} addUserToRoomRequest 
      */
-    addUserToRoom(addUserToRoomRequest) {
-        const roomId = addUserToRoomRequest.roomId;
-        const userId = addUserToRoomRequest.userId;
+    addUserToRoom(userId, roomId) {
         return new Promise((resolve, reject) => {
             Models.User.findById(userId, function (err, user) {
                 if (err) reject(err);
-                console.log(`found user ${user.name}`);
+                if (user == null) {
+                    reject(`No user found with id ${userId}`);
+                }
+                console.log(`found user ${user._id}`);
+
                 Models.Room.findByIdAndUpdate(
                     roomId,
                     { $addToSet: { users: user } },
@@ -91,7 +118,7 @@ class DataBase {
                         if (err) {
                             reject(err);
                         }
-                        console.log(`updated room ${room._id} and added user ${user.name}`)
+                        console.log(`updated room ${room._id} and added user ${user._id}`)
                         resolve({
                             user: user,
                             room: room
@@ -106,9 +133,8 @@ class DataBase {
      * Removes a user from a room
      * @param {roomId, userId} removeUserFromRoomRequest 
      */
-    removeUserFromRoom(removeUserFromRoomRequest) {
-        const roomId = removeUserFromRoomRequest.roomId;
-        const userId = removeUserFromRoomRequest.userId;
+    removeUserFromRoom(userId, roomId) {
+        
         return new Promise((resolve, reject) => {
             Models.User.findById(userId, function (err, user) {
                 if (err) reject(err);
@@ -118,11 +144,13 @@ class DataBase {
                     { $pull: { users: user } },
                     { new: true },
                     function (err, room) {
-                        if (err) reject(err)
+                        if (err) reject(err);
+                        if (room == null) {
+                            reject(`room was not found with id: ${roomId}`);
+                        }
                         console.log(`updated room and removed user ${room._id}`)
                         resolve({
-                            user: user,
-                            room: room
+                            users: room.users
                         });
                     }
                 );
@@ -140,13 +168,16 @@ class DataBase {
         const roomId = addQueueItemRequest.roomId;
         const trackName = addQueueItemRequest.trackName;
         const type = addQueueItemRequest.type;
-
+        const lengthSeconds = addQueueItemRequest.lengthSeconds;
+        console.log(`adding queue item`);
+        console.log(addQueueItemRequest);
         return new Promise((resolve, reject) => {
 
             var queueItem = new Models.QueueItem({
                 playUrl: url,
                 userId: userId,
                 trackName: trackName,
+                lengthSeconds: lengthSeconds,
                 type: type
             });
             Models.Room.findByIdAndUpdate(
@@ -156,33 +187,42 @@ class DataBase {
                 function (err, model) {
                     if (err) reject(err);
                     console.log(model);
+                    const firstQueueItem = model.queue.length > 0 ?
+                        model.queue[0] : null;
+                    let isFirstSong = model.queue.length == 1;
+
+                    let timeTillPlay = 0;
+                    if (!isFirstSong) {
+
+                        // Sum up the length of all the songs in the queue 
+                        // except the new one
+                        model.queue.map((item) => {
+                            if (item._id !== queueItem._id) {
+                                timeTillPlay += item.lengthSeconds;
+                            }
+                        });
+
+                        // Now, calculate the time that has passed since the currently playing item
+                        // and subtract that from the time until next play
+                        let timeSinceFirstQueueItem = 0;
+                        if (firstQueueItem) {
+                            let currentTime = new Date().getTime();
+                            let firstQueuedItemAt = new Date(firstQueueItem.createdAt).getTime();
+                            timeSinceFirstQueueItem = (currentTime - firstQueuedItemAt) / 1000;
+                        }
+
+                        timeTillPlay -= timeSinceFirstQueueItem;
+                    }
+                    console.log(`added new queueItem which will be played in ${timeTillPlay}`);
                     resolve({
-                        isFirstSong: model.queue.length == 1,
-                        queueItem: queueItem
+                        queue: model.queue,
+                        isFirstSong: isFirstSong,
+                        queueItem: queueItem,
+                        timeTillPlay: timeTillPlay
                     });
                 }
             );
         });
-        // return new Promise((resolve, reject) => {
-        //     Models.Room.findById(roomId, function(err, room) {
-        //         if (err) reject(err);
-
-        //         var queueItem = new Models.QueueItem({
-        //                 playUrl: url,
-        //                 userId: userId,
-        //         });
-
-        //         Models.Room.findByIdAndUpdate(
-        //             roomId,
-        //             { $push: { queue: queueItem } },
-        //             function(err, model) {
-        //                 if (err) reject(err);
-        //                 console.log(model);
-        //                 resolve(model);
-        //             }
-        //         );
-        //     })
-        // });
     }
 
     /**
@@ -218,34 +258,45 @@ class DataBase {
 
     }
 
-    getNextSongForRoom(roomId, currentQueueItemId) {
-        console.log(`db lookup for next track in ${roomId} after ${currentQueueItemId}`);
+    getNextSongForRoom(roomId) {
+        console.log(`db lookup for next track in ${roomId}`);
         return new Promise((resolve, reject) => {
             Models.Room.findById(roomId, function (err, room) {
                 console.log(err);
                 if (err) {
                     reject(err);
-                } else {
-                    const queue = room.queue;
-                    if (currentQueueItemId == null) {
-                        resolve(queue[0]);
-                    } else {
-                        let clearedQueue = queue.filter(queueItem => {
-                            queueItem._id != currentQueueItemId;
-                        });
-                        room.queue = clearedQueue;
-                        room.save(function (err) {
-                            if (err) reject(err);
-                        });
-                        resolve(queue[0]);
-                    }
                 }
 
-                resolve(room);
+                const queue = room.queue;
+                if (queue.length === 0) resolve({});
+                console.log(queue);
+
+                queue.findOne().sort('-insertDate').exec(function (err, queueItem) {
+                    if (err) {
+                        reject(err);
+                    }
+                    console.log(`found queueItem in roomId: ${roomId}`);
+                    console.log(queueItem);
+                    queue.id(queueItem.id).remove();
+
+                    room.save(function (err) {
+                        reject(err);
+                    });
+                    resolve(queueItem);
+                });
+
+                resolve({});
             })
         });
-
     }
+
+
+
+    totalQueueLength(total, queueItem) {
+        return total + queueItem.lengthSeconds;
+    }
+
+
 
 }
 

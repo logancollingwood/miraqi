@@ -106,6 +106,13 @@ nav {
   max-height: 60px;
 }
 
+.nothing-playing {
+    font-size: 24px;
+    margin: 0 auto;
+    color: #fff;
+    padding-top: 20vh;
+}
+
 .hidden {
 	display: none;
 }
@@ -135,6 +142,7 @@ nav {
 .dj .row.video {
   flex: 0 1 auto;
   height: 50vh;
+  background-color: #1A1A1D;
 }
 
 .dj .row.time {
@@ -295,7 +303,7 @@ p.time {
 }
 
 .timeRemainingText { 
-	padding-top: 7px;
+	padding-top: 5px;
     font-family: 'Open Sans', sans-serif;
     color: #999;
     font-size: 12px;
@@ -315,6 +323,8 @@ p.time {
     width: 100%;
     color: #ffffff;
     height: 30px;
+    border: 2px solid #b0aba0;
+    border-right: 0px;
 }
 
 .queue {

@@ -8,7 +8,9 @@ import Config from "../Config.js";
 class Room extends Component {
   constructor(props) {
     super(props);
+    console.info('initializing socket');
     this.socket = io(Config.SOCKET_API_HOST);
+    this.socket.emit('user joined', {roomId: this.props.match.params.id});
   }
 
   render() {

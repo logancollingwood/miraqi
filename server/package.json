@@ -13,7 +13,8 @@
     "express": "^4.16.1",
     "get-youtube-title": "^1.0.0",
     "mongoose": "^5.0.11",
-    "socket.io": "^2.0.4"
+    "socket.io": "^2.0.4",
+    "youtube-info": "^1.2.0"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",

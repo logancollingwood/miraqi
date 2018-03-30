@@ -17,6 +17,10 @@ class Chat extends React.Component {
 			chatHidden: true,
 			room: this.props.room
 		};
+
+		if (this.props.room) {
+			this.state.users = this.props.room.users;
+		}
 		
 		this.socket = this.props.socket;
 
@@ -43,7 +47,7 @@ class Chat extends React.Component {
 					userNameEntryHidden: true,
 					chatHidden: false
 				})
-				this.socket.emit("subscribe", { room: this.props.room._id, username: this.state.username });
+				this.socket.emit("subscribe", { username: this.state.username });
 			}
 		}
 
@@ -54,6 +58,16 @@ class Chat extends React.Component {
 		this.socket.on('RECEIVE_MESSAGE', function(data){
 			addMessage(data);
 		});
+
+		const newUserList = userList => {
+			this.setState({users: userList});
+		}
+
+		this.socket.on('users', function(usersList) {
+			console.log('got new user list');
+			console.log(usersList);
+			newUserList(usersList);
+		})
 
 		if (this.props.room != null) {
 			console.log(' room prop is not null');
@@ -117,8 +131,8 @@ class Chat extends React.Component {
 
 							<hr />
 							<div className="roomInfo">
-								{ this.props.room &&
-									 `${this.props.room.users.length} users connected to room ${this.props.room._id}`
+								{ this.state.users &&
+									 `${this.state.users.length} users connected to room ${this.props.room._id}`
 								}
 							</div>
 						</div>

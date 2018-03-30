@@ -16,27 +16,16 @@ class ChatRoomManager extends React.Component {
 	}
 
 	componentDidMount() {
-		console.log(this.props.id);
 		console.log(`going to search for room with id: ${this.props.id}`);
 		Api.getRoomById(this.props.id)
 			.then(room => {
-				console.log(`found room:`);
-				console.log(room);
+				if (room == null) return;
 				this.setState({loading: false, room: room});
 			}).catch(error => console.error);
-
-
-		this.socket.on('SYNC_ROOM', function(room){
-			console.log('client got sync');
-			console.log(room);
-			this.setState({room: room});
-		}.bind(this));
 	}
 
 
     render() {
-		console.log(`got new room`);
-		console.log(this.state);
         return (
 			<div className="container-fluid">
 				<div className="row justify-content-center main-content">

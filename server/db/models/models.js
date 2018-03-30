@@ -4,6 +4,7 @@ var Schema       = mongoose.Schema;
 var UserSchema   = new Schema({
         name: String,
         admin: Boolean,
+        socketId: String,
         lastLogin: Date,
     }, 
     {   
@@ -24,6 +25,7 @@ var QueueItemSchema = new Schema({
     playUrl: String,
     trackName: String,
     type: String,
+    lengthSeconds: Number,
     userId: mongoose.Schema.Types.ObjectId,
 },
 {
