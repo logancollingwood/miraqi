@@ -1,6 +1,7 @@
 import React from 'react';
 import moment from "moment";
 import { Link } from 'react-router-dom'
+import Config from "./Config.js";
 
 const DATE_FORMAT = "MM YY";
 const TIME_FORMAT = "h:mm:ss a";
@@ -13,7 +14,7 @@ class Nav extends React.Component {
 	    date: moment().format(DATE_FORMAT),
       time: moment().format(TIME_FORMAT),
       intervalId: -1,
-      room: this.props.currentRoom
+      room: this.props.currentRoom,
     }
   }
 
@@ -29,7 +30,6 @@ class Nav extends React.Component {
   componentDidMount() {
     const intervalId = setInterval(this.tick.bind(this), 1000);
     console.log(`setting interval id: ${intervalId}`);
-    this.setState({intervalId: intervalId});
   }
 
   componentWillUnmount() {
@@ -39,6 +39,20 @@ class Nav extends React.Component {
 
   render() {
     let isCreate = this.props.isCreate;
+    let loginLink = Config.WEB_HOST + "login/discord";
+    let logoutLink = Config.WEB_HOST + 'logout';
+    const isLoggedIn = this.props.user != null;
+
+    const authHeaderToShow = isLoggedIn ? 
+        <li className="nav-item">
+          <a href={logoutLink} className="nav-link">Logout</a>
+        </li>
+    : 
+        <li className="nav-item">
+          <a href={loginLink} className="nav-link">Login</a>
+        </li>
+    ;
+
     return (
         <nav className="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
 		      <Link to="/" className="navbar-brand">eden</Link>
@@ -49,6 +63,7 @@ class Nav extends React.Component {
               <li className={ "nav-item  " + (isCreate ? 'active' : '')}>
                   <Link to="/" className="nav-link">Get a Room</Link>
               </li>
+              { authHeaderToShow }
             </ul>
             <div className="my-2 my-lg-0 white">
               <p className="date"> {this.state.date} </p>

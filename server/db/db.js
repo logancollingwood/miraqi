@@ -149,6 +149,7 @@ class DataBase {
                             reject(`room was not found with id: ${roomId}`);
                         }
                         console.log(`updated room and removed user ${room._id}`)
+                        console.log(room.users);
                         resolve({
                             users: room.users
                         });

@@ -2,20 +2,68 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser')
 let db = require('../db/db.js');
+const passport = require('passport');
+var DiscordStrategy = require('passport-discord').Strategy;
+let session = require('express-session');
+var cors = require('cors');
+
 require('dotenv').config()
 
 
+var scopes = ['identify', 'email', 'guilds'];
+    
+passport.serializeUser(function(user, done) {
+    done(null, user);
+});
+passport.deserializeUser(function(obj, done) {
+    done(null, obj);
+});
+
+passport.use(new DiscordStrategy({
+    clientID: process.env.DISCORD_CLIENT_ID,
+    clientSecret: process.env.DISCORD_CLIENT_SECRET,
+    callbackURL: 'http://localhost:3001/login/discord/return',
+    scope: scopes
+}, function(accessToken, refreshToken, profile, done) {
+    process.nextTick(function() {
+        return done(null, profile);
+    });
+}));
+
 function setup(port) {
     console.log("Meraki Web starting on port:" + port);
+
     app.use(bodyParser.json());
-    app.use(function(req, res, next) {
-        res.header("Access-Control-Allow-Origin", "*");
-        res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-        next();
+    app.use(cors({credentials: true, origin: 'http://localhost:3000'}));
+
+    app.use(session({
+        secret: 'keyboard cat',
+        resave: false,
+        saveUninitialized: false
+    }));
+    app.use(passport.initialize());
+    app.use(passport.session());
+    function checkAuth(req, res, next) {
+        if (req.isAuthenticated()) return next();
+        res.send('not logged in :(');
+    }
+
+
+    app.get('/login/discord', passport.authenticate('discord'));
+
+    app.get('/login/discord/return', passport.authenticate('discord', {failureRedirect: '/login'}),
+        function(req, res) {
+            res.redirect('http://localhost:3000/home');
+        }
+    );
+
+    app.get('/logout', function(req, res) {
+        req.logout();
+        res.redirect('http://localhost:3000/');
     });
-    // respond with "hello world" when a GET request is made to the homepage
-    app.get('/api/hello', function (req, res) {       
-        res.send("hello");
+    app.get('/user/info', checkAuth, function(req, res) {
+        console.log('searching for user');
+        res.json(req.user);
     });
 
     app.get('/api/room/:id', function(req, res) {

@@ -19,7 +19,7 @@ class DjContainer extends React.Component {
 	constructor(props) {
 		super(props);
 
-		let nowPlayingUrl = null;
+		let nowPlayingUrl = 'https://www.youtube.com/watch?v=R0rKB_bsUNg';
 		const room = this.props.room ? this.props.room :  null;
 		if (room) {
 			nowPlayingUrl = room.queue ? room.queue[0] : null;

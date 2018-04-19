@@ -1,6 +1,6 @@
 import Request from "request-promise";
 
-const API_BASE_URL = 'http://localhost:8003/api/';
+const API_BASE_URL = 'http://localhost:3001/api/';
 let API_OPTIONS = {
     uri: API_BASE_URL,
     headers: {

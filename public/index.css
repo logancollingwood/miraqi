@@ -327,23 +327,23 @@ p.time {
     border-right: 0px;
 }
 
-.queue {
+.songQueue {
     overflow-y: auto;
 }
-.song-queue {
+.songQueue {
     padding-top: 15px;
     padding-left: 0px;
     color: #ffffff;
 }
 
-.song-queue li {
+.songQueue li {
     padding-top: 10px;
     border-bottom: 2px solid #444;
     font-family: 'Open Sans';
     padding-bottom: 10px;
 }
 
-.song-queue li ::after {
+.songQueue li ::after {
     border-bottom: 1px solid #ffffff;
 }
 
@@ -368,4 +368,15 @@ p.time {
 
 .btn {
     0 10px 10px 0px;
+}
+
+.DjQueue {
+    text-align: center;
+}
+
+.DjQueue .queueHeader {
+    font-size: 20px;
+    color: #fff;
+    padding-top: 2vh;
+    font-family: 'Raleway';
 }

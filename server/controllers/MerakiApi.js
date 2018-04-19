@@ -1,6 +1,8 @@
+const fetchVideoInfo = require('youtube-info');
 const db = require("../db/db.js");
 const dj = require('./Dj.js');
 const TIME_FORMAT = "MM YY / h:mm:ss a";
+const QueueUtil = require('./QueueUtil.js');
 
 class MerakiApi {
 
@@ -47,10 +49,10 @@ class MerakiApi {
             if (isPlayCommand) {
                 const playUrl = message.split(" ")[1];
                 const vidId = dj.ytVidId(playUrl);
-                console.log(vidId);
+                console.log(`videoId: ${vidId}`);
                 if (vidId) {
-
-                    if (userModel && roomModel) {
+                    console.log(roomId + ' ' + userId);
+                    if (roomId && userId) {
                         fetchVideoInfo(vidId, function (err, videoInfo) {
                             let queueItem = {
                                 url: playUrl,
@@ -60,20 +62,15 @@ class MerakiApi {
                                 lengthSeconds: videoInfo.duration,
                                 type: 'yt',
                             }
+                            console.log(queueItem);
                             db.addQueueItem(queueItem)
                                 .then(data => {
-                                    socketLog('added item to queue db');
-                                    socketLog(data);
                                     resolve({
                                         isPlay: true,
                                         first: data.isFirstSong,
                                         playUrl: playUrl,
                                         queue: data.queue,
                                     })
-                                    // if (data.isFirstSong) {
-                                    //     io.to(roomModel._id).emit('PLAY_MESSAGE', playUrl);
-                                    // }
-                                    // io.to(roomModel._id).emit('new queue', data.queue);
                                 })
                                 .catch(err => console.log(err));
                         });

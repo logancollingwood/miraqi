@@ -9,8 +9,10 @@
     "start": "npm run build && node dist/index.js"
   },
   "dependencies": {
+    "cors": "^2.8.4",
     "dotenv": "^5.0.1",
     "express": "^4.16.1",
+    "express-session": "^1.15.6",
     "get-youtube-title": "^1.0.0",
     "mongoose": "^5.0.11",
     "socket.io": "^2.0.4",
