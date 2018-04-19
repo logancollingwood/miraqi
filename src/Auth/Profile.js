@@ -5,6 +5,7 @@ import Config from "../Config.js";
 import auth from "./Auth.js";
 import Nav from "../Nav.js";
 import Guilds from "../components/Guilds.js";
+import API from "../components/Api.js";
 
 
 class Profile extends React.Component {
@@ -16,26 +17,14 @@ class Profile extends React.Component {
 		}
 	}
 
+	async requestUser() {
+		let user = await API.getUser();
+		this.setState({user: user});
+	}
+	
 	componentDidMount() {
 		console.log('fetching');
-		fetch(Config.WEB_HOST + 'user/info',
-			{
-				method: 'GET',
-				credentials: 'include',
-				// mode: 'no-cors'
-			}
-		)
-		.then(response => {
-			if(response.status == 402) {
-				console.log('caught 402');
-			}
-			return response.json();
-		})
-		.then(json => {
-			this.setState({user: json});
-			console.log(json);
-		});
-
+		this.requestUser();
 	}
 
 	render() {
