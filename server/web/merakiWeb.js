@@ -48,7 +48,6 @@ function setup(port) {
         res.send('not logged in :(');
     }
 
-
     app.get('/login/discord', passport.authenticate('discord'));
 
     app.get('/login/discord/return', passport.authenticate('discord', {failureRedirect: '/login'}),
