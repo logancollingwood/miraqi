@@ -124,7 +124,7 @@ class DjContainer extends React.Component {
 
 		const playerOrNothing = this.state.nowPlaying.url ?
 			<ReactPlayer ref={(input) => { this.playerElement = input; }}
-						controls={true}
+						controls={false}
 						playing={true}
 						className="youtubeEmbed"
 						volume={this.state.volume}

@@ -33,8 +33,8 @@ class Guilds extends React.Component {
         if (this.props.loading) {
             return (
                 <div className="guildQueue">
-                    <div className="queueHeader">
-                        <div className="name"> Guilds loading ...</div>
+                    <div className="header">
+                         Guilds loading ...
                     </div>
                     <ul className="songQueue">
                     </ul>
@@ -45,8 +45,8 @@ class Guilds extends React.Component {
             return (
                 
                 <div className="guildQueue">
-                    <div className="queueHeader">
-                        <div className="name"> Guilds </div>
+                    <div className="header">
+                         Guilds
                     </div>
                     <ul className="songQueue">
                         {guildsList}

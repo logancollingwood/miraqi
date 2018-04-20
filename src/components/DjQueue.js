@@ -40,7 +40,7 @@ class DjQueue extends React.Component {
 
         return (
             <div className="DjQueue">
-                <div className="queueHeader">
+                <div className="header">
                     On Deck
                 </div>
                 <ul className="songQueue">
