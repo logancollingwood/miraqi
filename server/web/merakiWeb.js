@@ -26,7 +26,11 @@ passport.use(new DiscordStrategy({
     scope: scopes
 }, function(accessToken, refreshToken, profile, done) {
     process.nextTick(function() {
-        return done(null, profile);
+        console.log(profile);
+        db.createUser(false, profile)
+            .then(user=> {
+                return done(null, profile);
+            });
     });
 }));
 

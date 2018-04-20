@@ -39,21 +39,29 @@ class DataBase {
         });
     }
 
-    createUser(socketId, isAdmin) {
+    createUser(isAdmin, profile) {
+        console.log('creating passport user');
+        console.log(isAdmin);
+        console.log(profile);
         if (isAdmin == null) {
             isAdmin = false;
         }
         return new Promise((resolve, reject) => {
-            Models.User.findOneAndUpdate({socketId: socketId}, {expire: new Date()}, { upsert: true }, function(error, result) {
+            Models.User.findOneAndUpdate({discordId: profile.id}, {expire: new Date()}, { upsert: true }, function(error, result) {
+                console.log('found result');
+                console.log(result);
                 if (!result) {
                     var user = new Models.User({
                         admin: isAdmin,
-                        socketId: socketId,
+                        discordId: profile.id,
                         lastLogin: new Date(),
                     });
                 } else {
+                    console.log('user already exists');
                     user = result;
+                    user.lastLogin = new Date();
                 }
+                console.log(user);
 
                 user.save(function (err) {
                     if (err) reject(err);

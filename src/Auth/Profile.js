@@ -37,10 +37,10 @@ class Profile extends React.Component {
 				<div className="container-fluid">
 						{ readyToRender &&
 							<div className="row justify-content-center main-content">
-								<div className="col-md-3 no-padding">
+								<div className="col-md-2 no-padding">
 									<Guilds guilds={this.state.user.guilds} />
 								</div>
-								<div className="col-md-9 no-padding left-half">
+								<div className="col-md-10 no-padding left-half">
 									<div>
 										{ readyToRender &&
 											<p>Hey, {this.state.user.userName}</p>
