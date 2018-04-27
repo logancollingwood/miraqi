@@ -12,6 +12,11 @@ body {
   min-width: 100%;
   max-width: 100%;
 }
+
+.row {
+	margin-left: 0px;
+	margin-right: 0px;
+}
 .react-draggable, .cursor {
   cursor: move;
 }
@@ -42,6 +47,14 @@ body {
   margin: 10px;
   padding: 10px;
   float: left;
+}
+
+.bg-dark {
+    background-color: #313131!important;
+}
+
+.bg-bright {
+    background-color: #BDBDBD!important;
 }
 
 #content {
@@ -85,10 +98,309 @@ body {
   margin: 0
 }
 
-.main-content {
-  height:calc(100vh - 56px);
+nav {
+  min-height: 60px;
+  max-height: 60px;
 }
 
-nav {
-  width: 100%;
+.nothing-playing {
+    font-size: 24px;
+    margin: 0 auto;
+    color: #fff;
+    padding-top: 20vh;
+}
+
+.hidden {
+	display: none;
+}
+.no-padding {
+    padding: 0px;
+}
+#sendMessageInput {
+	display: inline-block;
+}
+
+.container-fluid {
+	padding-left: 0px;
+    padding-right: 0px;
+    margin-top: 60px;
+}
+
+.left-half {
+    border-right: 2px solid #b0aba0;
+}
+
+.dj {
+    height: calc(100vh - 60px);
+    display: flex;
+    flex-flow: column;
+}
+
+.dj .row.video {
+  flex: 0 1 auto;
+  height: 50vh;
+  background-color: #1A1A1D;
+}
+
+.dj .row.time {
+  flex: 0 1 auto;
+  text-align: center;
+  background-color: #202225;
+  height: 30px;  
+}
+
+.dj .row.info {
+  flex: 1 1 40px;
+  background-color: #36393e;
+}
+
+.row.info {
+    min-height: 30vh;
+}
+
+.youtubeContainer {
+    position: relative;
+    width: 100%;
+    height: auto;
+	padding-left: 0px;
+	padding-right: 0px;
+}
+
+.youtubeEmbed {
+	position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 40vh;
+}
+
+.chat {
+    margin-bottom: 37px;
+}
+.chatRoom {
+    background-color: #202225;
+    padding-left: 0px;
+    padding-right: 0px;
+    height: calc(100vh - 60px);
+}
+.chatMessages {
+    min-height: 75vh;
+    max-height: 75vh;
+    padding-left: 10px;
+    padding-right: 10px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column-reverse;
+}
+
+.chatFooter {
+    max-height: 15%;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-top: 3vh;
+}
+
+.roomInfo {
+    margin-top: 60px;
+    text-align: center;
+    font-size: 12px;
+    color: #aaa;
+}
+
+.chatTitle {
+    font-size: 24px;
+    font-family: 'Raleway';
+	background-color: #dadada;
+	width: 100%;
+	padding: 15px;
+    max-height: 15vh;
+    text-align: center;
+}
+
+.message {
+    color: #fff;
+}
+.message.server {
+	color: #67b762;
+}
+
+.message :not(:first-child){
+    padding-bottom: 10px;
+}
+
+.message .author {
+    display: inline;
+    font-family: 'Raleway';
+    font-size: 20px;
+}
+.message .timestamp {
+    font-size: 12px;
+    display: inline;
+    margin-left: 4px;
+    color: #8c8c8c;
+}
+
+p {
+	display: inline;
+}
+
+.white {
+	color: #fff;
+}
+
+.footer {
+	background-color: #eee
+}
+
+#NameLabel {
+	font-family: 'Open Sans', sans-serif;
+	font-weight: 200;
+	width: 10%;
+}
+
+
+.navbar-brand {
+	font-family: 'Raleway', sans-serif;
+	font-size: 24px;
+}
+
+p.date {
+	color: #c5c5c5;
+	font-size: 16px;
+}
+
+p.dateTimeSeperator {
+	color: #fff;
+    margin-left: 6px;
+    font-size: 10px;
+}
+
+p.time {
+	color: #fff;
+	font-size: 16px;
+	margin-left: 6px;
+
+}
+
+/* PLAYER */
+.nowPlayingBar {
+	min-height: 40px;
+	background-color: #949494;
+	padding-top: 5px;
+	padding-bottom: 5px;
+
+}
+.nowPlayingBar div {
+	color: #fff;
+	
+	/* This centers the text div inside of the bar */
+	display: table;
+	margin: 0 auto;
+
+}
+
+.timeRemainingText { 
+	padding-top: 5px;
+    font-family: 'Open Sans', sans-serif;
+    color: #999;
+    font-size: 12px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.progress {
+    border-radius: 0px;
+    background-color: #202225;
+}
+.progress-bar {
+    background-color: rgba(79,84,92,.6);
+}
+
+.progress.timeRemainingBar {
+    width: 100%;
+    color: #ffffff;
+    height: 30px;
+    border-right: 0px;
+}
+
+.songQueue {
+    overflow-y: auto;
+}
+.songQueue {
+    padding-top: 15px;
+    padding-left: 0px;
+    color: #ffffff;
+}
+
+.guildQueue {
+    height: calc(100vh - 60px);
+    background-color: #202225;
+}
+
+.header {
+    text-align: center;
+    font-size: 20px;
+    color: #fff;
+    padding-top: 2vh;
+    font-family: 'Raleway';
+}
+
+.songQueue li {
+    padding-top: 10px;
+    border-bottom: 2px solid #5a5a5a;
+    font-family: 'Open Sans';
+    padding-bottom: 10px;
+}
+
+.songQueue li ::after {
+    border-bottom: 1px solid #ffffff;
+}
+
+.listItem.active {
+    background-color: rgba(79,84,92,.6);
+}
+
+.listItem .name {
+    display: inline;
+    font-size: 20px;
+}
+
+.listItem .type {
+    display: inline;
+}
+
+.listItem .type a {
+    color: inherit;
+}
+.listItem .type a:hover {
+    color: #888888;
+}
+.listItem .link {
+    display: inline;
+}
+
+.listItem img {
+    height: 40px;
+    width: 40px;
+    border-radius: 5px;
+    -moz-transition: all .3s;
+    -o-transition: all .3s;
+    -webkit-transition: all .3s;
+    transition: all .3s;
+}
+
+.listItem img:hover {
+    border-radius: 15px;
+}
+
+
+.DjQueue {
+    text-align: center;
+}
+
+.DjQueue .queueHeader {
+    font-size: 20px;
+    color: #fff;
+    padding-top: 2vh;
+    font-family: 'Raleway';
 }

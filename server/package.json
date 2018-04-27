@@ -9,12 +9,15 @@
     "start": "npm run build && node dist/index.js"
   },
   "dependencies": {
+    "connect-mongo": "^2.0.1",
+    "cookie-parser": "^1.4.3",
     "cors": "^2.8.4",
     "dotenv": "^5.0.1",
     "express": "^4.16.1",
     "express-session": "^1.15.6",
     "get-youtube-title": "^1.0.0",
     "mongoose": "^5.0.11",
+    "passport.socketio": "^3.7.0",
     "socket.io": "^2.0.4",
     "youtube-info": "^1.2.0"
   },

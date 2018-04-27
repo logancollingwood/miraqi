@@ -18,6 +18,7 @@
     "react": "^16.2.0",
     "react-bootstrap": "^0.31.3",
     "react-color": "^2.13.8",
+    "react-cookie": "^1.0.5",
     "react-dom": "^16.2.0",
     "react-fontawesome": "^1.6.1",
     "react-player": "^1.1.2",

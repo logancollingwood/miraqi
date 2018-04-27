@@ -6,10 +6,8 @@ var Models = require('./models/models');
 
 class DataBase {
 
-    constructor() {
-        var uri = process.env.MONGO_CONNECTION_STRING;
-        console.log("Connecting to mongodb: " + uri);
-        let db = mongoose.connect(uri);
+    constructor(databaseConnection) {
+        const db = databaseConnection;
     }
 
 
@@ -36,6 +34,33 @@ class DataBase {
                 if (err) reject(err);
                 resolve(user);
             })
+        });
+    }
+
+    createOauthUser(userName, providerLoginId, loginProviderType) {
+        return new Promise((resolve, reject) => {
+            Models.User.findOneAndUpdate({providerLoginId: providerLoginId, loginProviderType: loginProviderType}, {expire: new Date()}, { upsert: true }, function(error, result) {
+                console.log('found result');
+                console.log(result);
+                if (!result) {
+                    var user = new Models.User({
+                        admin: false,
+                        providerLoginId: providerLoginId,
+                        loginProviderType: loginProviderType,
+                        lastLogin: new Date(),
+                    });
+                } else {
+                    console.log('user already exists');
+                    user = result;
+                    user.lastLogin = new Date();
+                }
+                console.log(user);
+
+                user.save(function (err) {
+                    if (err) reject(err);
+                    resolve(user);
+                });
+            });
         });
     }
 
@@ -309,4 +334,4 @@ class DataBase {
 
 }
 
-module.exports = new DataBase();
+module.exports = DataBase;

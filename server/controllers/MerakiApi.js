@@ -11,6 +11,16 @@ class MerakiApi {
 
     }
 
+    getOrCreateUser(userName, providerLoginId, loginProviderType) {
+        return new Promise((resolve, reject) => {
+            db.createOauthUser(userName, providerLoginId, loginProviderType)
+                .then(user => {
+                    resolve(user);
+                })
+                .catch(error => reject(error));
+        })
+    }
+
 
     createSocketUserAndAddToRoom(socketId, roomId) {
         return new Promise((resolve, reject) => {

@@ -1,0 +1,34 @@
+SCHEMA:
+
+
+Room {
+    type: 'discord',
+    nowPlaying: {
+        queueItem: QueueItem,
+        startedAt: Timestamp
+    },
+    queue: [QueueItem],
+    messages: [Message]
+    users: [User]
+}
+
+QueueItem {
+    type: 'yt',
+    id: 'nowPlayingId',
+    requestedBy: User
+}
+
+
+User { 
+    name: String,
+    admin: Boolean,
+    lastLogin: Date,
+    providerLoginId: String (oauth user id)
+    providerType: String ('discord', 'twitter', 'twitch')
+}
+
+Message {
+    author: User,
+    message: 'Test Message',
+    createdAt: Timestamp
+}

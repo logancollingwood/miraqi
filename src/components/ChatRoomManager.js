@@ -40,7 +40,7 @@ class ChatRoomManager extends React.Component {
 			<div className="container-fluid">
 				<div className="row justify-content-center main-content">
 					<div className="col-md-2 no-padding">
-						<Guilds loading={this.state.loading} guilds={guildsToRender} currentRoom={this.state.room}/>
+						<Guilds loading={this.state.loading} guilds={guildsToRender} user={this.state.user} currentRoom={this.state.room}/>
 					</div>
 					<div className="col-md-7 no-padding">
 						<DjContainer loading={this.state.loading} room={this.state.room} socket={this.socket}/>

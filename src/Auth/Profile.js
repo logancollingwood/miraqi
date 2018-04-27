@@ -17,9 +17,12 @@ class Profile extends React.Component {
 		}
 	}
 
-	async requestUser() {
-		let user = await API.getUser();
-		this.setState({user: user});
+	requestUser() {
+		API.getUser()
+			.then(user => {
+				console.log(user);
+				this.setState({user: user});
+			});
 	}
 	
 	componentDidMount() {
@@ -31,14 +34,15 @@ class Profile extends React.Component {
 		console.log("re-rendering profile with user: ");
 		console.log(this.state.user);
 		let readyToRender = this.state.user != null;
+		console.log('ready to render: ' + readyToRender);
 		return (
 			<div>
-				<Nav isHome={false} isRoom={true} user={this.state.user}/>
+				<Nav isHome={false} isRoom={false}/>
 				<div className="container-fluid">
 						{ readyToRender &&
 							<div className="row justify-content-center main-content">
 								<div className="col-md-2 no-padding">
-									<Guilds guilds={this.state.user.guilds} />
+									<Guilds guilds={this.state.user.guilds} loading={!readyToRender}/>
 								</div>
 								<div className="col-md-10 no-padding left-half">
 									<div>
@@ -51,7 +55,7 @@ class Profile extends React.Component {
 						}
 
 						{
-							!readyToRender &&
+							!this.state.user &&
 								<div className="col-md-12">
 									<a href="http://localhost:3001/login/discord"> login </a>
 								</div>

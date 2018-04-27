@@ -1,5 +1,6 @@
 import React from "react";
 import Link from "react-router";
+import UserProfile from "./UserProfile.js";
 
 class Guilds extends React.Component {
 
@@ -38,6 +39,9 @@ class Guilds extends React.Component {
                     </div>
                     <ul className="songQueue">
                     </ul>
+                    <div className="about">
+                        Loading ...
+                    </div>
                 </div>
             );
         } else {
@@ -51,6 +55,9 @@ class Guilds extends React.Component {
                     <ul className="songQueue">
                         {guildsList}
                     </ul>
+                    <div className="about">
+                        <UserProfile user={this.props.user} />
+                    </div>
                 </div>
             );
         }

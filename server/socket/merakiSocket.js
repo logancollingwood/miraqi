@@ -1,10 +1,10 @@
-const io = require('socket.io')();
-const db = require('../db/db.js');
+const DataBase = require('../db/db.js');
 const QueueHandler = require('./handler/queueHandler.js');
 const moment = require('moment');
 
 const MerakiApi = require("../controllers/MerakiApi");
 const SocketSession = require("./socketSession");
+const { WebAuth, SocketAuth } = require('../auth/MerakiAuth.js');
 
 let TIME_FORMAT = "MM YY / h:mm:ss a";
 function ytVidId(url) {
@@ -14,14 +14,19 @@ function ytVidId(url) {
 
 let users = [];
 
-function setup(port) {
-    io.on('connection', (socket) => {
+function setup(io, database, sessionStore) {
+    
+    const db = new DataBase(database);
+    SocketAuth(io, sessionStore);
 
+    io.on('connection', (socket) => {
+        console.log(socket.request.user);
         let socketSession = null;
 
         socketLog('socketId: ' + socket.id + ' connected.');
 
-        let userModel, roomId = -1, roomModel, roomSocket, queueHandler;
+        let userModel, roomId = -1, roomModel, roomSocket;
+        const queueHandler = new QueueHandler(socket);
 
         socket.on('SEND_MESSAGE', function (data) {
             const message = data.message;
@@ -42,7 +47,7 @@ function setup(port) {
                             message: message,
                             timestamp: moment().format(TIME_FORMAT)
                         }
-                        socketSession.emitToRoom('RECEIVE_MESSAGE', broadcastMessage);
+                        socketSession.emitToRoom('message', broadcastMessage);
                     }
                 })
                 .catch(error => { });
@@ -59,7 +64,7 @@ function setup(port) {
                     message: "has joined the room"
                 }
                 socketSession.user = user;
-                socketSession.emitToRoom('RECEIVE_MESSAGE', broadcastMessage);
+                socketSession.emitToRoom('message', broadcastMessage);
             })
         })
 
@@ -86,18 +91,51 @@ function setup(port) {
             MerakiApi.removeUserFromRoom(user._id, room._id)
                 .then(usersLeftInRoom => {
                     socketSession.emitToRoom('users', usersLeftInRoom);
-                    socketSession.emitToRoom('RECEIVE_MESSAGE', broadcastMessage);
+                    socketSession.emitToRoom('message', broadcastMessage);
                 })
                 .catch(err => console.log(err));
 
         });
 
-        socket.on('get next track', function (data) {
-            console.log(`ws: got get next track event in room ${data.roomId}, from user ${data.userId}`);
-            if (roomModel != null) {
-                publishNextSongForRoomId(roomModel._id);
+
+        /**
+         * Takes in a request object to join the room. Sent by clients
+         * on joining a room (initiated when landing on a room page)
+         * 
+         * {
+         *  userName,
+         *  providerLoginId (discord atm),
+         *  loginProviderType (discord/facebook/etc),
+         *  roomId (the id of the room to join)
+         * }
+         * 
+         * Creates or retrieves a user record on our side and adds 
+         * them to the current room
+         * 
+         */
+        socket.on('join', function(data) {
+            const { userName, providerLoginId, loginProviderType } = data;
+            if (userName == null || providerLoginId == null || loginProviderType == null) {
+                return;
             }
+
+            MerakiApi.getOrCreateUser(userName, providerLoginId, loginProviderType)
+                .then(user => {
+                    socketSession.user = user;
+                    return MerakiApi.addUserToRoom(user._id, roomId);
+                })
+                .then(({user, room}) => {
+                    var broadcastMessage = {
+                        serverMessage: true,
+                        author: user.name,
+                        message: "has joined the room"
+                    }
+                    socketSession.emitToRoom('message', broadcastMessage);
+                    socketSession.emitToRoom('users', room.users);
+                });
         });
+
+
 
 
         socket.on('user joined', function (data) {
@@ -111,24 +149,8 @@ function setup(port) {
                 })
                 .catch(err => console.log(err));
         });
+            
     });
-
-    function publishNextSongForRoomId(roomId) {
-        db.getNextSongForRoom(roomId)
-            .then(nextSongInfo => {
-                io.to(roomModel._id).emit('PLAY_MESSAGE', nextSongInfo.playUrl);
-            })
-            .catch(err => console.log(err));
-    }
-
-    function getNextTrackCallBack(queueItem, roomId) {
-        console.log(`executing next track in room: ${roomId}`);
-        console.log(queueItem);
-        io.to(roomId).emit('PLAY_MESSAGE', queueItem.playUrl);
-    }
-
-    io.listen(port);
-    console.log("Socket server listening on port:" + port);
 
 }
 

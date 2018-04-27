@@ -12,15 +12,12 @@ class Chat extends React.Component {
             username: '',
             message: '',
             messages: [],
-			users: [],
+			users: this.props.room ? this.props.room.users : [],
 			userNameEntryHidden: false,
 			chatHidden: true,
 			room: this.props.room
 		};
 
-		if (this.props.room) {
-			this.state.users = this.props.room.users;
-		}
 		
 		this.socket = this.props.socket;
 
@@ -33,7 +30,6 @@ class Chat extends React.Component {
 				this.socket.emit('SEND_MESSAGE', {
 					author: this.state.username,
 					message: this.state.message,
-					serverMessage: false,
 					timestamp: moment().format(TIME_FORMAT)
 				});
 				this.setState({message: ''});
@@ -55,7 +51,7 @@ class Chat extends React.Component {
 			this.setState({messages: [...this.state.messages, data]});
 		};
 
-		this.socket.on('RECEIVE_MESSAGE', function(data){
+		this.socket.on('message', function(data){
 			addMessage(data);
 		});
 
