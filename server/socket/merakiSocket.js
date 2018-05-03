@@ -15,25 +15,21 @@ function ytVidId(url) {
 let users = [];
 
 function setup(io, database, sessionStore) {
-    
-    const db = new DataBase(database);
+
     SocketAuth(io, sessionStore);
 
     io.on('connection', (socket) => {
-        console.log(socket.request.user);
-        let socketSession = null;
-
+        let user = socket.request.user;
+        const db = new DataBase(database);
+        const API = new MerakiApi(db);
         socketLog('socketId: ' + socket.id + ' connected.');
-
-        let userModel, roomId = -1, roomModel, roomSocket;
         const queueHandler = new QueueHandler(socket);
+        const socketSession = new SocketSession(io, socket);
 
         socket.on('SEND_MESSAGE', function (data) {
             const message = data.message;
-            const user = socketSession.getUser();
-            const room = socketSession.getRoom();
 
-            MerakiApi.sendMessageToRoom(room._id, user._id, message)
+            API.sendMessageToRoom(room._id, user.id, message)
                 .then(data => {
                     if (data.isPlay) {
                         if (data.first) {
@@ -55,58 +51,21 @@ function setup(io, database, sessionStore) {
         });
 
         socket.on('subscribe', function (data) {
-            let user = socketSession.getUser();
-            MerakiApi.setSocketUserName(user._id, data.username)
-            .then(user => {
-                var broadcastMessage = {
-                    serverMessage: true,
-                    author: user.name,
-                    message: "has joined the room"
-                }
-                socketSession.user = user;
-                socketSession.emitToRoom('message', broadcastMessage);
-            })
+            console.log('got subscribe');
         })
 
         socket.on('disconnect', function () {
-            console.log('ws: got disconnect event');
-            if (socketSession == null) {
-                return;
-            }
-            const user = socketSession.getUser();
-            const room = socketSession.getRoom();
-
-            var broadcastMessage = {
-                serverMessage: true,
-                author: 'no author',
-                message: " signed off"
-            }
-
-            if (user.name == null) {
-                broadcastMessage.author = user._id
-            } else {
-                broadcastMessage.author = user.name;
-            }
-
-            MerakiApi.removeUserFromRoom(user._id, room._id)
-                .then(usersLeftInRoom => {
-                    socketSession.emitToRoom('users', usersLeftInRoom);
-                    socketSession.emitToRoom('message', broadcastMessage);
-                })
-                .catch(err => console.log(err));
-
+           console.log('got disconnect');
         });
 
 
         /**
          * Takes in a request object to join the room. Sent by clients
-         * on joining a room (initiated when landing on a room page)
+         * on joining a room. Socket has already been created an
+         * the user property is created already for the oAuth profile
          * 
          * {
-         *  userName,
-         *  providerLoginId (discord atm),
-         *  loginProviderType (discord/facebook/etc),
-         *  roomId (the id of the room to join)
+         *  roomId
          * }
          * 
          * Creates or retrieves a user record on our side and adds 
@@ -114,22 +73,26 @@ function setup(io, database, sessionStore) {
          * 
          */
         socket.on('join', function(data) {
-            const { userName, providerLoginId, loginProviderType } = data;
-            if (userName == null || providerLoginId == null || loginProviderType == null) {
+            const roomId = data.roomId;
+            if (roomId === null || roomId === undefined || roomId === '') {
                 return;
             }
-
-            MerakiApi.getOrCreateUser(userName, providerLoginId, loginProviderType)
+            console.log(`got join request from ${roomId} user: ${user.profile.username}`)
+            let userName = user.profile.username;
+            let profile = user.profile;
+            let loginProviderType = 'discord';
+            API.getOrCreateUser(userName, profile, loginProviderType)
                 .then(user => {
-                    socketSession.user = user;
-                    return MerakiApi.addUserToRoom(user._id, roomId);
+                    return API.addUserToRoom(user._id, roomId);
                 })
                 .then(({user, room}) => {
+                    socketSession.room = room;
                     var broadcastMessage = {
                         serverMessage: true,
                         author: user.name,
                         message: "has joined the room"
                     }
+                    socketSession.emitToClient('room', room);
                     socketSession.emitToRoom('message', broadcastMessage);
                     socketSession.emitToRoom('users', room.users);
                 });
@@ -141,7 +104,7 @@ function setup(io, database, sessionStore) {
         socket.on('user joined', function (data) {
             let roomId = data.roomId;
             console.log(`ws: user joined room: ${roomId}`);
-            MerakiApi.createSocketUserAndAddToRoom(socket.id, roomId)
+            API.createSocketUserAndAddToRoom(socket.id, roomId)
                 .then(userRoom => {
                     let { user, room } = userRoom;
                     socketSession = new SocketSession(user, room, socket, io);

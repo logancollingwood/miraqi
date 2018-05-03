@@ -1,5 +1,4 @@
 const fetchVideoInfo = require('youtube-info');
-const db = require("../db/db.js");
 const dj = require('./Dj.js');
 const TIME_FORMAT = "MM YY / h:mm:ss a";
 const QueueUtil = require('./QueueUtil.js');
@@ -7,13 +6,13 @@ const QueueUtil = require('./QueueUtil.js');
 class MerakiApi {
 
 
-    constructor() {
-
+    constructor(db) {
+        this.db = db;
     }
 
-    getOrCreateUser(userName, providerLoginId, loginProviderType) {
+    getOrCreateUser(userName, profile, loginProviderType) {
         return new Promise((resolve, reject) => {
-            db.createOauthUser(userName, providerLoginId, loginProviderType)
+            this.db.createOauthUser(userName, profile, loginProviderType)
                 .then(user => {
                     resolve(user);
                 })
@@ -24,7 +23,7 @@ class MerakiApi {
 
     createSocketUserAndAddToRoom(socketId, roomId) {
         return new Promise((resolve, reject) => {
-            db.createUser(socketId)
+            this.db.createUser(socketId)
                 .then(user => {
                     db.addUserToRoom(user._id, roomId)
                         .then(data => {
@@ -39,7 +38,7 @@ class MerakiApi {
 
     setSocketUserName(userId, name) {
         return new Promise((resolve, reject) => {
-            db.updateUserName(userId, name)
+            this.db.updateUserName(userId, name)
                 .then(user => {
                     this.user = user;
                     resolve(user);
@@ -73,7 +72,7 @@ class MerakiApi {
                                 type: 'yt',
                             }
                             console.log(queueItem);
-                            db.addQueueItem(queueItem)
+                            this.db.addQueueItem(queueItem)
                                 .then(data => {
                                     resolve({
                                         isPlay: true,
@@ -96,7 +95,7 @@ class MerakiApi {
 
     removeUserFromRoom(userId, roomId) {
         return new Promise((resolve, reject) => {
-            db.removeUserFromRoom(userId, roomId)
+            this.db.removeUserFromRoom(userId, roomId)
                 .then(usersInRoom => {
                     resolve(usersInRoom.users);
                 })
@@ -104,7 +103,17 @@ class MerakiApi {
         })
     }
 
+    addUserToRoom(userId, roomId) {
+        return new Promise((resolve, reject) => {
+            this.db.addUserToRoom(userId, roomId)
+                .then(({user, room}) => {
+                    resolve({user: user, room: room});
+                })
+                .catch(err => {reject(err)});
+        })
+    }
+
 }
 
 
-module.exports = new MerakiApi();
+module.exports = MerakiApi;

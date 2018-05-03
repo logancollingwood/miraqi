@@ -5,7 +5,10 @@ var UserSchema   = new Schema({
         name: String,
         admin: Boolean,
         lastLogin: Date,
-        discordId: String
+        discordId: String,
+        loginProviderId: String, // the user id of the oauth user
+        loginProviderType: String, // The type of the oauth provider (discord)
+        profile: Object
     }, 
     {   
         timestamps: true
@@ -36,6 +39,8 @@ var RoomSchema   = new Schema({
     name: String,
     description: String,
     sourceIp: String,
+    roomProviderId: String, // the user id of the oauth user
+    roomProviderType: String, // The type of the oauth provider (discord)
     users: [UserSchema],
     messages: [MessageSchema],
     queue: [QueueItemSchema]

@@ -14,13 +14,19 @@ class UserProfile extends Component {
     let profileToRender = null;
     if (this.props.user) {
         profileToRender = 
-        <div>
-          <img style={{borderRadius: "50px"}} src={`https://cdn.discordapp.com/avatars/${this.props.user.id}/${this.props.user.avatar}.png?size=64`}/>
-          <p className='name'>{this.props.user.username}</p>
+        <div className="row">
+          <div className="col-md-4">
+            <img style={{borderRadius: "50px"}} src={`https://cdn.discordapp.com/avatars/${this.props.user.id}/${this.props.user.avatar}.png?size=64`}/>
+          </div>
+          <div className="col-md-8">
+            <p className='name'>{this.props.user.username}</p>
+            <hr />
+            <a href={Config.WEB_HOST + "auth/logout"}> logout </a>
+          </div>
         </div>;
     } else {
         profileToRender = 
-          <div>
+          <div className="row">
             <p className="name">Loading</p>
             <a href={this.loginLink} className="nav-link"><i className="fab fa-discord"></i> Login </a>
           </div>;

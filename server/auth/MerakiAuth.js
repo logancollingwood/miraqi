@@ -21,10 +21,10 @@ function InitializePassportWeb(app, dbInstance, sessionStore, cookieParser) {
     }, function(accessToken, refreshToken, profile, done) {
         process.nextTick(function() {
             console.log(profile);
-            dbInstance.createUser(false, profile)
-                .then(user=> {
-                    return done(null, profile);
-                });
+            dbInstance.createUser(profile, 'discord')
+            .then(user=> {
+                return done(null, user);
+            });
         });
     }));
 
@@ -57,10 +57,9 @@ function InitializePassportWeb(app, dbInstance, sessionStore, cookieParser) {
 
     app.get('/logout', function(req, res) {
         req.logout();
-        res.redirect('http://localhost:3000/');
+        res.redirect('http://localhost:3001/');
     });
     app.get('/user/info', checkAuth, function(req, res) {
-        console.log('searching for user');
         res.json(req.user);
     });
 }
@@ -77,7 +76,6 @@ function InitializePassportSocket(io, sessionStore, cookieParser) {
 }
 
 function onAuthorizeSuccess(data, accept) {
-  console.log('SUCCESSFUL CONNECTION TO SOCKET.IO!!!');
   // The accept-callback still allows us to decide whether to
   // accept the connection or not.
   accept(null, true);

@@ -37,25 +37,24 @@ class DataBase {
         });
     }
 
-    createOauthUser(userName, providerLoginId, loginProviderType) {
+    createOauthUser(userName, profile, loginProviderType) {
         return new Promise((resolve, reject) => {
-            Models.User.findOneAndUpdate({providerLoginId: providerLoginId, loginProviderType: loginProviderType}, {expire: new Date()}, { upsert: true }, function(error, result) {
-                console.log('found result');
-                console.log(result);
+            Models.User.findOneAndUpdate({loginProviderId: profile.id, loginProviderType: loginProviderType}, {expire: new Date()}, { upsert: true }, function(error, result) {
                 if (!result) {
+                    console.log('new user');
                     var user = new Models.User({
                         admin: false,
-                        providerLoginId: providerLoginId,
+                        loginProviderId: profile.id,
                         loginProviderType: loginProviderType,
+                        userName: userName,
                         lastLogin: new Date(),
+                        profile: profile
                     });
                 } else {
                     console.log('user already exists');
                     user = result;
                     user.lastLogin = new Date();
                 }
-                console.log(user);
-
                 user.save(function (err) {
                     if (err) reject(err);
                     resolve(user);
@@ -64,21 +63,16 @@ class DataBase {
         });
     }
 
-    createUser(isAdmin, profile) {
+    createUser(profile, loginProviderType) {
         console.log('creating passport user');
-        console.log(isAdmin);
         console.log(profile);
-        if (isAdmin == null) {
-            isAdmin = false;
-        }
         return new Promise((resolve, reject) => {
-            Models.User.findOneAndUpdate({discordId: profile.id}, {expire: new Date()}, { upsert: true }, function(error, result) {
-                console.log('found result');
-                console.log(result);
+            Models.User.findOneAndUpdate({loginProviderType: loginProviderType, loingProviderId: profile.id, profile: profile}, {expire: new Date()}, { upsert: true }, function(error, result) {
                 if (!result) {
                     var user = new Models.User({
-                        admin: isAdmin,
-                        discordId: profile.id,
+                        loginProviderType: loginProviderType,
+                        loginProviderId: profile.id,
+                        profile: profile,
                         lastLogin: new Date(),
                     });
                 } else {
@@ -115,18 +109,27 @@ class DataBase {
 
     }
 
-    createRoom(roomRequest) {
-        console.log("Serving API request to create room with name: " + roomRequest.name);
+    createRoom(request) {
+        console.log("Serving API request to create room with name: " + request.name);
         return new Promise((resolve, reject) => {
-            var room = new Models.Room({
-                name: roomRequest.name,
-                description: roomRequest.description,
-                sourceIp: roomRequest.sourceIp
+            let roomRequest = {
+                name: request.name,
+                roomProviderId: request.roomProviderId,
+                roomProviderType: request.roomProviderType
+            }
+            
+            Models.Room.findOneAndUpdate(roomRequest, {expire: new Date()}, { upsert: true }, function(error, result) {
+                if (!result) {
+                    var room = new Models.Room(roomRequest);
+                } else {
+                    room = result;
+                }
+
+                room.save(function (err) {
+                    if (err) reject(err);
+                    resolve(room);
+                });
             });
-            room.save(function (err) {
-                if (err) reject(err);
-                resolve(room);
-            })
         });
     }
 
@@ -135,6 +138,7 @@ class DataBase {
      * @param {roomId, userId} addUserToRoomRequest 
      */
     addUserToRoom(userId, roomId) {
+        let self = this;
         return new Promise((resolve, reject) => {
             Models.User.findById(userId, function (err, user) {
                 if (err) reject(err);
@@ -142,22 +146,22 @@ class DataBase {
                     reject(`No user found with id ${userId}`);
                 }
                 console.log(`found user ${user._id}`);
-
-                Models.Room.findByIdAndUpdate(
-                    roomId,
-                    { $addToSet: { users: user } },
-                    { new: true },
-                    function (err, room) {
-                        if (err) {
-                            reject(err);
-                        }
-                        console.log(`updated room ${room._id} and added user ${user._id}`)
-                        resolve({
-                            user: user,
-                            room: room
-                        });
-                    }
-                );
+                self.createRoom({
+                    name: 'test',
+                    roomProviderId: roomId,
+                    roomProviderType: 'discord'
+                }).then(room => {
+                    console.log(`updated room ${room._id} and added user ${user._id}`)
+                    room.update(
+                        { 'users.id': {'$ne': user._id}},
+                        {'users': {'$push': user}});
+                    resolve({
+                        user: user,
+                        room: room
+                    });
+                }).catch((err) => {
+                    reject(err);
+                })
             })
         });
     }

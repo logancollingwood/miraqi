@@ -20,33 +20,34 @@ class ChatRoomManager extends React.Component {
 	
 	async requestUser() {
 		let user = await Api.getUser();
-		this.setState({user: user});
+		this.setState({user: user.profile});
 	}
 	
 	componentDidMount() {
-		console.log(`going to search for room with id: ${this.props.id}`);
-		Api.getRoomById(this.props.id)
-			.then(room => {
-				if (room == null) return;
-				this.setState({loading: false, room: room});
-			}).catch(error => console.error);
+		const updateRoom = data => {
+			this.setState({loading: false, room: data});
+		};
+		this.socket.on('room', function(data) {
+			console.log('received room publish');
+			console.log(data);
+			updateRoom(data);
+		});
 		this.requestUser();
 	}
 
 
     render() {
-		const guildsToRender = this.state.user ? this.state.user.guilds : null;
         return (
 			<div className="container-fluid">
 				<div className="row justify-content-center main-content">
 					<div className="col-md-2 no-padding">
-						<Guilds loading={this.state.loading} guilds={guildsToRender} user={this.state.user} currentRoom={this.state.room}/>
+						<Guilds loading={this.state.loading} user={this.state.user} currentRoom={this.state.room}/>
 					</div>
 					<div className="col-md-7 no-padding">
 						<DjContainer loading={this.state.loading} room={this.state.room} socket={this.socket}/>
 					</div>
 					<div className="col-md-3 no-padding">
-						<Chat loading={this.state.loading} socket={this.socket} room={this.state.room}/>
+						<Chat loading={this.state.loading} user={this.state.user} socket={this.socket} room={this.state.room}/>
 					</div>
 				</div>
 			</div>

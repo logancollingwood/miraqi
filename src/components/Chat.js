@@ -14,7 +14,6 @@ class Chat extends React.Component {
             messages: [],
 			users: this.props.room ? this.props.room.users : [],
 			userNameEntryHidden: false,
-			chatHidden: true,
 			room: this.props.room
 		};
 
@@ -26,24 +25,13 @@ class Chat extends React.Component {
 	componentDidMount() {
 		this.sendMessage = ev => {
 			if (ev.charCode === 13) {
-				if(this.state.message === null || this.state.message === '') return;
-				this.socket.emit('SEND_MESSAGE', {
-					author: this.state.username,
-					message: this.state.message,
-					timestamp: moment().format(TIME_FORMAT)
-				});
+				if(this.state.message === null || this.state.message === '' || this.props.user.username === null) return;
+					this.socket.emit('SEND_MESSAGE', {
+						author: this.props.user.id,
+						message: this.state.message,
+						timestamp: moment().format(TIME_FORMAT)
+					});
 				this.setState({message: ''});
-			}
-		}
-
-		this.setUsername = ev => {
-			if(ev.charCode === 13 || ev == null){
-				console.log(this.props);
-				this.setState({
-					userNameEntryHidden: true,
-					chatHidden: false
-				})
-				this.socket.emit("subscribe", { username: this.state.username });
 			}
 		}
 
@@ -102,20 +90,10 @@ class Chat extends React.Component {
 						<div className="chatFooter">
 
 							<div>
-								{ !this.state.userNameEntryHidden &&
-									<div className="input-group mb-3">
-										<input type="text" placeholder="Username" value={this.state.username} onChange={ev => this.setState({username: ev.target.value})} onKeyPress={this.setUsername} className="form-control"/>
-										<span className="input-group-btn">
-											<button className="btn btn-secondary" type="button" onClick={this.setUsername}>Set</button>
-										</span>
-									</div>
-								}
-
-
-								{ !this.state.chatHidden &&
+								{ !this.props.loading &&
 									<div className="input-group mb-3">
 											<div className="input-group-prepend">
-												<span className="input-group-text" id="userNameLabel">{this.state.username}</span>
+												<span className="input-group-text" id="userNameLabel">{this.props.user.username}</span>
 											</div>
 										<input id="sendMessageInput" type="text" placeholder="Message" className="form-control" aria-describedby="userNameLabel" value={this.state.message} onChange={ev => this.setState({message: ev.target.value})} onKeyPress={this.sendMessage}/>
 										<span className="input-group-btn">

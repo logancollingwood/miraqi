@@ -5,8 +5,8 @@ import Config from "../Config.js";
 import auth from "./Auth.js";
 import Nav from "../Nav.js";
 import Guilds from "../components/Guilds.js";
-import API from "../components/Api.js";
-
+import Api from "../components/Api.js";
+import UserProfile from "../components/UserProfile.js";
 
 class Profile extends React.Component {
 
@@ -17,12 +17,9 @@ class Profile extends React.Component {
 		}
 	}
 
-	requestUser() {
-		API.getUser()
-			.then(user => {
-				console.log(user);
-				this.setState({user: user});
-			});
+	async requestUser() {
+		let user = await Api.getUser();
+		this.setState({user: user.profile});
 	}
 	
 	componentDidMount() {
@@ -42,12 +39,12 @@ class Profile extends React.Component {
 						{ readyToRender &&
 							<div className="row justify-content-center main-content">
 								<div className="col-md-2 no-padding">
-									<Guilds guilds={this.state.user.guilds} loading={!readyToRender}/>
+								<Guilds loading={!readyToRender} user={this.state.user} currentRoom={this.state.room}/>
 								</div>
 								<div className="col-md-10 no-padding left-half">
 									<div>
 										{ readyToRender &&
-											<p>Hey, {this.state.user.userName}</p>
+											<UserProfile user={this.props.user} />
 										}
 									</div>
 								</div>

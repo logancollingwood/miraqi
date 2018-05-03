@@ -13,8 +13,8 @@ class Guilds extends React.Component {
         let guildsList;
         let currentRoomId = this.props.currentRoom != null ? this.props.currentRoom.id : -1;
         console.log(`currentRoomId: ${currentRoomId}`);
-        if (this.props.guilds) {
-            guildsList = this.props.guilds.slice(0).map((guild, i) => 
+        if (this.props.user) {
+            guildsList = this.props.user.guilds.slice(0).map((guild, i) => 
                 // {`row listItem ${currentRoomId === guild.id ? 'active' : ''}`}
                 <li className={`row listItem ${i == 0 ? 'active' : ''}`} key={i}>
                     <div className="col-md-2">

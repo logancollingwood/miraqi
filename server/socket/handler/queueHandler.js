@@ -3,7 +3,6 @@ class QueueHandler {
     
 
     constructor(socket) {
-        console.log('Starting up QueueHandler');
         this.socket = socket;
         this.queue = [];
     }
