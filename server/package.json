@@ -6,7 +6,8 @@
   "main": "server.js",
   "scripts": {
     "build": "rimraf dist/ && babel ./ --out-dir dist/ --ignore ./node_modules,./.babelrc,./package.json,./npm-debug.log --copy-files",
-    "start": "npm run build && forever dist/index.js"
+    "start": "forever index.js",
+    "dev-start": "nodemon index.js"
   },
   "dependencies": {
     "connect-mongo": "^2.0.1",

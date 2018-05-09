@@ -20,18 +20,24 @@ require('dotenv').config();
 function setup(app, dbInstance, sessionStore, cookieParser) {
     var db = new DataBase(dbInstance);
 
+    var buildFolder = "../../../build";
+    if (process.env.IS_SERVER == true) {
+        buildFolder += "../";
+    }
+    console.log('using buildfolder: ' + buildFolder);
     app.use(bodyParser.json());
     app.use(cors({ credentials: true, origin: 'http://localhost:3000' }));
-    app.use(express.static(path.join(__dirname, '../../build')));
 
     app.get('/', function (req, res) {
-        res.sendFile(path.join(__dirname, '../../build', 'index.html'));
+        res.sendFile(path.join(__dirname, buildFolder, 'index.html'));
     });
 
     WebAuth(app, db, sessionStore, cookieParser);
 
+    app.use(express.static(path.join(__dirname, buildFolder + 'static')));
+
     app.get('*', function (req, res) {
-        res.sendFile(path.join(__dirname, '../../build', 'index.html'));
+        res.sendFile(path.join(__dirname, buildFolder, 'index.html'));
     });
 
     setupWebEndpoints(app, db);
