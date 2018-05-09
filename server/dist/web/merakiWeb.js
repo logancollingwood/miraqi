@@ -1,22 +1,40 @@
 'use strict';
 
 var express = require('express');
-var app = express();
-var db = require('./db/db.js');
+var DiscordStrategy = require('passport-discord').Strategy;
+var passport = require('passport');
+var bodyParser = require('body-parser');
+var path = require('path');
 
-function setup(port) {
-    console.log("Meraki Web starting on port:" + port);
+var DataBase = require('../db/db.js');
 
-    // respond with "hello world" when a GET request is made to the homepage
-    app.get('/api/hello', function (req, res) {
-        res.send("hello");
+var _require = require('../auth/MerakiAuth.js'),
+    WebAuth = _require.WebAuth,
+    SocketAuth = _require.SocketAuth;
+
+var cors = require('cors');
+var setupWebEndpoints = require('./webEndpoints.js');
+
+require('dotenv').config();
+
+function setup(app, dbInstance, sessionStore, cookieParser) {
+    var db = new DataBase(dbInstance);
+
+    app.use(bodyParser.json());
+    app.use(cors({ credentials: true, origin: 'http://localhost:3000' }));
+    app.use(express.static(path.join(__dirname, '../../build')));
+
+    app.get('/', function (req, res) {
+        res.sendFile(path.join(__dirname, '../../build', 'index.html'));
     });
 
-    app.get('/api/room/:id', function (req, res) {
-        res.send(db.getRoomById(req.params.id));
+    WebAuth(app, db, sessionStore, cookieParser);
+
+    app.get('*', function (req, res) {
+        res.sendFile(path.join(__dirname, '../../build', 'index.html'));
     });
 
-    app.listen(port);
+    setupWebEndpoints(app, db);
 }
 
 module.exports = {
