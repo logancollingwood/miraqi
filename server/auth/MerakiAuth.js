@@ -16,7 +16,7 @@ function InitializePassportWeb(app, dbInstance, sessionStore, cookieParser) {
     passport.use(new DiscordStrategy({
         clientID: process.env.DISCORD_CLIENT_ID,
         clientSecret: process.env.DISCORD_CLIENT_SECRET,
-        callbackURL: 'http://localhost:3001/login/discord/return',
+        callbackURL: '/login/discord/return',
         scope: scopes
     }, function(accessToken, refreshToken, profile, done) {
         process.nextTick(function() {
