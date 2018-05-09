@@ -55,7 +55,7 @@ function InitializePassportWeb(app, dbInstance, sessionStore, cookieParser) {
 
     app.get('/login/discord/return', passport.authenticate('discord', {failureRedirect: '/login'}),
         function(req, res) {
-            res.redirect('http://localhost:3001/home');
+            res.redirect('/home');
         }
     );
 
