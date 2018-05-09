@@ -13,10 +13,14 @@ function InitializePassportWeb(app, dbInstance, sessionStore, cookieParser) {
         done(null, obj);
     });
 
+    let hostName = process.env.HOST_NAME
+    console.log(`using hostName: ${hostName}`);
+
     passport.use(new DiscordStrategy({
         clientID: process.env.DISCORD_CLIENT_ID,
         clientSecret: process.env.DISCORD_CLIENT_SECRET,
-        callbackURL: '/login/discord/return',
+        callbackURL: hostName + 'login/discord/return',
+        proxy: true,
         scope: scopes
     }, function(accessToken, refreshToken, profile, done) {
         process.nextTick(function() {
