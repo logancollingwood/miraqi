@@ -31,7 +31,8 @@
     "socket.io-client": "^2.1.0"
   },
   "scripts": {
-    "start": "npm run build && cd server && nodemon index.js",
+    "start": "cd server && nodemon index.js",
+    "postinstall": "npm run build",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
