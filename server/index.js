@@ -9,7 +9,7 @@ var app = require('express')();
 var server = require('http').createServer(app);
 var io = require('socket.io')(server);
 
-const WEB_PORT = 3001;
+const WEB_PORT = process.env.PORT || 3001;
 
 
 const uri = process.env.MONGO_CONNECTION_STRING;
