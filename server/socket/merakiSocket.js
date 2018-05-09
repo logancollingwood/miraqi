@@ -28,8 +28,8 @@ function setup(io, database, sessionStore) {
 
         socket.on('SEND_MESSAGE', function (data) {
             const message = data.message;
-
-            API.sendMessageToRoom(room._id, user.id, message)
+            console.log(socketSession);
+            API.sendMessageToRoom(socketSession.room._id, socketSession.user._id, message)
                 .then(data => {
                     if (data.isPlay) {
                         if (data.first) {
@@ -37,9 +37,10 @@ function setup(io, database, sessionStore) {
                         }
                         socketSession.emitToRoom('new queue', data.queue);
                     } else {
+                        console.log('username:' + socketSession.user.profile.username);
                         var broadcastMessage = {
                             serverMessage: false,
-                            author: user.name,
+                            author: socketSession.user.profile.username,
                             message: message,
                             timestamp: moment().format(TIME_FORMAT)
                         }
@@ -86,31 +87,20 @@ function setup(io, database, sessionStore) {
                     return API.addUserToRoom(user._id, roomId);
                 })
                 .then(({user, room}) => {
+                    console.log(user);
+                    console.log(room);
                     socketSession.room = room;
+                    socketSession.user = user;
                     var broadcastMessage = {
                         serverMessage: true,
-                        author: user.name,
+                        author: socketSession.user.profile.username,
                         message: "has joined the room"
                     }
+                    socketSession.joinRoom(room);
                     socketSession.emitToClient('room', room);
                     socketSession.emitToRoom('message', broadcastMessage);
                     socketSession.emitToRoom('users', room.users);
                 });
-        });
-
-
-
-
-        socket.on('user joined', function (data) {
-            let roomId = data.roomId;
-            console.log(`ws: user joined room: ${roomId}`);
-            API.createSocketUserAndAddToRoom(socket.id, roomId)
-                .then(userRoom => {
-                    let { user, room } = userRoom;
-                    socketSession = new SocketSession(user, room, socket, io);
-                    socketSession.emitToRoom('users', room.users);
-                })
-                .catch(err => console.log(err));
         });
             
     });

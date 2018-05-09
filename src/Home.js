@@ -39,8 +39,7 @@ class Home extends React.Component {
       displayDiv = (<FontAwesome name="spinner" pulse />);
     } else {
       displayDiv =  (<div>
-                      <h2 className="title"> get a room </h2>
-                      <button onClick={this.createRoom.bind(this)}> create one. </button> 
+                      <button onClick={this.createRoom.bind(this)}><i className="fab fa-discord" /> get a room </button> 
                     </div>);
     }
     if (this.state.redirect) {

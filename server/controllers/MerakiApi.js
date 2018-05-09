@@ -52,17 +52,17 @@ class MerakiApi {
     }
 
     sendMessageToRoom(roomId, userId, message) {
+        let self = this;
         return new Promise((resolve, reject) => {
             const isPlayCommand = message.startsWith("!play");
 
             if (isPlayCommand) {
                 const playUrl = message.split(" ")[1];
                 const vidId = dj.ytVidId(playUrl);
-                console.log(`videoId: ${vidId}`);
                 if (vidId) {
-                    console.log(roomId + ' ' + userId);
                     if (roomId && userId) {
                         fetchVideoInfo(vidId, function (err, videoInfo) {
+                            if (videoInfo == null) return;
                             let queueItem = {
                                 url: playUrl,
                                 userId: userId,
@@ -71,8 +71,7 @@ class MerakiApi {
                                 lengthSeconds: videoInfo.duration,
                                 type: 'yt',
                             }
-                            console.log(queueItem);
-                            this.db.addQueueItem(queueItem)
+                            self.db.addQueueItem(queueItem)
                                 .then(data => {
                                     resolve({
                                         isPlay: true,

@@ -50,7 +50,7 @@ body {
 }
 
 .bg-dark {
-    background-color: #484577!important;
+    background-color: #212121!important;
 }
 
 .bg-bright {
@@ -103,6 +103,42 @@ nav {
   max-height: 60px;
 }
 
+.profile {
+    height: 99px;
+}
+
+
+.profile .logout {
+    border-left: 1px solid #b0aba0;
+    font-size: 20px;
+    background-color: #424242;
+    padding-top: 15px;
+    padding-left: 1vw;
+}
+
+.profile .logout a {
+    color: #aaa;
+}
+
+.profile .logout .version {
+    font-size: 10px;
+    display: block;
+    position: absolute;
+    bottom: 0px;
+}
+
+.profile .logout a:hover {
+    color: #b0aba0;
+}
+
+.profile .profilePic {
+    padding-top: 15px;
+}
+
+.profile .userName {
+    padding-top: 15px;
+}
+
 .nothing-playing {
     font-size: 24px;
     margin: 0 auto;
@@ -117,7 +153,15 @@ nav {
     padding: 0px;
 }
 #sendMessageInput {
-	display: inline-block;
+    display: inline-block;
+    background-color: transparent;
+    border-radius: 0px;
+    height: 30px;
+}
+
+#sendMessageButton {
+    width: 100%;
+    border-radius: 0px;
 }
 
 .container-fluid {
@@ -152,6 +196,7 @@ nav {
 .dj .row.info {
   flex: 1 1 40px;
   background-color: #36393e;
+  background-image: linear-gradient(to bottom, #51545b, #484b51, #404248, #37393f, #2f3136);
 }
 
 .row.info {
@@ -177,6 +222,20 @@ nav {
 .chat {
     margin-bottom: 37px;
 }
+
+.chat .userName {
+    min-height: 10vh;
+}
+
+.chat .messageInput input {
+    min-height: 10vh;
+}
+
+.chat .sendButton button {
+    min-height: 10vh;
+}
+
+
 .chatRoom {
     background-color: #2f3136;
     padding-left: 0px;
@@ -195,13 +254,11 @@ nav {
 
 .chatFooter {
     max-height: 15%;
-    padding-left: 10px;
-    padding-right: 10px;
-    margin-top: 3vh;
+    border-top: 1px solid #ffffff;
+    padding-top: 3vh;
 }
 
 .roomInfo {
-    margin-top: 60px;
     text-align: center;
     font-size: 12px;
     color: #aaa;
@@ -313,7 +370,7 @@ p.time {
     background-color: #2f3136;
 }
 .progress-bar {
-    background-color: rgba(79,84,92,.6);
+    background-color: rgba(255, 255, 255, 0.6);
 }
 
 .progress.timeRemainingBar {
@@ -323,6 +380,9 @@ p.time {
     border-right: 0px;
 }
 
+.queue {
+    background-image: linear-gradient(to bottom, #51545b, #484b51, #404248, #37393f, #2f3136);
+}
 .songQueue {
     overflow-y: auto;
 }
@@ -341,10 +401,10 @@ p.time {
     position: absolute;
     bottom: 0px;
     height: 100px;
-    border-top: solid 1px  #b0aba0;
+    border-top: solid 1px #b0aba0;
     vertical-align: text-bottom;
     width: 100%;
-    padding-top: 5%;
+    margin-top: 5%;
 }
 
 .header {

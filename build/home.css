@@ -73,10 +73,6 @@ p {
 	font-size: 22px;
 }
 
-p:hover {
-	opacity: 0.6;
-	color: #eee;
-}
 
 a:hover {
 	text-decoration: none;

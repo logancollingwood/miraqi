@@ -152,13 +152,11 @@ class DataBase {
                     roomProviderType: 'discord'
                 }).then(room => {
                     console.log(`updated room ${room._id} and added user ${user._id}`)
-                    room.update(
-                        { 'users.id': {'$ne': user._id}},
-                        {'users': {'$push': user}});
-                    resolve({
-                        user: user,
-                        room: room
-                    });
+                    Models.Room.findByIdAndUpdate(room._id, {'users': {'$push': user}},{'new': true}, function(err, room) {
+                        resolve({
+                            user: user,
+                            room: room});
+                        });
                 }).catch((err) => {
                     reject(err);
                 })
@@ -198,19 +196,16 @@ class DataBase {
 
     /**
      * 
-     * @param {url, userId, roomId} addQueueItemRequest 
+     * @param {url, userId, roomId, trackName, type, lengthSeconds} addQueueItemRequest 
      */
     addQueueItem(addQueueItemRequest) {
-        const url = addQueueItemRequest.url;
-        const userId = addQueueItemRequest.userId;
-        const roomId = addQueueItemRequest.roomId;
-        const trackName = addQueueItemRequest.trackName;
-        const type = addQueueItemRequest.type;
-        const lengthSeconds = addQueueItemRequest.lengthSeconds;
-        console.log(`adding queue item`);
-        console.log(addQueueItemRequest);
         return new Promise((resolve, reject) => {
-
+            const url = addQueueItemRequest.url;
+            const userId = addQueueItemRequest.userId;
+            const roomId = addQueueItemRequest.roomId;
+            const trackName = addQueueItemRequest.trackName;
+            const type = addQueueItemRequest.type;
+            const lengthSeconds = addQueueItemRequest.lengthSeconds;
             var queueItem = new Models.QueueItem({
                 playUrl: url,
                 userId: userId,

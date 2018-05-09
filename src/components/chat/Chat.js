@@ -1,8 +1,6 @@
 import React from "react";
-import moment from "moment";
 import ChatMessage from "./ChatMessage";
-
-let TIME_FORMAT = "MM YY / h:mm:ss a";
+import ChatInput from "./ChatInput";
 
 class Chat extends React.Component {
 	constructor(props){
@@ -10,7 +8,6 @@ class Chat extends React.Component {
 
         this.state = {
             username: '',
-            message: '',
             messages: [],
 			users: this.props.room ? this.props.room.users : [],
 			userNameEntryHidden: false,
@@ -23,23 +20,14 @@ class Chat extends React.Component {
     }
 
 	componentDidMount() {
-		this.sendMessage = ev => {
-			if (ev.charCode === 13) {
-				if(this.state.message === null || this.state.message === '' || this.props.user.username === null) return;
-					this.socket.emit('SEND_MESSAGE', {
-						author: this.props.user.id,
-						message: this.state.message,
-						timestamp: moment().format(TIME_FORMAT)
-					});
-				this.setState({message: ''});
-			}
-		}
 
 		const addMessage = data => {
 			this.setState({messages: [...this.state.messages, data]});
 		};
 
 		this.socket.on('message', function(data){
+			console.log('got message');
+			console.log(data);
 			addMessage(data);
 		});
 
@@ -86,24 +74,14 @@ class Chat extends React.Component {
 								messagesToRender
 							}
 						</div>
-						<hr />
 						<div className="chatFooter">
 
 							<div>
 								{ !this.props.loading &&
-									<div className="input-group mb-3">
-											<div className="input-group-prepend">
-												<span className="input-group-text" id="userNameLabel">{this.props.user.username}</span>
-											</div>
-										<input id="sendMessageInput" type="text" placeholder="Message" className="form-control" aria-describedby="userNameLabel" value={this.state.message} onChange={ev => this.setState({message: ev.target.value})} onKeyPress={this.sendMessage}/>
-										<span className="input-group-btn">
-											<button onClick={this.sendMessage} className="btn btn-secondary">Send</button>
-										</span>
-									</div>
+									<ChatInput user={this.props.user} socket={this.props.socket} />
 								}
 							</div>
 
-							<hr />
 							<div className="roomInfo">
 								{ this.state.users &&
 									 `${this.state.users.length} users connected to room ${this.props.room._id}`

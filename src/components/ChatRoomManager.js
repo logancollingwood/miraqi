@@ -1,5 +1,5 @@
 import React from "react";
-import Chat from "./Chat";
+import Chat from "./chat/Chat";
 import DjContainer from "./DjContainer.js";
 import Api from "../components/Api.js";
 import Guilds from "../components/Guilds.js";

@@ -7,15 +7,6 @@ class SocketSession {
         this._io = io;
     }
 
-    setUser(user) {
-        this.user = user;
-    }
-
-    setRoom(room) {
-        this.room = room;
-        this.socket.join(room._id);
-    }
-
     getUser() {
         return this.user;
     }
@@ -33,6 +24,11 @@ class SocketSession {
     emitToClient(key, data) {
         console.log(`emitting action: '${key}' to user: ${this.user._id}`)
         this._io.emit(key, data);
+    }
+
+    joinRoom(room) {
+        this.socket.join(room._id);
+        console.log(`socket joined room: ${room._id}`);
     }
 
 }
