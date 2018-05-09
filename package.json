@@ -42,8 +42,8 @@
     "youtube-info": "^1.2.0"
   },
   "scripts": {
-    "start": "cd server && npm run build && forever index.js",
-    "postinstall": "npm run build",
+    "start": "cd server && npm run start",
+    "postinstall": "npm run build && cd server && npm install",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
