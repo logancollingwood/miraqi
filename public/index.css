@@ -408,6 +408,11 @@ p.time {
     background-color: #2f3136;
 }
 
+.guildQueue .guildNoIcon {
+    font-size: 25px;
+    padding-left: 0.5vw;
+}
+
 .about {
     position: absolute;
     bottom: 0px;

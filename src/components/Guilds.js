@@ -11,15 +11,18 @@ class Guilds extends React.Component {
 
     render() {
         let guildsList;
-        let currentRoomId = this.props.currentRoom != null ? this.props.currentRoom.id : -1;
+        let currentRoomId = this.props.currentRoom != null ? this.props.currentRoom.roomProviderId : -1;
         console.log(`currentRoomId: ${currentRoomId}`);
         if (this.props.user) {
             guildsList = this.props.user.guilds.slice(0).map((guild, i) => 
-                // {`row listItem ${currentRoomId === guild.id ? 'active' : ''}`}
-                <li className={`row listItem ${i == 0 ? 'active' : ''}`} key={i}>
+                <li className={`row listItem ${currentRoomId == guild.id ? 'active' : ''}`} key={i}>
                     <div className="col-md-2">
                         <div className="name"> 
-                            <img src={`https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png`} />
+                            { guild.icon ? 
+                                <img src={`https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png`} />
+                                :
+                                <div className="guildNoIcon"> {guild.name.charAt(0)} </div>
+                            }
                         </div>
                     </div>
                     <div className="col-md-9">
