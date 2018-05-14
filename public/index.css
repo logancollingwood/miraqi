@@ -140,10 +140,21 @@ nav {
 }
 
 .nothing-playing {
+    background-image: url(http://www.pngmart.com/files/3/Play-Button-PNG-Picture.png);
+    background-size: cover;
+    background-size: 50%;
+    background-repeat: no-repeat;
+    background-position-x: 50%;
+    background-position-y: 50%;
+}
+
+.nothing {
     font-size: 24px;
-    margin: 0 auto;
-    color: #fff;
-    padding-top: 20vh;
+    padding-top: 23vh;
+    color: #424242;
+    padding-left: 26vw;
+    width: 100%;
+    z-index: 3;
 }
 
 .hidden {

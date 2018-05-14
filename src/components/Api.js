@@ -23,4 +23,4 @@ let API = {
     }
 }
 
-module.exports = API;
+export default API;

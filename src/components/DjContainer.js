@@ -2,7 +2,8 @@ import React from "react";
 import ReactPlayer from "react-player";
 import DjQueue from "./DjQueue";
 import Api from "../components/Api.js";
-
+import moment from "moment";
+import { create } from "domain";
 
 function secondsToString(seconds) {
 	return {
@@ -15,9 +16,30 @@ function secondsToString(seconds) {
 }
 
 class DjContainer extends React.Component {
+	playMessage = data => {
+		// hack to check if data is not {}
+		if (!(Object.keys(data).length === 0 && data.constructor === Object)) {
+			let createdDate = moment(data.createdAt);
+			// const secondsElapsed = ((new Date().getSeconds() - createdDate.seconds()));
+			const secondsElapsed = moment().diff(createdDate, 'seconds');
+			if (secondsElapsed < data.lengthSeconds) {
+				this.setState({
+					playing: true,
+					nowPlaying: {
+						url: data.playUrl
+					}
+				}, () => {
+					console.log(`seeking to ${secondsElapsed}`);
+					this.player.seekTo(secondsElapsed);
+				});
+			}
+			return;
+		}
+	}
 
 	constructor(props) {
 		super(props);
+		let self = this;
 
 		let nowPlayingUrl = 'https://www.youtube.com/watch?v=R0rKB_bsUNg';
 		const room = this.props.room ? this.props.room :  null;
@@ -26,10 +48,7 @@ class DjContainer extends React.Component {
 		}
 
 		this.state = {
-			nowPlaying: {
-				currentlyPlayingId: null,
-				url: nowPlayingUrl
-			},
+			nowPlaying: null,
 			secondsPlayed: 0,
 			songPlayed: 0, // the amount in seconds that the song has progressed
 			songLength: 0, // the length of the song in seconds
@@ -40,21 +59,23 @@ class DjContainer extends React.Component {
 
 		this.socket = this.props.socket;
 
-		const playMessage = data => {
-			this.setState({
-				playing: true,
-				nowPlaying: {
-					url: data
-				}
-			});
-		}
-
 		this.socket.on('play', function (data) {
 			console.log("PLAYING ");
 			console.log(data);
-			playMessage(data);
+			self.playMessage(data);
 		});
 
+		this.socket.on('nowPlaying', function(data) {
+			console.log('got nowPlaying');
+			console.log(data);
+			self.playMessage(data);
+		});
+	}
+
+	componentDidUpdate() {
+		if (!(this.player === undefined || this.player === null)) {
+			this.player.seekTo(this.state.nowPlaying)
+		}
 	}
 
 	getNowPlayingUrl(optionalRoom) {
@@ -67,15 +88,20 @@ class DjContainer extends React.Component {
 	}
 
 	onProgress(status) {
-		let secondsPlayed = secondsToString(status.playedSeconds.toFixed(0));
-		let secondsPlayedString = secondsPlayed.numseconds + "s";
-		if (secondsPlayed.numminutes > 0) {
-			secondsPlayedString = secondsPlayed.numminutes + "m" + secondsPlayedString;
+		console.log('onProgress');
+		console.log(status);
+		if (status.played !== NaN) {
+			console.log(status.played);
+			let secondsPlayed = secondsToString(status.playedSeconds);
+			let secondsPlayedString = secondsPlayed.numseconds + "s";
+			if (secondsPlayed.numminutes > 0) {
+				secondsPlayedString = secondsPlayed.numminutes + "m" + secondsPlayedString;
+			}
+			this.setState({
+				secondsPlayed: secondsPlayedString,
+				songPlayed: status.playedSeconds
+			});
 		}
-		this.setState({
-			secondsPlayed: secondsPlayedString,
-			songPlayed: status.playedSeconds
-		});
 	}
 
 	onDuration(seconds) {
@@ -101,49 +127,36 @@ class DjContainer extends React.Component {
 	}
 
 	render() {
-		if (this.props.loading) {
-			return (
-				<div className="col-md-8 youtubeContainer">
-					<div className="loading">Loading...</div>
-				</div>
-			)
-		}
 
 		const timeRemainingStyle = {
 			width: (this.state.songPlayed / this.state.songLength) * 100 + '%'
 		}
-		
-		// let nowPlayingUrl = null;
-		// const room = this.state.nowPlaying.url ? this.props.room :  null;
-		// if (room) {
-		// 	let nowPlaying = room.queue ? room.queue[0] : null;
-		// 	if (nowPlaying) {
-		// 		nowPlayingUrl = nowPlaying.playUrl;
-		// 	}
-		// }
 
-		const playerOrNothing = this.state.nowPlaying.url ?
-			<ReactPlayer ref={(input) => { this.playerElement = input; }}
-						controls={false}
-						playing={false}
-						className="youtubeEmbed"
-						volume={this.state.volume}
-						url={this.state.nowPlaying.url}
-						onProgress={this.onProgress.bind(this)}
-						onDuration={this.onDuration.bind(this)}
-						onPause={this.onPause.bind(this)}
-						onEnded={this.onEnded.bind(this)}
-						height='50vh'
-						width='100%' />
+		console.log(this.state.nowPlaying);
+		const playerOrNothing = this.state.nowPlaying ?
+				<div className="row video">
+					<ReactPlayer ref={(input) => { this.player = input; }}
+								controls={false}
+								playing={this.state.playing}
+								className="youtubeEmbed"
+								volume={this.state.volume}
+								url={this.state.nowPlaying.url}
+								onProgress={this.onProgress.bind(this)}
+								onDuration={this.onDuration.bind(this)}
+								onPause={this.onPause.bind(this)}
+								onEnded={this.onEnded.bind(this)}
+								height='50vh'
+								width='100%' />
+				</div>
 			: 
-				<div className="nothing-playing"> Nothing playing </div>
+				<div className="row video nothing-playing">
+					<div className="nothing"> Nothing playing </div>
+				</div>
 			;
 		let queue = this.props.room ? this.props.room.queue : null;
 		return (
 			<div className="dj">
-				<div className="row video">
-					{ playerOrNothing }
-				</div>
+				{ playerOrNothing }
 				<div className="row time">
 					<div className="progress position-relative timeRemainingBar">
 						<div className="progress-bar" role="progressbar" style={timeRemainingStyle} aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>

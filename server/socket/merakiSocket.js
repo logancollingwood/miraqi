@@ -86,7 +86,7 @@ function setup(io, database, sessionStore) {
                 .then(user => {
                     return API.addUserToRoom(user._id, roomId);
                 })
-                .then(({user, room}) => {
+                .then(({user, room, nowPlaying}) => {
                     console.log(user);
                     console.log(room);
                     socketSession.room = room;
@@ -98,6 +98,7 @@ function setup(io, database, sessionStore) {
                     }
                     socketSession.joinRoom(room);
                     socketSession.emitToClient('room', room);
+                    socketSession.emitToClient('nowPlaying', nowPlaying);
                     socketSession.emitToRoom('message', broadcastMessage);
                     socketSession.emitToRoom('users', room.users);
                 });
