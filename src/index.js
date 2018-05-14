@@ -11,8 +11,7 @@ render((
 	<BrowserRouter>
       	<Switch>
         	<Route exact path="/" component={Home}/>
-			<Route exact path="/rooms/" component={RoomCreate}/>
-        	<Route path="/rooms/:id" component={Room}/>
+        	<Route path="/rooms/discord/:id" component={Room}/>
 			<Route path="/home" component={Profile} />
     	</Switch>
 	</BrowserRouter>

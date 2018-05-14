@@ -27,7 +27,7 @@ class Guilds extends React.Component {
                     </div>
                     <div className="col-md-9">
                         <div className="type">
-                            <a href={`/rooms/${guild.id}`}>{guild.name}</a>
+                            <a href={`/rooms/discord/${guild.id}`}>{guild.name}</a>
                         </div>
                     </div>
                 </li>
@@ -36,7 +36,7 @@ class Guilds extends React.Component {
         
         if (this.props.loading) {
             return (
-                <div className="guildQueue">
+                <div className="guildQueue left-half">
                     <div className="header">
                          Guilds loading ...
                     </div>

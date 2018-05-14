@@ -22,7 +22,7 @@ class UserProfile extends Component {
             <div className="col-md-4 no-padding userName">
               <p className='name'>{this.props.user.username}</p>
             </div>
-            <div className="col-md-4 no-padding logout">
+            <div className="col-md-4 no-padding logout left-half">
                 <a href={Config.WEB_HOST + "auth/logout"}> logout </a>
                 <p className="version"> v 1.0 </p>
             </div>
