@@ -3,6 +3,7 @@ const QueueHandler = require('./handler/queueHandler.js');
 const moment = require('moment');
 
 const MerakiApi = require("../controllers/MerakiApi");
+const DJ = require('../controllers/Dj');
 const SocketSession = require("./socketSession");
 const { WebAuth, SocketAuth } = require('../auth/MerakiAuth.js');
 
@@ -21,33 +22,38 @@ function setup(io, database, sessionStore) {
     io.on('connection', (socket) => {
         let user = socket.request.user;
         const db = new DataBase(database);
-        const API = new MerakiApi(db);
         socketLog('socketId: ' + socket.id + ' connected.');
         const queueHandler = new QueueHandler(socket);
         const socketSession = new SocketSession(io, socket);
+        const API = new MerakiApi(db, socketSession);
+        const dj = new DJ(socketSession, db);
 
         socket.on('SEND_MESSAGE', function (data) {
             const message = data.message;
-            console.log(socketSession);
             API.sendMessageToRoom(socketSession.room._id, socketSession.user._id, message)
                 .then(data => {
+                    let broadcastMessage = null;
                     if (data.isPlay) {
-                        if (data.first) {
-                            socketSession.emitToRoom('play', data.playUrl);
+                        console.log(data.queue);
+                        dj.addQueueItem(data.queueItem, data.queue);
+                        broadcastMessage = {
+                            serverMessage: true,
+                            author: socketSession.user.profile.username,
+                            message: `queued up ${data.queueItem.trackName}`,
+                            timestamp: moment().format(TIME_FORMAT)
                         }
-                        socketSession.emitToRoom('new queue', data.queue);
                     } else {
                         console.log('username:' + socketSession.user.profile.username);
-                        var broadcastMessage = {
+                        broadcastMessage = {
                             serverMessage: false,
                             author: socketSession.user.profile.username,
                             message: message,
                             timestamp: moment().format(TIME_FORMAT)
                         }
-                        socketSession.emitToRoom('message', broadcastMessage);
                     }
+                    socketSession.emitToRoom('message', broadcastMessage);
                 })
-                .catch(error => { });
+                .catch(error => { console.error(error)});
 
         });
 
@@ -76,6 +82,11 @@ function setup(io, database, sessionStore) {
         socket.on('join', function(data) {
             const roomId = data.roomId;
             if (roomId === null || roomId === undefined || roomId === '') {
+                return;
+            }
+            if (user.logged_in === false) {
+                console.log(`emitting notauth`);
+                socketSession.emitToClient('notauth', null);
                 return;
             }
             console.log(`got join request from ${roomId} user: ${user.profile.username}`)

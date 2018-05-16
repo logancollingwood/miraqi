@@ -1,4 +1,5 @@
 import React from "react";
+import { Redirect } from "react-router";
 import Chat from "./chat/Chat";
 import DjContainer from "./DjContainer.js";
 import Api from "../components/Api.js";
@@ -12,6 +13,7 @@ class ChatRoomManager extends React.Component {
 		console.log(this.props);
 		this.state = {
 			loading: true,
+			redirect: null,
 			room: null,
 			user: null,
 		}
@@ -32,11 +34,26 @@ class ChatRoomManager extends React.Component {
 			console.log(data);
 			updateRoom(data);
 		});
+
+		const notAuthorized = () => {
+			this.setState({
+				redirect: '/login/discord'
+			})
+		}
+		this.socket.on('notauth', function(data) {
+			notAuthorized();
+		});
 		this.requestUser();
 	}
 
 
     render() {
+		if (this.state.redirect) {
+			console.log(`redirecting to : ${this.state.redirect}`);
+			return (
+				<Redirect to={this.state.redirect} />
+			)
+		}
         return (
 			<div className="container-fluid">
 				<div className="row justify-content-center main-content">

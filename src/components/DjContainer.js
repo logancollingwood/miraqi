@@ -26,11 +26,10 @@ class DjContainer extends React.Component {
 				this.setState({
 					playing: true,
 					nowPlaying: {
-						url: data.playUrl
+						url: data.playUrl,
+						secondsElapsed: secondsElapsed,
+						seeking: true
 					}
-				}, () => {
-					console.log(`seeking to ${secondsElapsed}`);
-					this.player.seekTo(secondsElapsed);
 				});
 			}
 			return;
@@ -73,8 +72,11 @@ class DjContainer extends React.Component {
 	}
 
 	componentDidUpdate() {
-		if (!(this.player === undefined || this.player === null)) {
-			this.player.seekTo(this.state.nowPlaying)
+		if (!(this.player === undefined || this.player === null) && this.state.seeking) {
+			this.player.seekTo(this.state.nowPlaying.secondsElapsed);
+			this.setState({
+				seeking: false
+			});
 		}
 	}
 
@@ -88,11 +90,9 @@ class DjContainer extends React.Component {
 	}
 
 	onProgress(status) {
-		console.log('onProgress');
-		console.log(status);
-		if (status.played !== NaN) {
+		if (status.loaded != 0) {
 			console.log(status.played);
-			let secondsPlayed = secondsToString(status.playedSeconds);
+			let secondsPlayed = secondsToString(status.playedSeconds.toFixed(0));
 			let secondsPlayedString = secondsPlayed.numseconds + "s";
 			if (secondsPlayed.numminutes > 0) {
 				secondsPlayedString = secondsPlayed.numminutes + "m" + secondsPlayedString;
@@ -132,7 +132,6 @@ class DjContainer extends React.Component {
 			width: (this.state.songPlayed / this.state.songLength) * 100 + '%'
 		}
 
-		console.log(this.state.nowPlaying);
 		const playerOrNothing = this.state.nowPlaying ?
 				<div className="row video">
 					<ReactPlayer ref={(input) => { this.player = input; }}

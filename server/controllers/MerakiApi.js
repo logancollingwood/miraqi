@@ -1,13 +1,19 @@
 const fetchVideoInfo = require('youtube-info');
-const dj = require('./Dj.js');
 const TIME_FORMAT = "MM YY / h:mm:ss a";
 const QueueUtil = require('./QueueUtil.js');
+
+
+function ytVidId(url) {
+    var p = /^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
+    return (url.match(p)) ? RegExp.$1 : false;
+}
 
 class MerakiApi {
 
 
-    constructor(db) {
+    constructor(db, socketSession) {
         this.db = db;
+        this.socketSession = socketSession;
     }
 
     getOrCreateUser(userName, profile, loginProviderType) {
@@ -58,7 +64,7 @@ class MerakiApi {
 
             if (isPlayCommand) {
                 const playUrl = message.split(" ")[1];
-                const vidId = dj.ytVidId(playUrl);
+                const vidId = ytVidId(playUrl);
                 if (vidId) {
                     if (roomId && userId) {
                         fetchVideoInfo(vidId, function (err, videoInfo) {
@@ -76,7 +82,7 @@ class MerakiApi {
                                     resolve({
                                         isPlay: true,
                                         first: data.isFirstSong,
-                                        playUrl: playUrl,
+                                        queueItem: queueItem,
                                         queue: data.queue,
                                     })
                                 })

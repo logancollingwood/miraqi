@@ -33,6 +33,7 @@
   },
   "scripts": {
     "start": "cd server && npm run start",
+    "dev-start": "react-scripts start",
     "postinstall": "npm run build && cd server && npm install",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",

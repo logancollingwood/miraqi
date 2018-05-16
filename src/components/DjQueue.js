@@ -11,6 +11,8 @@ class DjQueue extends React.Component {
         this.socket = this.props.socket;
         
         const newQueue = queue => {
+            console.log('updating queue to:')
+            console.log(queue);
 			this.setState({queue: queue});
 		};
         this.socket.on('queue', function(queue){
@@ -22,8 +24,8 @@ class DjQueue extends React.Component {
 
     render() {
         let queueList;
-        if (this.props.queue) {
-            queueList = this.props.queue.slice(0).map((queueItem, i) =>
+        if (this.state.queue) {
+            queueList = this.state.queue.slice(0).map((queueItem, i) =>
                 <li className="row queueItem" key={i}>
                     <div className="col-md-8">
                         <div className="name"> {queueItem.trackName} </div>

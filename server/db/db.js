@@ -153,6 +153,7 @@ class DataBase {
                 }).then(room => {
                     console.log(`updated room ${room._id} and added user ${user._id}`)
                     Models.Room.findByIdAndUpdate(room._id, {'users': {'$push': user}},{'new': true}, function(err, room) {
+                        console.log(`updated room id ${room._id}`);
                         resolve({
                             user: user,
                             room: room});
@@ -219,7 +220,6 @@ class DataBase {
                 { new: true },
                 function (err, model) {
                     if (err) reject(err);
-                    console.log(model);
                     const firstQueueItem = model.queue.length > 0 ?
                         model.queue[0] : null;
                     let isFirstSong = model.queue.length == 1;
@@ -255,6 +255,36 @@ class DataBase {
                     });
                 }
             );
+        });
+    }
+
+    popQueue(roomId) {
+        return new Promise((resolve, reject) => {
+            console.log(`popping queue with roomId:${roomId}`);
+            Models.Room.findById(roomId, function (err, room) {
+                console.log(err);
+                if (err) {
+                    reject(err);
+                }
+
+                if (!room) {
+                    console.log('uh oh, no room found');
+                }
+
+                const queue = room.queue;
+                if (queue.length === 0) resolve({queue: queue});
+                console.log(queue);
+
+                let queueItem = queue.shift();
+
+                room.save()
+                    .then(room => {
+                        resolve({queueItem: queueItem});
+                    })
+                    .catch(error => {
+                        reject(error);
+                    })
+            })
         });
     }
 
