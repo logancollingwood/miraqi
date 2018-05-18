@@ -19,7 +19,11 @@ class DjQueue extends React.Component {
             console.log('got new queue');
             console.log(queue);
 			newQueue(queue);
-		});
+        });
+        
+        this.socket.on('no_queue', function() {
+            newQueue([]);
+        })
     }
 
     render() {

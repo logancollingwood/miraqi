@@ -97,6 +97,18 @@ class MerakiApi {
         });
     }
 
+    getNextTrack(roomId) {
+        return new Promsise((resolve, reject) => {
+            this.db.getFirstQueueItem(roomId)
+                .then(queueItem => {
+                    
+                })
+                .catch(error => {
+                    reject(error);
+                })
+        });
+    }
+
 
     removeUserFromRoom(userId, roomId) {
         return new Promise((resolve, reject) => {

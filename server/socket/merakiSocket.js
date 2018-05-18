@@ -19,10 +19,15 @@ function setup(io, database, sessionStore) {
 
     SocketAuth(io, sessionStore);
 
+    let numUsers = 0;
+    let numberOfUsersWhoFinishedSong = 0;
+
     io.on('connection', (socket) => {
+        numUsers++;
         let user = socket.request.user;
         const db = new DataBase(database);
         socketLog('socketId: ' + socket.id + ' connected.');
+        console.log(`got connect. Number of users here: ${numUsers}`);
         const queueHandler = new QueueHandler(socket);
         const socketSession = new SocketSession(io, socket);
         const API = new MerakiApi(db, socketSession);
@@ -43,7 +48,6 @@ function setup(io, database, sessionStore) {
                             timestamp: moment().format(TIME_FORMAT)
                         }
                     } else {
-                        console.log('username:' + socketSession.user.profile.username);
                         broadcastMessage = {
                             serverMessage: false,
                             author: socketSession.user.profile.username,
@@ -57,12 +61,25 @@ function setup(io, database, sessionStore) {
 
         });
 
+
+        socket.on('next_track', function(data) {
+            numberOfUsersWhoFinishedSong++;
+            let readyToRemoveFromQueueAndPlay = 
+                numUsers == numberOfUsersWhoFinishedSong;
+            console.log(`numUsers: ${numUsers}, number who finished song: ${numberOfUsersWhoFinishedSong}, so readyToQueue is: ${readyToRemoveFromQueueAndPlay}`);
+            if (readyToRemoveFromQueueAndPlay) {
+                dj.handleNextTrack()
+                numberOfUsersWhoFinishedSong = 0;
+            }
+        });
+
         socket.on('subscribe', function (data) {
             console.log('got subscribe');
         })
 
         socket.on('disconnect', function () {
-           console.log('got disconnect');
+           numUsers--;
+           console.log(`got disconnect. Number of users remaining: ${numUsers}`);
         });
 
 

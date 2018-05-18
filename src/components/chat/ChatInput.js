@@ -25,7 +25,6 @@ class ChatInput extends React.Component {
         }
 
         this.enterKey = ev => {
-            console.log('hit send');
 			if (ev.charCode === 13) {
 				this.processSend();
 			}

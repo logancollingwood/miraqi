@@ -13,9 +13,8 @@ class Dj {
         return (url.match(p)) ? RegExp.$1 : false;
     }
 
-    
     processQueue(db, socketSession) {
-        db.popQueue(socketSession.room._id)
+        db.getNextQueueItem(socketSession.room._id)
             .then(data => {
                 console.log(data);
                 let queueItem = data.queueItem;
@@ -33,16 +32,56 @@ class Dj {
         console.log(`is first: ${isFirst}`);
         // We only need to add the song on the first 
         if (isFirst) {
-            this.addFirstQueueItem(queueItem, currentQueue);
+            this.addFirstQueueItem(this.db, this.socketSession);
             this.socketSession.emitToRoom('queue', currentQueue.splice(0));
         } else {
             this.socketSession.emitToRoom('queue', currentQueue);
         }
     }
 
-    addFirstQueueItem(queueItem, currentQueue) {
-        this.intervalId = setTimeout(this.processQueue, 0, this.db, this.socketSession);
-        console.log(`processing queue on interval: ${this.intervalId}`);
+    /**
+     * Handler called when all users in the room have requested the next track via the onEnd event
+     * 
+     * Will pop the song off the current queue, and issue a play event for the new queueItem
+     * 
+     */
+    handleNextTrack() {
+        this.db.popAndGetNextQueueItem(this.socketSession.room._id)
+            .then((data) => {
+                // There was nothing left in the queue
+                if(data === null) {
+                    this.socketSession.emitToRoom('no_queue');
+                    return;
+                }
+                let queueItem = data.queueItem;
+                let leftOverQueue = data.queue;
+                console.log(`got data back from db`);
+                console.log(queueItem);
+                console.log(leftOverQueue);
+                
+                // if we popped the last item (the leftOverQueue was null), then the queue is just the currently playing track
+                if (leftOverQueue.length == 0) {
+                    leftOverQueue.push(queueItem);
+                }
+                
+                this.socketSession.emitToRoom('play', queueItem);
+                this.socketSession.emitToRoom('queue', leftOverQueue);
+             })
+            .catch(err => {
+                console.log('Unable to get next queue item from the db');
+            })
+    }
+
+    addFirstQueueItem(db, socketSession) {
+        db.getNextQueueItem(socketSession.room._id)
+            .then(queueItem => {
+                console.log(`processed queueItem and playing url: ${queueItem.playUrl}`);
+                socketSession.emitToRoom('play', queueItem);
+            })
+            .catch(error => {
+                console.log(`error processing next queue item `);
+                console.error(error);
+            })
     }
 
 }

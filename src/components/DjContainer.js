@@ -17,23 +17,15 @@ function secondsToString(seconds) {
 
 class DjContainer extends React.Component {
 	playMessage = data => {
-		// hack to check if data is not {}
-		if (!(Object.keys(data).length === 0 && data.constructor === Object)) {
-			let createdDate = moment(data.createdAt);
-			// const secondsElapsed = ((new Date().getSeconds() - createdDate.seconds()));
-			const secondsElapsed = moment().diff(createdDate, 'seconds');
-			if (secondsElapsed < data.lengthSeconds) {
-				this.setState({
-					playing: true,
-					nowPlaying: {
-						url: data.playUrl,
-						secondsElapsed: secondsElapsed,
-						seeking: true
-					}
-				});
+		this.setState({
+			playing: true,
+			nowPlaying: {
+				url: data.playUrl,
+				secondsElapsed: 0,
+				seeking: false
 			}
-			return;
-		}
+		});
+		
 	}
 
 	constructor(props) {
@@ -69,6 +61,15 @@ class DjContainer extends React.Component {
 			console.log(data);
 			self.playMessage(data);
 		});
+		
+		this.socket.on('no_queue', function() {
+			console.log('no_queue');
+			self.setState({
+				nowPlaying: null,
+				songPlayed: 0,
+				songLength: 0,
+			});
+		});
 	}
 
 	componentDidUpdate() {
@@ -91,7 +92,6 @@ class DjContainer extends React.Component {
 
 	onProgress(status) {
 		if (status.loaded != 0) {
-			console.log(status.played);
 			let secondsPlayed = secondsToString(status.playedSeconds.toFixed(0));
 			let secondsPlayedString = secondsPlayed.numseconds + "s";
 			if (secondsPlayed.numminutes > 0) {
@@ -123,13 +123,13 @@ class DjContainer extends React.Component {
 	}
 
 	onEnded() {
-		this.socket.emit('get next track', {});
+		this.socket.emit('next_track', {});
 	}
 
 	render() {
 
 		const timeRemainingStyle = {
-			width: (this.state.songPlayed / this.state.songLength) * 100 + '%'
+			width: this.state.nowPlaying ? (this.state.songPlayed / this.state.songLength) * 100 + '%' : 0
 		}
 
 		const playerOrNothing = this.state.nowPlaying ?

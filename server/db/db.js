@@ -51,7 +51,6 @@ class DataBase {
                         profile: profile
                     });
                 } else {
-                    console.log('user already exists');
                     user = result;
                     user.lastLogin = new Date();
                 }
@@ -145,7 +144,6 @@ class DataBase {
                 if (user == null) {
                     reject(`No user found with id ${userId}`);
                 }
-                console.log(`found user ${user._id}`);
                 self.createRoom({
                     name: 'test',
                     roomProviderId: roomId,
@@ -153,7 +151,6 @@ class DataBase {
                 }).then(room => {
                     console.log(`updated room ${room._id} and added user ${user._id}`)
                     Models.Room.findByIdAndUpdate(room._id, {'users': {'$push': user}},{'new': true}, function(err, room) {
-                        console.log(`updated room id ${room._id}`);
                         resolve({
                             user: user,
                             room: room});
@@ -258,11 +255,15 @@ class DataBase {
         });
     }
 
-    popQueue(roomId) {
+    /**
+     * Returns the top of the queue and
+     *   then permanently removes the item from the queue.
+     * @param {*} roomId 
+     */
+    popAndGetNextQueueItem(roomId) {
         return new Promise((resolve, reject) => {
-            console.log(`popping queue with roomId:${roomId}`);
+            console.log(`grabbing and popping next queue with roomId:${roomId}`);
             Models.Room.findById(roomId, function (err, room) {
-                console.log(err);
                 if (err) {
                     reject(err);
                 }
@@ -272,19 +273,54 @@ class DataBase {
                 }
 
                 const queue = room.queue;
+                // if queue is empty, return empty queue
                 if (queue.length === 0) resolve({queue: queue});
-                console.log(queue);
-
-                let queueItem = queue.shift();
-
+               
+                // Pop the queue, and then save the room
+                queue.shift();
+               
                 room.save()
                     .then(room => {
-                        resolve({queueItem: queueItem});
-                    })
+                        // The queueItem we want is now on top
+                        let queueItem = room.queue.shift();
+                        if (queueItem === undefined) {
+                            resolve(null);
+                        }
+                        resolve({queueItem: queueItem, queue: room.queue});
+                    })  
                     .catch(error => {
-                        reject(error);
-                    })
-            })
+                        console.log(`unable to pop top of room queue on db`);
+                    });                
+
+
+            });
+        });
+    }
+
+
+    /**
+     * Simply returns the top of the queue
+     * @param {the roomId of the room to grab the top of the queue for} roomId 
+     */
+    getNextQueueItem(roomId) {
+        return new Promise((resolve, reject) => {
+            console.log(`grabbing next queue with roomId:${roomId}`);
+            Models.Room.findById(roomId, function (err, room) {
+                if (err) {
+                    reject(err);
+                }
+
+                if (!room) {
+                    console.log('uh oh, no room found');
+                }
+
+                const queue = room.queue;
+                // if queue is empty, return empty queue
+                if (queue.length === 0) resolve({queue: queue});
+
+                let queueItem = queue.shift();
+                resolve(queueItem);
+            });
         });
     }
 
