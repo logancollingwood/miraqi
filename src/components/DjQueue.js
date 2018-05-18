@@ -6,7 +6,8 @@ class DjQueue extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            queue: this.props.queue
+            queue: this.props.queue,
+            skipping: false
         }
         this.socket = this.props.socket;
         
@@ -14,7 +15,14 @@ class DjQueue extends React.Component {
             console.log('updating queue to:')
             console.log(queue);
 			this.setState({queue: queue});
-		};
+        };
+
+        const resetSkip = () => {
+            this.setState({
+                skipping: false
+            })
+        }
+        
         this.socket.on('queue', function(queue){
             console.log('got new queue');
             console.log(queue);
@@ -23,7 +31,21 @@ class DjQueue extends React.Component {
         
         this.socket.on('no_queue', function() {
             newQueue([]);
-        })
+        });
+        
+        this.socket.on('play', function (data) {
+			resetSkip();
+        });
+        
+        this.skip = () => {
+            console.log('skip click');
+            // don't force re-render if already skipping
+            if (this.state.skipping) return;
+            this.socket.emit('skip_track', {});
+            this.setState({
+                skipping: true,
+            });
+        }
     }
 
     render() {
@@ -44,11 +66,20 @@ class DjQueue extends React.Component {
                 </li>);
         }
 
+        let skipOrNot = this.state.skipping ? 
+                <i className="fas fa-check"></i> 
+            :
+                <i className="fas fa-arrow-right" onClick={this.skip}></i>;
+
         return (
             <div className="DjQueue">
                 <div className="header">
                     On Deck
+                    <div className="skip" >
+                        {skipOrNot}
+                    </div>
                 </div>
+
                 <ul className="songQueue">
                     {queueList}
                 </ul>

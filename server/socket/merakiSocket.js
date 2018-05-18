@@ -14,6 +14,7 @@ function ytVidId(url) {
 }
 
 let users = [];
+const SKIP_VOTE_PERCENT = 75;
 
 function setup(io, database, sessionStore) {
 
@@ -21,13 +22,12 @@ function setup(io, database, sessionStore) {
 
     let numUsers = 0;
     let numberOfUsersWhoFinishedSong = 0;
+    let numberOfUsersWhoVoteToSkip = 0;
 
     io.on('connection', (socket) => {
-        numUsers++;
         let user = socket.request.user;
         const db = new DataBase(database);
         socketLog('socketId: ' + socket.id + ' connected.');
-        console.log(`got connect. Number of users here: ${numUsers}`);
         const queueHandler = new QueueHandler(socket);
         const socketSession = new SocketSession(io, socket);
         const API = new MerakiApi(db, socketSession);
@@ -61,6 +61,16 @@ function setup(io, database, sessionStore) {
 
         });
 
+        socket.on('skip_track', function(data) {
+            numberOfUsersWhoVoteToSkip++;
+            let readyToSkip = 
+                ((numberOfUsersWhoVoteToSkip / numUsers) * 100) > SKIP_VOTE_PERCENT;
+                console.log(`numUsers: ${numUsers}, number who skipped song: ${numberOfUsersWhoVoteToSkip}, so readyToSkip is: ${readyToSkip}`);
+                if (readyToSkip) {
+                dj.handleNextTrack()
+                numberOfUsersWhoVoteToSkip = 0;
+            }
+        });
 
         socket.on('next_track', function(data) {
             numberOfUsersWhoFinishedSong++;
@@ -124,6 +134,8 @@ function setup(io, database, sessionStore) {
                         author: socketSession.user.profile.username,
                         message: "has joined the room"
                     }
+                    numUsers++;
+                    console.log(`got connect. Number of users here: ${numUsers}`);
                     socketSession.joinRoom(room);
                     socketSession.emitToClient('room', room);
                     socketSession.emitToClient('nowPlaying', nowPlaying);
