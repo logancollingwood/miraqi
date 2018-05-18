@@ -56,8 +56,6 @@ class Dj {
                 let queueItem = data.queueItem;
                 let leftOverQueue = data.queue;
                 console.log(`got data back from db`);
-                console.log(queueItem);
-                console.log(leftOverQueue);
                 
                 // if we popped the last item (the leftOverQueue was null), then the queue is just the currently playing track
                 if (leftOverQueue.length == 0) {
