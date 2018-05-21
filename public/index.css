@@ -164,6 +164,11 @@ nav {
     background-color: transparent;
     border-radius: 0px;
     height: 30px;
+    border-radius: 15px 0px 0px 15px;
+}
+.form-control:focus {
+    border-color: #72D687;
+    box-shadow: 0 0 0 0.2rem rgba(114,214,135,.25);
 }
 
 #sendMessageButton {
