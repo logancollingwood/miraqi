@@ -57,11 +57,6 @@ body {
     background-color: #BDBDBD!important;
 }
 
-#content {
-  background-color: #FFFFFF;
-  padding: 20px;
-}
-
 #footer {
   min-height: 5vh;
   background-color: #797979;
@@ -109,7 +104,8 @@ nav {
 
 
 .profile .logout {
-    border-left: 1px solid #b0aba0;
+    border-left: 1px solid #72D687;
+    border-right: 1px solid #72D687;
     font-size: 20px;
     background-color: #424242;
     padding-top: 15px;
@@ -182,7 +178,7 @@ nav {
 }
 
 .left-half {
-    border-right: 2px solid #b0aba0;
+    border-right: 2px solid #72D687;
 }
 
 .dj {
@@ -289,7 +285,7 @@ nav {
     color: #fff;
 }
 .message.server {
-	color: #67b762;
+	color: #72D687;
 }
 
 .message :not(:first-child){
@@ -311,7 +307,15 @@ nav {
 p {
 	display: inline;
 }
-
+.skip {
+    display: inline;
+    right: 5vw;
+    position: absolute;
+    color: #72D687;
+}
+.skip:hover {
+    color: #777;
+}
 .white {
 	color: #fff;
 }
@@ -370,7 +374,7 @@ p.time {
 .timeRemainingText { 
 	padding-top: 5px;
     font-family: 'Open Sans', sans-serif;
-    color: #999;
+    color: #fff;
     font-size: 12px;
     margin: 0 auto;
     width: 100%;
@@ -380,8 +384,9 @@ p.time {
     border-radius: 0px;
     background-color: #2f3136;
 }
+
 .progress-bar {
-    background-color: rgba(255, 255, 255, 0.6);
+    background-color: rgba(114,214,135, 1);
 }
 
 .progress.timeRemainingBar {
@@ -417,7 +422,7 @@ p.time {
     position: absolute;
     bottom: 0px;
     height: 100px;
-    border-top: solid 1px #b0aba0;
+    border-top: solid 1px #72D687;
     vertical-align: text-bottom;
     width: 100%;
     margin-top: 5%;

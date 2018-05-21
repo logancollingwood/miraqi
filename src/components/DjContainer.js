@@ -4,6 +4,7 @@ import DjQueue from "./DjQueue";
 import Api from "../components/Api.js";
 import moment from "moment";
 import { create } from "domain";
+import { VolumeSlider, ControlDirection } from "react-player-controls";
 
 function secondsToString(seconds) {
 	return {
@@ -70,6 +71,14 @@ class DjContainer extends React.Component {
 				songLength: 0,
 			});
 		});
+
+
+		this.handleVolumeChange = function(event) {
+			console.log(event);
+			self.setState({
+				volume: event
+			})
+		}
 	}
 
 	componentDidUpdate() {
@@ -146,6 +155,14 @@ class DjContainer extends React.Component {
 								onEnded={this.onEnded.bind(this)}
 								height='50vh'
 								width='100%' />
+					<div className="player-controls">
+						<VolumeSlider
+							direction={ControlDirection.VERTICAL}
+							volume={this.state.volume}
+							onVolumeChange={this.handleVolumeChange}
+							isEnabled={true}
+						/>
+					</div>
 				</div>
 			: 
 				<div className="row video nothing-playing">

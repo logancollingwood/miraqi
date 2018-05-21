@@ -59,9 +59,9 @@ class Dj {
                 
                 // if we popped the last item (the leftOverQueue was null), then the queue is just the currently playing track
                 if (leftOverQueue.length == 0) {
-                    leftOverQueue.push(queueItem);
+                    leftOverQueue.push({});
                 }
-                
+                console.log(leftOverQueue);
                 this.socketSession.emitToRoom('play', queueItem);
                 this.socketSession.emitToRoom('queue', leftOverQueue);
              })

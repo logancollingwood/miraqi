@@ -60,9 +60,6 @@ class Nav extends React.Component {
           <div className="collapse navbar-collapse" id="navbarNav">
 
             <ul className="navbar-nav mr-auto">
-              <li className={ "nav-item  " + (isCreate ? 'active' : '')}>
-                  <Link to="/" className="nav-link">Get a Room</Link>
-              </li>
               { authHeaderToShow }
             </ul>
             <div className="my-2 my-lg-0 white">

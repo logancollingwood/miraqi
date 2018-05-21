@@ -50,7 +50,7 @@ class DjQueue extends React.Component {
 
     render() {
         let queueList;
-        if (this.state.queue) {
+        if (this.state.queue && this.state.queue.length > 0) {
             queueList = this.state.queue.slice(0).map((queueItem, i) =>
                 <li className="row queueItem" key={i}>
                     <div className="col-md-8">

@@ -33,15 +33,13 @@ class Home extends React.Component {
     .catch(err => console.error)
   }
 
+  
+
   render() {
-    let displayDiv;
-    if (this.state.loading) {
-      displayDiv = (<FontAwesome name="spinner" pulse />);
-    } else {
-      displayDiv =  (<div>
-                      <button onClick={this.createRoom.bind(this)}><i className="fab fa-discord" /> get a room </button> 
+    let displayDiv =  (<div>
+                        <a type="button" className="btn btn-dark" href="/login/discord"><i className="fab fa-discord fa-2x"/> <p>Login</p> </a>
                     </div>);
-    }
+    
     if (this.state.redirect) {
        console.log("attempting redirect");
        return <Redirect to={'/rooms/' + this.state.redirectRoomId} />;
@@ -50,10 +48,11 @@ class Home extends React.Component {
       <div>
         <Nav isHome={true} loading={this.state.loading}/>
         <div className="container-fluid home">
-          <div className="content">
+          <section className="content banner">
             <div className="row justify-content-md-center">
-              <div className="col-8">
-                <h1 className="homeName"> eden </h1>
+              <div className="col-8 col-md-offset-2">
+                <h1 className="homeName"> miraqi </h1>
+                <p className="flavorText"> Your personalized discord media share room </p>
               </div>
             </div>
             <div className="row justify-content-md-center go">
@@ -61,7 +60,24 @@ class Home extends React.Component {
                 { displayDiv }
               </div>
             </div>
-          </div>
+            <div class="arrow-container"><div class="arrow bounce"></div></div>
+          </section>
+          <section className="content">
+            <div className="row justify-content-md-center">
+              <div className="col-8 col-md-offset-2">
+                <h1 className="homeName"> share music </h1>
+                <p className="flavorText"> Use our dj so you don't have to. No setup required, just jammin'.</p>
+              </div>
+            </div>
+            <div className="row justify-content-md-center">
+              <div className="col-8">
+                <div className="commmand">
+                 <p className="commandName"> !play </p>
+                 <p className="commandExample"> <a href="https://youtu.be/pb8vWUDEmxc"> https://youtu.be/pb8vWUDEmxc </a></p>  
+                </div>
+              </div>
+            </div>
+          </section>
         </div>
       </div>
 
