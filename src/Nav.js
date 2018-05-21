@@ -44,13 +44,13 @@ class Nav extends React.Component {
     const isLoggedIn = this.props.user != null;
 
     const authHeaderToShow = isLoggedIn ? 
-        <li className="nav-item">
+        <div>
           <a href={logoutLink} className="nav-link">Logout</a>
-        </li>
+        </div>
     : 
-        <li className="nav-item">
+        <div>
           <a href={loginLink} className="nav-link"><i className="fab fa-discord" /> Login </a>
-        </li>
+        </div>
     ;
 
     return (
@@ -60,7 +60,12 @@ class Nav extends React.Component {
           <div className="collapse navbar-collapse" id="navbarNav">
 
             <ul className="navbar-nav mr-auto">
-              { authHeaderToShow }
+              <li className="nav-item">
+                { authHeaderToShow }
+              </li>
+              <li className="nav-item">
+                <div> <a href="https://twitter.com/miraqiapp" className="nav-link"><i className="fab fa-twitter" /> bugs? </a> </div>
+              </li>
             </ul>
             <div className="my-2 my-lg-0 white">
               <p className="date"> {this.state.date} </p>
