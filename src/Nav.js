@@ -55,7 +55,7 @@ class Nav extends React.Component {
 
     return (
         <nav className="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
-		      <Link to="/" className="navbar-brand">eden</Link>
+		      <Link to="/" className="navbar-brand">miraqi.app</Link>
           
           <div className="collapse navbar-collapse" id="navbarNav">
 
