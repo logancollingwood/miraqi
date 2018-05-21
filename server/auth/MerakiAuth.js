@@ -61,7 +61,7 @@ function InitializePassportWeb(app, dbInstance, sessionStore, cookieParser) {
 
     app.get('/auth/logout', function(req, res) {
         req.logout();
-        res.redirect('http://localhost:3001/');
+        res.redirect('/');
     });
     app.get('/user/info', checkAuth, function(req, res) {
         res.json(req.user);
