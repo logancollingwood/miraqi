@@ -14,7 +14,7 @@ function ytVidId(url) {
 }
 
 let users = [];
-const SKIP_VOTE_PERCENT = 75;
+const SKIP_VOTE_PERCENT = 65;
 
 function setup(io, database, sessionStore) {
 
@@ -63,13 +63,22 @@ function setup(io, database, sessionStore) {
 
         socket.on('skip_track', function(data) {
             numberOfUsersWhoVoteToSkip++;
-            let readyToSkip = 
-                ((numberOfUsersWhoVoteToSkip / numUsers) * 100) > SKIP_VOTE_PERCENT;
-                console.log(`numUsers: ${numUsers}, number who skipped song: ${numberOfUsersWhoVoteToSkip}, so readyToSkip is: ${readyToSkip}`);
-                if (readyToSkip) {
+            let readyToSkip =  ((numberOfUsersWhoVoteToSkip / numUsers) * 100) > SKIP_VOTE_PERCENT;
+            let numUsersRequiredToSkip = Math.ceil((numUsers * SKIP_VOTE_PERCENT) / 100);
+            console.log(`numUsers: ${numUsers}, number who skipped song: ${numberOfUsersWhoVoteToSkip}, so readyToSkip is: ${readyToSkip}. ${numUsersRequiredToSkip} required to skip`);
+            var broadcastMessage = {
+                serverMessage: true,
+                author: socketSession.user.profile.username,
+                message: `voted to skip the currently playing song. ${numUsersRequiredToSkip} more votes to skip`
+            }
+            if (readyToSkip) {
                 dj.handleNextTrack()
                 numberOfUsersWhoVoteToSkip = 0;
+                broadcastMessage.message = `voted to skip the current song. Skipping now...`
+            } else {
+                broadcastMessage.message = `voted to skip the currently playing song. ${numUsersRequiredToSkip} more votes to skip`
             }
+            socketSession.emitToRoom('message', broadcastMessage);
         });
 
         socket.on('next_track', function(data) {
@@ -125,8 +134,6 @@ function setup(io, database, sessionStore) {
                     return API.addUserToRoom(user._id, roomId);
                 })
                 .then(({user, room, nowPlaying}) => {
-                    console.log(user);
-                    console.log(room);
                     socketSession.room = room;
                     socketSession.user = user;
                     var broadcastMessage = {
@@ -138,7 +145,9 @@ function setup(io, database, sessionStore) {
                     console.log(`got connect. Number of users here: ${numUsers}`);
                     socketSession.joinRoom(room);
                     socketSession.emitToClient('room', room);
-                    socketSession.emitToClient('nowPlaying', nowPlaying);
+                    if (nowPlaying !== undefined) {
+                        socketSession.emitToClient('nowPlaying', nowPlaying);
+                    }
                     socketSession.emitToRoom('message', broadcastMessage);
                     socketSession.emitToRoom('users', room.users);
                 });

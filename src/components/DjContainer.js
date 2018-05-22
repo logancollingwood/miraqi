@@ -18,15 +18,16 @@ function secondsToString(seconds) {
 
 class DjContainer extends React.Component {
 	playMessage = data => {
-		this.setState({
-			playing: true,
-			nowPlaying: {
-				url: data.playUrl,
-				secondsElapsed: 0,
-				seeking: false
-			}
-		});
-		
+		if (data != null) {
+			this.setState({
+				playing: true,
+				nowPlaying: {
+					url: data.playUrl,
+					secondsElapsed: 0,
+					seeking: false
+				}
+			});
+		}
 	}
 
 	constructor(props) {
@@ -166,7 +167,7 @@ class DjContainer extends React.Component {
 				</div>
 			: 
 				<div className="row video nothing-playing">
-					<div className="nothing"> Nothing playing </div>
+					<div className="nothing"> n / a </div>
 				</div>
 			;
 		let queue = this.props.room ? this.props.room.queue : null;

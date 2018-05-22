@@ -124,7 +124,7 @@ class MerakiApi {
         return new Promise((resolve, reject) => {
             this.db.addUserToRoom(userId, roomId)
                 .then(({user, room}) => {
-                    let nowPlaying = {};
+                    let nowPlaying;
                     if (room.queue.length > 0) {
                         nowPlaying = room.queue[0];
                     }

@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "react-router";
-import UserProfile from "./UserProfile.js";
+import GuildProfile from "./guilds/GuildProfile.js";
 
 class Guilds extends React.Component {
 
@@ -59,7 +59,7 @@ class Guilds extends React.Component {
                         {guildsList}
                     </ul>
                     <div className="about">
-                        <UserProfile user={this.props.user} />
+                        <GuildProfile user={this.props.user} />
                     </div>
                 </div>
             );

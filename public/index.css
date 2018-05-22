@@ -135,8 +135,20 @@ nav {
     padding-top: 15px;
 }
 
+.nothing-playing:before {
+    content: "\f144";
+    font-family: FontAwesome;
+    top: 0;
+    font-size: 400px;
+    color: #424242;
+    z-index: 1;
+    height: 50vh;
+    width: 100%;
+    position: absolute;
+    margin-left: 20vw;
+    margin-top: -6vh;
+}
 .nothing-playing {
-    background-image: url(http://www.pngmart.com/files/3/Play-Button-PNG-Picture.png);
     background-size: cover;
     background-size: 50%;
     background-repeat: no-repeat;
@@ -148,7 +160,7 @@ nav {
     font-size: 24px;
     padding-top: 23vh;
     color: #424242;
-    padding-left: 26vw;
+    padding-left: 27vw;
     width: 100%;
     z-index: 3;
 }
@@ -313,11 +325,12 @@ p {
 	display: inline;
 }
 .skip {
-    display: inline;
-    right: 5vw;
-    position: absolute;
     color: #72D687;
 }
+.skip p {
+    padding-left: 1vw;
+}
+
 .skip:hover {
     color: #777;
 }
@@ -494,9 +507,11 @@ p.time {
     text-align: center;
 }
 
-.DjQueue .queueHeader {
+.DjQueue .header {
     font-size: 20px;
     color: #fff;
     padding-top: 2vh;
+    padding-bottom: 2vh;
     font-family: 'Raleway';
+    border-bottom: 1px solid #72D687;
 }
