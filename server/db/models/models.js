@@ -30,6 +30,7 @@ var QueueItemSchema = new Schema({
     type: String,
     lengthSeconds: Number,
     userId: mongoose.Schema.Types.ObjectId,
+    playTime: Date,
 },
 {
     timestamps: true

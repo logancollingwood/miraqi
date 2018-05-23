@@ -209,7 +209,8 @@ class DataBase {
                 userId: userId,
                 trackName: trackName,
                 lengthSeconds: lengthSeconds,
-                type: type
+                type: type,
+                playTime: null
             });
             Models.Room.findByIdAndUpdate(
                 roomId,
@@ -223,7 +224,7 @@ class DataBase {
 
                     let timeTillPlay = 0;
                     if (!isFirstSong) {
-
+                        
                         // Sum up the length of all the songs in the queue 
                         // except the new one
                         model.queue.map((item) => {
@@ -242,14 +243,34 @@ class DataBase {
                         }
 
                         timeTillPlay -= timeSinceFirstQueueItem;
+                        resolve({
+                            queue: model.queue,
+                            isFirstSong: isFirstSong,
+                            queueItem: queueItem,
+                            timeTillPlay: timeTillPlay
+                        });
+                    } else {
+                        firstQueueItem.playTime = new Date();
+                        console.log('model');
+                        console.log(model);
+                        model.queue[0] = firstQueueItem;
+                        console.log('new model');
+                        console.log(model);
+                        model.save(function(error, room) {
+                            console.log(`added new queueItem which will be played in ${timeTillPlay}`);
+                            console.log(room);
+                            let newQueueItem = room.queue[0];
+                            console.log(newQueueItem);
+                            resolve({
+                                queue: model.queue,
+                                isFirstSong: isFirstSong,
+                                queueItem: newQueueItem,
+                                timeTillPlay: timeTillPlay
+                            });
+                            return;
+                        });
                     }
-                    console.log(`added new queueItem which will be played in ${timeTillPlay}`);
-                    resolve({
-                        queue: model.queue,
-                        isFirstSong: isFirstSong,
-                        queueItem: queueItem,
-                        timeTillPlay: timeTillPlay
-                    });
+
                 }
             );
         });
@@ -283,12 +304,24 @@ class DataBase {
                     .then(room => {
                         // The queueItem we want is now on top
                         let queueItem = room.queue.shift();
-                        if (queueItem === undefined) {
+                        console.log(queueItem);
+                        if (queueItem === undefined || queueItem === null) {
+                            console.log(`resolving`);
                             resolve(null);
+                            return;
                         }
-                        resolve({queueItem: queueItem, queue: room.queue});
+                        queueItem.playTime = new Date();
+                        queueItem.save()
+                            .then(queueItem => {
+                                resolve({queueItem: queueItem, queue: room.queue});
+                            })
+                            .catch(error => {
+                                console.log(error)
+                            ;})
+                        
                     })  
                     .catch(error => {
+                        console.log(error);
                         console.log(`unable to pop top of room queue on db`);
                     });                
 

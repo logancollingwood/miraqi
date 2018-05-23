@@ -19,13 +19,24 @@ function secondsToString(seconds) {
 class DjContainer extends React.Component {
 	playMessage = data => {
 		if (data != null) {
+			let nowDate = new Date();
+			let queueItemStartDate = new Date(data.playTime);
+			console.log(`nowDate: ${nowDate} start date ${queueItemStartDate}`);
+			let dateDifference = (nowDate - queueItemStartDate) / 1000;
+			if (dateDifference > data.lengthSeconds) {
+				this.onEnded();
+				return;
+			}
+			let secondsDifferent = dateDifference;
+			console.log(`seeking to ${secondsDifferent}`);
 			this.setState({
 				playing: true,
 				nowPlaying: {
 					url: data.playUrl,
-					secondsElapsed: 0,
-					seeking: false
-				}
+					secondsElapsed: secondsDifferent,
+					totalLength: data.lengthSeconds,
+				},
+				seeking: true
 			});
 		}
 	}
@@ -75,19 +86,26 @@ class DjContainer extends React.Component {
 
 
 		this.handleVolumeChange = function(event) {
-			console.log(event);
 			self.setState({
 				volume: event
 			})
 		}
 	}
 
+	/**
+	 * This method handles the seeking logic for the react-player.
+	 * The seeking logic is only triggered after the component is updated and if seeking has been set to true.
+	 * 
+	 * This is because we need to first render the player, before we can access the seekTo method on it.
+	 */
 	componentDidUpdate() {
 		if (!(this.player === undefined || this.player === null) && this.state.seeking) {
-			this.player.seekTo(this.state.nowPlaying.secondsElapsed);
 			this.setState({
 				seeking: false
 			});
+			let seekFraction = this.state.nowPlaying.secondsElapsed / this.state.nowPlaying.totalLength;
+			console.log(`seeking to fraction ${seekFraction}`);
+			this.player.seekTo(seekFraction);
 		}
 	}
 

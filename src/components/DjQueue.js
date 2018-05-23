@@ -38,6 +38,10 @@ class DjQueue extends React.Component {
         this.socket.on('play', function (data) {
 			resetSkip();
         });
+
+        this.socket.on('nowPlaying', function(data) {
+			resetSkip();
+		});
         
         this.skip = () => {
             console.log('skip click');

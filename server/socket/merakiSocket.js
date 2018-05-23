@@ -20,7 +20,6 @@ function setup(io, database, sessionStore) {
 
     SocketAuth(io, sessionStore);
 
-    let numUsers = 0;
     let numberOfUsersWhoFinishedSong = 0;
     let numberOfUsersWhoVoteToSkip = 0;
 
@@ -63,9 +62,9 @@ function setup(io, database, sessionStore) {
 
         socket.on('skip_track', function(data) {
             numberOfUsersWhoVoteToSkip++;
-            let readyToSkip =  ((numberOfUsersWhoVoteToSkip / numUsers) * 100) > SKIP_VOTE_PERCENT;
-            let numUsersRequiredToSkip = Math.ceil((numUsers * SKIP_VOTE_PERCENT) / 100);
-            console.log(`numUsers: ${numUsers}, number who skipped song: ${numberOfUsersWhoVoteToSkip}, so readyToSkip is: ${readyToSkip}. ${numUsersRequiredToSkip} required to skip`);
+            let readyToSkip =  ((numberOfUsersWhoVoteToSkip / io.engine.clientsCount) * 100) > SKIP_VOTE_PERCENT;
+            let numUsersRequiredToSkip = Math.ceil((io.engine.clientsCount * SKIP_VOTE_PERCENT) / 100);
+            console.log(`numUsers: ${io.engine.clientsCount}, number who skipped song: ${numberOfUsersWhoVoteToSkip}, so readyToSkip is: ${readyToSkip}. ${numUsersRequiredToSkip} required to skip`);
             var broadcastMessage = {
                 serverMessage: true,
                 author: socketSession.user.profile.username,
@@ -84,8 +83,8 @@ function setup(io, database, sessionStore) {
         socket.on('next_track', function(data) {
             numberOfUsersWhoFinishedSong++;
             let readyToRemoveFromQueueAndPlay = 
-                numUsers == numberOfUsersWhoFinishedSong;
-            console.log(`numUsers: ${numUsers}, number who finished song: ${numberOfUsersWhoFinishedSong}, so readyToQueue is: ${readyToRemoveFromQueueAndPlay}`);
+            io.engine.clientsCount == numberOfUsersWhoFinishedSong;
+            console.log(`numUsers: ${io.engine.clientsCount}, number who finished song: ${numberOfUsersWhoFinishedSong}, so readyToQueue is: ${readyToRemoveFromQueueAndPlay}`);
             if (readyToRemoveFromQueueAndPlay) {
                 dj.handleNextTrack()
                 numberOfUsersWhoFinishedSong = 0;
@@ -97,8 +96,7 @@ function setup(io, database, sessionStore) {
         })
 
         socket.on('disconnect', function () {
-           numUsers--;
-           console.log(`got disconnect. Number of users remaining: ${numUsers}`);
+           console.log(`got disconnect. Number of users remaining: ${io.engine.clientsCount}`);
         });
 
 
@@ -141,8 +139,7 @@ function setup(io, database, sessionStore) {
                         author: socketSession.user.profile.username,
                         message: "has joined the room"
                     }
-                    numUsers++;
-                    console.log(`got connect. Number of users here: ${numUsers}`);
+                    console.log(`got connect. Number of users here: ${io.engine.clientsCount}`);
                     socketSession.joinRoom(room);
                     socketSession.emitToClient('room', room);
                     if (nowPlaying !== undefined) {
