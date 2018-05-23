@@ -16,22 +16,29 @@ class Room extends Component {
     super(props);
     let roomId = this.props.match.params.id;
     if (!(roomId === null || roomId === undefined)) {
-      console.info('initializing socket');
-      let connectSid = cookie.load('connect.sid');
-      console.log(`found cookie:${connectSid}`);
       this.socket = io.connect(Config.SOCKET_API_HOST);
       let joinRequest = {
         roomId: this.props.match.params.id
       }
       this.socket.emit('join', joinRequest);
     }
+
+    this.state = {
+      user: null
+    }
+
+    this.socket.on('not_auth', function() {
+      this.setState({
+        
+      })
+    })
   }
 
   render() {
     console.log(this.state);
     return (
       <div>
-        <Nav isHome={false} isRoom={true}/>
+        <Nav isHome={false} isRoom={true} user={this.state.user}/>
         <ChatRoomManager id={this.props.match.params.id} socket={this.socket}/>
       </div>
     );

@@ -24,6 +24,14 @@ class DjQueue extends React.Component {
                 playing: true
             })
         }
+
+        this.socket.on('room', function(room) {
+            if (room != null) {
+                if (room.queue != null) {
+                    newQueue(room.queue);
+                }
+            }
+        });
         
         this.socket.on('queue', function(queue){
             console.log('got new queue');
@@ -58,22 +66,32 @@ class DjQueue extends React.Component {
     render() {
         let queueList;
         if (this.state.queue && this.state.queue.length > 0) {
-            queueList = this.state.queue.slice(0).map((queueItem, i) =>
-                <li className="row queueItem" key={i}>
-                    <div className="col-md-1">
-                        <div className="queue-number"> {i+1} </div>
-                    </div>
-                    <div className="col-md-9">
-                        <div className="name"> {queueItem.trackName} </div>
-                    </div>
-                    <div className="col-md-2">
-                        <div className="type">
-                            <a href={queueItem.playUrl}>
-                                {queueItem.type === 'yt' ? <i className="fab fa-youtube fa-2x pull-right"></i> : ''}
-                            </a>
+            queueList = this.state.queue.slice(0).map(function(queueItem, i) {
+                let isFirst = (i === 0);
+                let numberToRender;
+                if (isFirst) {
+                    numberToRender = <div className="queue-number first"> now playing </div>;
+                } else {
+                    numberToRender = <div className="queue-number"> #{i+1} </div>;
+                }
+                return (
+                    <li className="row queue-item" key={i}>
+                        <div className="col-md-3">
+                            {numberToRender}
                         </div>
-                    </div>
-                </li>);
+                        <div className="col-md-8">
+                            <div className="name pull-left"> {queueItem.trackName} </div>
+                        </div>
+                        <div className="col-md-1">
+                            <div className="type">
+                                <a href={queueItem.playUrl}>
+                                    {queueItem.type === 'yt' ? <i className="fab fa-youtube fa-2x pull-right"></i> : ''}
+                                </a>
+                            </div>
+                        </div>
+                    </li>
+                );
+            });
         }
 
         let skipOrNot = this.state.skipping ? 

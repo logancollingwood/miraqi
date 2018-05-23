@@ -35,10 +35,14 @@ class Chat extends React.Component {
 			this.setState({users: userList});
 		}
 
-		this.socket.on('users', function(usersList) {
-			console.log('got new user list');
-			console.log(usersList);
-			newUserList(usersList);
+		this.socket.on('room', function(room) {
+			console.log('got new room');
+			console.log(room);
+			if (room != null) {
+				if (room.users != null) {
+					newUserList(room.users);
+				}
+			}
 		})
 
 		if (this.props.room != null) {

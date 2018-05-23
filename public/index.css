@@ -221,10 +221,8 @@ nav {
   flex: 1 1 40px;
   background-color: #36393e;
   background-image: linear-gradient(to bottom, #51545b, #484b51, #404248, #37393f, #2f3136);
-}
-
-.row.info {
-    min-height: 30vh;
+  min-height: 30vh;
+  max-height: 41vh;
 }
 
 .youtubeContainer {
@@ -425,6 +423,12 @@ p.time {
     padding-left: 0px;
     color: #ffffff;
 }
+.queue-item .queue-number.first {
+    color: #ffffff;
+}
+.queue-item .queue-number {
+    color: #5a5a5a;
+}
 
 .guildQueue {
     height: calc(100vh - 60px);
@@ -505,6 +509,10 @@ p.time {
 
 .DjQueue {
     text-align: center;
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-height: 40.5vh;
+    min-height: 40.5vh;
 }
 
 .DjQueue .header {
