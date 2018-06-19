@@ -1,7 +1,16 @@
 import React from "react";
 import Link from "react-router";
 import GuildProfile from "./guilds/GuildProfile.js";
+import {connect} from 'react-redux'
 
+const mapStateToProps = (state = {}) => {
+    console.log(state)
+    if (state.loading) {
+        return {loading: true}
+    }
+
+    return {guilds: state.user.profile.guilds, user: state.user};
+};
 class Guilds extends React.Component {
 
     constructor(props) {
@@ -13,8 +22,23 @@ class Guilds extends React.Component {
         let guildsList;
         let currentRoomId = this.props.currentRoom != null ? this.props.currentRoom.roomProviderId : -1;
         console.log(`currentRoomId: ${currentRoomId}`);
-        if (this.props.user) {
-            guildsList = this.props.user.guilds.slice(0).map((guild, i) => 
+
+        if (this.props.loading) {
+            return (
+                <div className="guildQueue left-half">
+                    <div className="header">
+                         Guilds loading ...
+                    </div>
+                    <ul className="songQueue">
+                    </ul>
+                    <div className="about">
+                        Loading ...
+                    </div>
+                </div>
+            );
+        } else {
+            console.log(this.props);
+            guildsList = this.props.guilds.slice(0).map((guild, i) => 
                 <li className={`row listItem ${currentRoomId == guild.id ? 'active' : ''}`} key={i}>
                     <div className="col-md-2">
                         <div className="name"> 
@@ -32,23 +56,6 @@ class Guilds extends React.Component {
                     </div>
                 </li>
             );
-        }
-        
-        if (this.props.loading) {
-            return (
-                <div className="guildQueue left-half">
-                    <div className="header">
-                         Guilds loading ...
-                    </div>
-                    <ul className="songQueue">
-                    </ul>
-                    <div className="about">
-                        Loading ...
-                    </div>
-                </div>
-            );
-        } else {
-
             return (
                 
                 <div className="guildQueue">
@@ -67,4 +74,4 @@ class Guilds extends React.Component {
     }
 }
 
-export default Guilds;
+export default connect(mapStateToProps)(Guilds);

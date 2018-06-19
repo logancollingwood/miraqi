@@ -141,7 +141,10 @@ function setup(io, database, sessionStore) {
                     }
                     console.log(`got connect. Number of users here: ${io.engine.clientsCount}`);
                     socketSession.joinRoom(room);
-                    socketSession.emitToClient('room', room);
+                    socketSession.emitToClient('initialize', {
+                        user: user,
+                        room: room
+                    });
                     if (nowPlaying !== undefined) {
                         socketSession.emitToClient('nowPlaying', nowPlaying);
                     }
