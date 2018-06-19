@@ -81,14 +81,21 @@ function setup(io, database, sessionStore) {
         });
 
         socket.on('next_track', function(data) {
+            let isBehind = data.isBehind ? data.isBehind : false;
+            if (isBehind) {
+                // if the user is asking for the next track, but is currently parsing an old song, 
+                // just finish
+                return;
+            }
             numberOfUsersWhoFinishedSong++;
             let readyToRemoveFromQueueAndPlay = 
-            io.engine.clientsCount == numberOfUsersWhoFinishedSong;
-            console.log(`numUsers: ${io.engine.clientsCount}, number who finished song: ${numberOfUsersWhoFinishedSong}, so readyToQueue is: ${readyToRemoveFromQueueAndPlay}`);
+                io.engine.clientsCount >= numberOfUsersWhoFinishedSong;
+            console.log(`numUsers: ${io.engine.clientsCount}, number who finished song: ${numberOfUsersWhoFinishedSong}, so readyToPlay is: ${readyToRemoveFromQueueAndPlay}`);
             if (readyToRemoveFromQueueAndPlay) {
                 dj.handleNextTrack()
                 numberOfUsersWhoFinishedSong = 0;
             }
+            
         });
 
         socket.on('subscribe', function (data) {

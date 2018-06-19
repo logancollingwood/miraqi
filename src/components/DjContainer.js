@@ -24,7 +24,7 @@ class DjContainer extends React.Component {
 			console.log(`nowDate: ${nowDate} start date ${queueItemStartDate}`);
 			let dateDifference = (nowDate - queueItemStartDate) / 1000;
 			if (dateDifference > data.lengthSeconds) {
-				this.onEnded();
+				this.onEnded(true);
 				return;
 			}
 			let secondsDifferent = dateDifference;
@@ -150,8 +150,9 @@ class DjContainer extends React.Component {
 		});
 	}
 
-	onEnded() {
-		this.socket.emit('next_track', {});
+	onEnded(isBehind) {
+		let request = isBehind ? {isBehind: true} : {};
+		this.socket.emit('next_track', request);
 	}
 
 	render() {

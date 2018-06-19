@@ -304,20 +304,19 @@ class DataBase {
                     .then(room => {
                         // The queueItem we want is now on top
                         let queueItem = room.queue.shift();
-                        console.log(queueItem);
                         if (queueItem === undefined || queueItem === null) {
-                            console.log(`resolving`);
                             resolve(null);
                             return;
                         }
                         queueItem.playTime = new Date();
-                        queueItem.save()
-                            .then(queueItem => {
-                                resolve({queueItem: queueItem, queue: room.queue});
-                            })
-                            .catch(error => {
-                                console.log(error)
-                            ;})
+                        room.queue.unshift(queueItem);
+                        queueItem.save(function(error, queueItem) {
+                            if (error) {
+                                console.log(error);
+                                return;
+                            }
+                            resolve({queueItem: queueItem, queue: room.queue});
+                        });
                         
                     })  
                     .catch(error => {

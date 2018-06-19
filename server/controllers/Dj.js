@@ -50,7 +50,7 @@ class Dj {
             .then((data) => {
                 console.log(data);
                 // There was nothing left in the queue
-                if(data === null || data.queueItem === undefined || data.queue.length === 0) {
+                if(data === null) {
                     this.socketSession.emitToRoom('no_queue');
                     return;
                 }
@@ -59,7 +59,7 @@ class Dj {
                 
                 // if we popped the last item (the leftOverQueue was null), then the queue is just the currently playing track
                 if (leftOverQueue.length == 0) {
-                    leftOverQueue.push({});
+                    leftOverQueue.push(queueItem);
                 }
                 
                 console.log(leftOverQueue);
