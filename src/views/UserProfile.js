@@ -27,9 +27,6 @@ class UserProfile extends React.Component {
 	constructor(props) {
 		super(props);
 		const { dispatch } = this.props;
-		this.state = {
-			user: null
-		}
 		this.requestUser(dispatch);
 	}
 
