@@ -25,9 +25,11 @@
     "react-fontawesome": "^1.6.1",
     "react-player": "^1.5.0",
     "react-player-controls": "^0.5.20",
+    "react-redux": "^5.0.7",
     "react-resizable": "^1.7.4",
     "react-router": "^4.2.0",
     "react-router-dom": "^4.2.2",
+    "redux": "^4.0.0",
     "request": "^2.85.0",
     "request-promise": "^4.2.2",
     "socket.io-client": "^2.1.0"

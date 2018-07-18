@@ -1,11 +1,18 @@
 import React from "react";
+import {connect} from 'react-redux'
 import ChatMessage from "./ChatMessage";
 import ChatInput from "./ChatInput";
+import {addMessage} from '../../actions/action'
 
-class Chat extends React.Component {
+const mapStateToProps = (state = {}) => {
+	console.log(state)
+    return {messages: state.messages, username: state.user.name};
+};
+
+export class Chat extends React.Component {
 	constructor(props){
         super(props);
-
+		const {dispatch} = this.props
         this.state = {
             username: '',
             messages: [],
@@ -17,18 +24,10 @@ class Chat extends React.Component {
 		
 		this.socket = this.props.socket;
 
-    }
-
-	componentDidMount() {
-
-		const addMessage = data => {
-			this.setState({messages: [...this.state.messages, data]});
-		};
-
 		this.socket.on('message', function(data){
 			console.log('got message');
 			console.log(data);
-			addMessage(data);
+			dispatch(addMessage(data))
 		});
 
 		const newUserList = userList => {
@@ -40,16 +39,11 @@ class Chat extends React.Component {
 			console.log(room);
 			if (room != null) {
 				if (room.users != null) {
-					newUserList(room.users);
+					// newUserList(room.users);
 				}
 			}
-		})
-
-		if (this.props.room != null) {
-			console.log(' room prop is not null');
-			this.setState({messages: this.props.room.messages});
-		}
-	}
+		});
+    }
 
 	handleKeyPress(target) {
 		console.log('got a key press');
@@ -60,6 +54,9 @@ class Chat extends React.Component {
 	}
 
     render(){
+		console.log(this.props);
+		const {dispatch,items} = this.props;
+
 		if (this.props.loading) {
 			return (
 				<div className="col-md-4 chatRoom h-100 bg-bright">
@@ -67,7 +64,7 @@ class Chat extends React.Component {
 				</div>
 			)
 		}
-		const messagesToRender = this.state.messages.slice(0).reverse().map((message, i) => 
+		const messagesToRender = this.props.messages.slice(0).reverse().map((message, i) => 
 			<ChatMessage key={i} message={message} />
 		);
 
@@ -97,4 +94,4 @@ class Chat extends React.Component {
     }
 }
 
-export default Chat;
+export default connect(mapStateToProps)(Chat);

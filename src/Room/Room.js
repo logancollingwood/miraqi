@@ -8,10 +8,7 @@ import cookie from 'react-cookie';
 import { isNullOrUndefined } from "util";
 
 
-
-
 class Room extends Component {
-
   constructor(props) {
     super(props);
     let roomId = this.props.match.params.id;
@@ -35,12 +32,11 @@ class Room extends Component {
   }
 
   render() {
-    console.log(this.state);
     return (
-      <div>
-        <Nav isHome={false} isRoom={true} user={this.state.user}/>
-        <ChatRoomManager id={this.props.match.params.id} socket={this.socket}/>
-      </div>
+        <div>
+          <Nav isHome={false} isRoom={true} user={this.state.user}/>
+          <ChatRoomManager id={this.props.match.params.id} socket={this.socket}/>
+        </div>
     );
   }
 }

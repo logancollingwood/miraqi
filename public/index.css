@@ -416,7 +416,6 @@ p.time {
     background-image: linear-gradient(to bottom, #51545b, #484b51, #404248, #37393f, #2f3136);
 }
 .songQueue {
-    overflow-y: auto;
 }
 .songQueue {
     padding-top: 15px;
@@ -431,7 +430,9 @@ p.time {
 }
 
 .guildQueue {
-    height: calc(100vh - 60px);
+    overflow-y: scroll;
+    min-height: calc(90vh - 60px);
+    max-height: calc(90vh - 60px);
     background-color: #2f3136;
 }
 
@@ -447,6 +448,7 @@ p.time {
     border-top: solid 1px #72D687;
     vertical-align: text-bottom;
     width: 100%;
+    background-color: #424242;
     margin-top: 5%;
 }
 
@@ -460,9 +462,12 @@ p.time {
 
 .songQueue li {
     padding-top: 10px;
-    border-bottom: 2px solid #5a5a5a;
     font-family: 'Open Sans';
     padding-bottom: 10px;
+}
+
+.songQueue li:not(:last-child) {
+    border-bottom: 2px solid #5a5a5a;
 }
 
 .songQueue li ::after {

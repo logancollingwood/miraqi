@@ -6,47 +6,49 @@ import Guilds from "../components/Guilds.js";
 import Api from "../components/Api.js";
 import GuildProfile from "../components/guilds/GuildProfile.js";
 import Profile from "../profile/Profile.js";
+import Provider from "react-redux";
+import {connect} from 'react-redux'
+import reducer from '../reducers/reducer'
+import { createStore } from 'redux'
+import { setUser } from "../actions/action";
 
+
+const store = createStore(reducer);
+const mapStateToProps = (state = {}) => {
+    console.log(state)
+    if (state.loading) {
+        return {loading: true}
+    }
+
+    return {};
+};
 class UserProfile extends React.Component {
 
 	constructor(props) {
 		super(props);
-		this.state = {
-			user: null
-		}
+		const { dispatch } = this.props;
+		this.requestUser(dispatch);
 	}
 
-	async requestUser() {
+	async requestUser(dispatch) {
 		let user = await Api.getUser();
-		this.setState({user: user.profile});
+		dispatch(setUser(user));
 	}
-	
-	componentDidMount() {
-		console.log('fetching');
-		this.requestUser();
-	}
+
 
 	render() {
-		console.log("re-rendering profile with user: ");
-		console.log(this.state.user);
-		let readyToRender = this.state.user != null;
-		console.log('ready to render: ' + readyToRender);
 		return (
-			<div>
-				<Nav isHome={false} isRoom={false}/>
-				<div className="container-fluid">
-						{ readyToRender &&
+				<div>
+					<Nav isHome={false} isRoom={false}/>
+						<div className="container-fluid">
 							<div className="row justify-content-center main-content">
 								<div className="col-md-2 no-padding">
-									<Guilds loading={!readyToRender} user={this.state.user} currentRoom={this.state.room}/>
+									<Guilds />
 								</div>
 								<div className="col-md-10 no-padding">
-										{ readyToRender &&
-											<Profile user={this.props.user} />
-										}
+									<Profile />
 								</div>
 							</div>
-						}
 					</div>
 				</div>
 		)
@@ -54,4 +56,4 @@ class UserProfile extends React.Component {
 }
 
 
-export default UserProfile;
+export default connect(mapStateToProps)(UserProfile);

@@ -4,13 +4,30 @@ import Chat from "./chat/Chat";
 import DjContainer from "./DjContainer.js";
 import Api from "../components/Api.js";
 import Guilds from "../components/Guilds.js";
+import {updateRoom, notAuthorized} from "../actions/action";
+import {connect} from 'react-redux'
+
+const mapStateToProps = (state = {}) => {
+	console.log(state)
+    return {messages: state.messages, username: state.user.name, authorized: state.authorized};
+};
 
 class ChatRoomManager extends React.Component {
 
 	constructor(props) {
 		super(props);
+		const {dispatch} = this.props;
 		this.socket = this.props.socket;
-		console.log(this.props);
+		this.socket.on('initialize', function(data) {
+			console.log('received room initialize');
+			console.log(data);
+			dispatch(updateRoom(data));
+		});
+
+		this.socket.on('notauth', function(data) {
+			dispatch(notAuthorized());
+		});
+
 		this.state = {
 			loading: true,
 			redirect: null,
@@ -19,46 +36,18 @@ class ChatRoomManager extends React.Component {
 		}
 	}
 
-	
-	async requestUser() {
-		let user = await Api.getUser();
-		this.setState({user: user.profile});
-	}
-	
-	componentDidMount() {
-		const updateRoom = data => {
-			this.setState({loading: false, room: data});
-		};
-		this.socket.on('room', function(data) {
-			console.log('received room publish');
-			console.log(data);
-			updateRoom(data);
-		});
-
-		const notAuthorized = () => {
-			this.setState({
-				redirect: '/login/discord'
-			})
-		}
-		this.socket.on('notauth', function(data) {
-			notAuthorized();
-		});
-		this.requestUser();
-	}
-
-
     render() {
-		if (this.state.redirect) {
-			console.log(`redirecting to : ${this.state.redirect}`);
+		if (!this.props.authorized) {
+			console.log(`redirecting to : /`);
 			return (
-				<Redirect to={this.state.redirect} />
+				<Redirect to={'/'} />
 			)
 		}
         return (
 			<div className="container-fluid">
 				<div className="row justify-content-center main-content">
 					<div className="col-md-2 no-padding">
-						<Guilds loading={this.state.loading} user={this.state.user} currentRoom={this.state.room}/>
+						<Guilds/>
 					</div>
 					<div className="col-md-7 no-padding">
 						<DjContainer loading={this.state.loading} room={this.state.room} socket={this.socket}/>
@@ -72,4 +61,4 @@ class ChatRoomManager extends React.Component {
     }
 }
 
-export default ChatRoomManager;
+export default connect(mapStateToProps)(ChatRoomManager);
