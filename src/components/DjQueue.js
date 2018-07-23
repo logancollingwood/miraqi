@@ -52,7 +52,6 @@ class DjQueue extends React.Component {
 		});
         
         this.skip = () => {
-            console.log('skip click');
             // don't force re-render if already skipping
             if (this.state.skipping) return;
             if (!this.state.playing) return;

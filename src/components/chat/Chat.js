@@ -6,21 +6,19 @@ import {addMessage} from '../../actions/action'
 
 const mapStateToProps = (state = {}) => {
 	console.log(state)
-    return {messages: state.messages, username: state.user.name};
+	return {
+		messages: state.messages, 
+		username: state.user.name, 
+		roomId: state.id, 
+		users: state.users, 
+		loading: state.loading
+	};
 };
 
 export class Chat extends React.Component {
 	constructor(props){
         super(props);
 		const {dispatch} = this.props
-        this.state = {
-            username: '',
-            messages: [],
-			users: this.props.room ? this.props.room.users : [],
-			userNameEntryHidden: false,
-			room: this.props.room
-		};
-
 		
 		this.socket = this.props.socket;
 
@@ -33,16 +31,6 @@ export class Chat extends React.Component {
 		const newUserList = userList => {
 			this.setState({users: userList});
 		}
-
-		this.socket.on('room', function(room) {
-			console.log('got new room');
-			console.log(room);
-			if (room != null) {
-				if (room.users != null) {
-					// newUserList(room.users);
-				}
-			}
-		});
     }
 
 	handleKeyPress(target) {
@@ -50,7 +38,6 @@ export class Chat extends React.Component {
 		if(target.charCode === 13){
 				alert('Enter clicked!!!');    
 		}
-
 	}
 
     render(){
@@ -84,8 +71,8 @@ export class Chat extends React.Component {
 							</div>
 
 							<div className="roomInfo">
-								{ this.state.users &&
-									 `${this.state.users.length} users connected to room ${this.props.room._id}`
+								{ this.props.users &&
+									 `${this.props.users.length} users connected to room ${this.props.roomId}`
 								}
 							</div>
 						</div>

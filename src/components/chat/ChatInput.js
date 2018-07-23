@@ -1,23 +1,30 @@
 import React from "react";
 import moment from "moment";
+import {connect} from 'react-redux'
 
 let TIME_FORMAT = "MM YY / h:mm:ss a";
+
+const mapStateToProps = (state = {}) => {
+	console.log(state)
+	return {
+        userName: state.user.profile.username,
+        userId: state.user._id
+	};
+};
 
 class ChatInput extends React.Component {
     constructor(props) {
         super(props);
+		const {dispatch} = this.props
         this.state = {
-            username: '',
             message: '',
         }
-
         this.socket = this.props.socket;
-        
         this.processSend = () => {
-            if(this.state.message === null || this.state.message === '' || this.props.user.username === null) return;
+            if(this.state.message === null || this.state.message === '' || this.props.userName === null) return;
                 console.log(`sending message : ${this.state.message}`)
                 this.socket.emit('SEND_MESSAGE', {
-                    author: this.props.user.id,
+                    author: this.props.userId,
                     message: this.state.message,
                     timestamp: moment().format(TIME_FORMAT)
                 });
@@ -35,8 +42,6 @@ class ChatInput extends React.Component {
         }
     }
 
-    componentDidMount() {
-    }
 
     render() {
         return (
@@ -57,4 +62,4 @@ class ChatInput extends React.Component {
     }
 }
 
-export default ChatInput;
+export default connect(mapStateToProps)(ChatInput);

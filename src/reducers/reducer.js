@@ -8,6 +8,7 @@ const initialState = {
     messages: [],
     nowPlaying: {},
     users: [],
+    id: id,
     user: {
         guilds: []
     },
