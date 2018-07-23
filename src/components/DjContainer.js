@@ -2,9 +2,12 @@ import React from "react";
 import ReactPlayer from "react-player";
 import DjQueue from "./DjQueue";
 import Api from "../components/Api.js";
+import {connect} from 'react-redux'
 import moment from "moment";
 import { create } from "domain";
 import { VolumeSlider, ControlDirection } from "react-player-controls";
+import {nowPlaying} from '../actions/action'
+
 
 function secondsToString(seconds) {
 	return {
@@ -15,6 +18,16 @@ function secondsToString(seconds) {
 		numseconds: (((seconds % 31536000) % 86400) % 3600) % 60
 	}
 }
+
+const mapStateToProps = (state = {}) => {
+	return {
+		messages: state.messages, 
+		username: state.user.name, 
+		roomId: state.id, 
+		users: state.users, 
+		loading: state.loading
+	};
+};
 
 class DjContainer extends React.Component {
 	playMessage = data => {
@@ -44,6 +57,8 @@ class DjContainer extends React.Component {
 	constructor(props) {
 		super(props);
 		let self = this;
+		const {dispatch} = this.props
+
 
 		let nowPlayingUrl = 'https://www.youtube.com/watch?v=R0rKB_bsUNg';
 		const room = this.props.room ? this.props.room :  null;
@@ -66,17 +81,13 @@ class DjContainer extends React.Component {
 		this.socket.on('play', function (data) {
 			console.log("PLAYING ");
 			console.log(data);
-			self.playMessage(data);
-		});
-
-		this.socket.on('nowPlaying', function(data) {
-			console.log('got nowPlaying');
-			console.log(data);
+			dispatch(nowPlaying(data))
 			self.playMessage(data);
 		});
 		
 		this.socket.on('no_queue', function() {
 			console.log('no_queue');
+			dispatch(nowPlaying(null))
 			self.setState({
 				nowPlaying: null,
 				songPlayed: 0,
@@ -152,6 +163,7 @@ class DjContainer extends React.Component {
 
 	onEnded(isBehind) {
 		let request = isBehind ? {isBehind: true} : {};
+		console.log(`making request for next track, but isBehind: ${isBehind}`);
 		this.socket.emit('next_track', request);
 	}
 
@@ -213,4 +225,4 @@ class DjContainer extends React.Component {
 	}
 }
 
-export default DjContainer;
+export default connect(mapStateToProps)(DjContainer);

@@ -18,3 +18,8 @@ export const setUser = (user) => ({
     type: "SET_USER",
     data: user
 })
+
+export const nowPlaying = (trackName) => ({
+    type: "NOW_PLAYING",
+    data: trackName
+})

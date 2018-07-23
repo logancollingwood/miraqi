@@ -6,7 +6,7 @@ const initialState = {
     name: '',
     roomProviderType: 'discord',
     messages: [],
-    nowPlaying: {},
+    nowPlaying: null,
     users: [],
     id: id,
     user: {
@@ -44,6 +44,12 @@ const reducer = (state=initialState, action) => {
         return Object.assign({}, state, {
             loading: false,
             user: action.data
+        });
+    case 'NOW_PLAYING' :
+        console.log('now playing');
+        console.log(action);
+        return Object.assign({}, state, {
+            nowPlaying: action.data
         });
     default:
       return state

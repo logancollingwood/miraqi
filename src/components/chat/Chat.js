@@ -5,7 +5,6 @@ import ChatInput from "./ChatInput";
 import {addMessage} from '../../actions/action'
 
 const mapStateToProps = (state = {}) => {
-	console.log(state)
 	return {
 		messages: state.messages, 
 		username: state.user.name, 
@@ -19,7 +18,6 @@ export class Chat extends React.Component {
 	constructor(props){
         super(props);
 		const {dispatch} = this.props
-		
 		this.socket = this.props.socket;
 
 		this.socket.on('message', function(data){
