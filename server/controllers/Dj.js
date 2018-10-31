@@ -45,7 +45,7 @@ class Dj {
      * Will pop the song off the current queue, and issue a play event for the new queueItem
      * 
      */
-    handleNextTrack() {
+    handleNextTrack(roomId) {
         this.db.popAndGetNextQueueItem(this.socketSession.room._id)
             .then((data) => {
                 console.log(data);

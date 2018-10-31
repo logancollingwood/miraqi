@@ -140,6 +140,7 @@ function setup(io, database, sessionStore) {
                 })
                 .then(({user, room, nowPlaying}) => {
                     socketSession.room = room;
+                    _roomId = room._id;
                     socketSession.user = user;
                     var broadcastMessage = {
                         serverMessage: true,

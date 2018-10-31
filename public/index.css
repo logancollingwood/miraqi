@@ -175,8 +175,8 @@ nav {
     display: inline-block;
     background-color: transparent;
     border-radius: 0px;
-    height: 30px;
-    border-radius: 15px 0px 0px 15px;
+    height: 15px;
+    color: #ffffff;
 }
 .form-control:focus {
     border-color: #72D687;
@@ -250,11 +250,11 @@ nav {
 }
 
 .chat .messageInput input {
-    min-height: 10vh;
+    min-height: 2vh;
 }
 
 .chat .sendButton button {
-    min-height: 10vh;
+    min-height: 2vh;
 }
 
 
@@ -277,7 +277,6 @@ nav {
 .chatFooter {
     max-height: 15%;
     border-top: 1px solid #ffffff;
-    padding-top: 3vh;
 }
 
 .roomInfo {
