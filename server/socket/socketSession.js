@@ -23,7 +23,7 @@ class SocketSession {
 
     emitToClient(key, data) {
         console.log(`emitting action: '${key}' to user: ${this.user._id}`)
-        this._io.emit(key, data);
+        this.socket.emit(key, data);
     }
 
     joinRoom(room) {
