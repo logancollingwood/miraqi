@@ -12,7 +12,7 @@ var io = require('socket.io')(server);
 const WEB_PORT = process.env.PORT || 3001;
 
 
-const uri = process.env.MONGO_CONNECTION_STRING;
+const uri = process.env.MONGODB_URI;
 console.log("Connecting to mongodb: " + uri);
 let db = mongoose.connect(uri);
 

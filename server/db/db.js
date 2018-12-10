@@ -39,7 +39,7 @@ class DataBase {
 
     createOauthUser(userName, profile, loginProviderType) {
         return new Promise((resolve, reject) => {
-            Models.User.findOneAndUpdate({loginProviderId: profile.id, loginProviderType: loginProviderType}, {expire: new Date()}, { upsert: true }, function(error, result) {
+            Models.User.findOneAndUpdate({loginProviderId: profile.id, loginProviderType: loginProviderType}, {expire: new Date()}, { upsert: true, new: true }, function(error, result) {
                 if (!result) {
                     console.log('new user');
                     var user = new Models.User({
@@ -51,7 +51,10 @@ class DataBase {
                         profile: profile
                     });
                 } else {
+                    console.log("found user");
+                    console.log(result.profile);
                     user = result;
+                    user.profile = profile;
                     user.lastLogin = new Date();
                 }
                 user.save(function (err) {
@@ -66,7 +69,7 @@ class DataBase {
         console.log('creating passport user');
         console.log(profile);
         return new Promise((resolve, reject) => {
-            Models.User.findOneAndUpdate({loginProviderType: loginProviderType, loingProviderId: profile.id, profile: profile}, {expire: new Date()}, { upsert: true }, function(error, result) {
+            Models.User.findOneAndUpdate({loginProviderType: loginProviderType, loingProviderId: profile.id, profile: profile}, {expire: new Date()}, { upsert: true, new: true }, function(error, result) {
                 if (!result) {
                     var user = new Models.User({
                         loginProviderType: loginProviderType,
