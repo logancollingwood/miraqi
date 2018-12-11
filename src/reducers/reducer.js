@@ -6,6 +6,7 @@ const initialState = {
     name: '',
     roomProviderType: 'discord',
     messages: [],
+    room: null,
     nowPlaying: null,
     users: [],
     id: id,
@@ -27,6 +28,7 @@ const reducer = (state=initialState, action) => {
         })
     case 'UPDATE_ROOM':
         return Object.assign({}, state, {
+            room: action.data.room,
             createdAt: action.data.room.createdAt,
             messages: action.data.room.messages,
             name: action.data.room.name,

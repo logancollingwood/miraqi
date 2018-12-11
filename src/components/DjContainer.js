@@ -79,29 +79,7 @@ class DjContainer extends React.Component {
 		}
 	}
 
-	/**
-	 * This method handles the seeking logic for the react-player.
-	 * The seeking logic is only triggered after the component is updated and if seeking has been set to true.
-	 * 
-	 * This is because we need to first render the player, before we can access the seekTo method on it.
-	 */
-	componentDidUpdate() {
-		if (!(this.player === undefined || this.player === null)	&& this.state.seeking) {
-			let nowDate = new Date();
-			let queueItemStartDate = new Date(this.props.nowPlaying.playTime);
-			console.log(`nowDate: ${nowDate} start date ${queueItemStartDate}`);
-			let dateDifference = (nowDate - queueItemStartDate) / 1000;
-			if (dateDifference > this.props.nowPlaying.lengthSeconds) {
-				this.onEnded(true);
-				return;
-			}
-			let secondsDifferent = dateDifference;
-			console.log(`seeking to ${secondsDifferent}`);
-			this.player.seekTo(secondsDifferent)
-		}
-	}
 
-	
 	getNowPlayingUrl(optionalRoom) {
 		let nowPlayingUrl = null;
 		const room = optionalRoom ? optionalRoom : null;
@@ -144,9 +122,7 @@ class DjContainer extends React.Component {
 	}
 
 	onEnded(isBehind) {
-		let request = isBehind ? {isBehind: true} : {};
-		console.log(`making request for next track, but isBehind: ${isBehind}`);
-		this.socket.emit('next_track', request);
+		this.socket.emit('next_track', {});
 	}
 
 	render() {

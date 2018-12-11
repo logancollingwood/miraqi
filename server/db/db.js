@@ -307,6 +307,8 @@ class DataBase {
                     .then(room => {
                         // The queueItem we want is now on top
                         let queueItem = room.queue.shift();
+
+                        // We just popped the last item off the queue
                         if (queueItem === undefined || queueItem === null) {
                             resolve(null);
                             return;

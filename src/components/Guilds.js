@@ -9,7 +9,7 @@ const mapStateToProps = (state = {}) => {
         return {loading: true}
     }
 
-    return {guilds: state.user.profile.guilds, user: state.user};
+    return {guilds: state.user.profile.guilds, user: state.user, room: state.room};
 };
 
 class Guilds extends React.Component {
@@ -21,7 +21,7 @@ class Guilds extends React.Component {
 
     render() {
         let guildsList;
-        let currentRoomId = this.props.currentRoom != null ? this.props.currentRoom.roomProviderId : -1;
+        let currentRoomId = this.props.room != null ? this.props.room.roomProviderId : -1;
         console.log(`currentRoomId: ${currentRoomId}`);
 
         if (this.props.loading) {
