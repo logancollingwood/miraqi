@@ -1,38 +1,30 @@
 import React from "react";
+import {updateQueue, setSkipping} from "../actions/action";
+import {connect} from 'react-redux'
 
+const mapStateToProps = (state = {}) => {
+    return {
+        queue: state.queue,
+        isSkipping: state.skipping
+    };
+};
 
 class DjQueue extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = {
-            queue: this.props.queue,
-            playing: false,
-            skipping: false
-        }
+
         this.socket = this.props.socket;
+        const {dispatch} = this.props
         
         const newQueue = queue => {
-            console.log('updating queue to:')
-            console.log(queue);
-			this.setState({queue: queue});
+            dispatch(updateQueue(queue));
         };
 
         const resetSkip = () => {
-            this.setState({
-                skipping: false,
-                playing: true
-            })
+            dispatch(setSkipping(false));
         }
 
-        this.socket.on('room', function(room) {
-            if (room != null) {
-                if (room.queue != null) {
-                    newQueue(room.queue);
-                }
-            }
-        });
-        
         this.socket.on('queue', function(queue){
             console.log('got new queue');
             console.log(queue);
@@ -53,19 +45,16 @@ class DjQueue extends React.Component {
         
         this.skip = () => {
             // don't force re-render if already skipping
-            if (this.state.skipping) return;
-            if (!this.state.playing) return;
+            if (this.props.skipping) return;
             this.socket.emit('skip_track', {});
-            this.setState({
-                skipping: true,
-            });
+            dispatch(setSkipping(true));
         }
     }
 
     render() {
         let queueList;
-        if (this.state.queue && this.state.queue.length > 0) {
-            queueList = this.state.queue.slice(0).map(function(queueItem, i) {
+        if (this.props.queue && this.props.queue.length > 0) {
+            queueList = this.props.queue.slice(0).map(function(queueItem, i) {
                 let isFirst = (i === 0);
                 let numberToRender;
                 if (isFirst) {
@@ -93,7 +82,7 @@ class DjQueue extends React.Component {
             });
         }
 
-        let skipOrNot = this.state.skipping ? 
+        let skipOrNot = this.props.skipping ? 
                 <i className="fas fa-check"></i> 
             :
                 <div className="skip"><i className="fas fa-arrow-right" onClick={this.skip}></i><p>skip</p></div>;
@@ -116,4 +105,4 @@ class DjQueue extends React.Component {
     }
 }
 
-export default DjQueue;
+export default connect(mapStateToProps)(DjQueue);

@@ -9,6 +9,7 @@ import { isNullOrUndefined } from "util";
 
 
 class Room extends Component {
+
   constructor(props) {
     super(props);
     let roomId = this.props.match.params.id;

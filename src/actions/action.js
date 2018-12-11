@@ -23,3 +23,13 @@ export const nowPlaying = (trackName) => ({
     type: "NOW_PLAYING",
     data: trackName
 })
+
+export const updateQueue = (queue) => ({
+    type: "NEW_QUEUE",
+    data: queue
+})
+
+export const setSkipping = (skipping) => ({
+    type: "IS_SKIPPING",
+    data: skipping
+})

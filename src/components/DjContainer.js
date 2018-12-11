@@ -7,6 +7,7 @@ import moment from "moment";
 import { create } from "domain";
 import { VolumeSlider, ControlDirection } from "react-player-controls";
 import {nowPlaying} from '../actions/action'
+import RoomInfo  from "./roomInfo/RoomInfo.js";
 
 
 function secondsToString(seconds) {
@@ -20,39 +21,15 @@ function secondsToString(seconds) {
 }
 
 const mapStateToProps = (state = {}) => {
+	console.log("dj state");
+	console.log(state);
+	let nowPlaying = state.queue[0] ? state.queue[0] : null;
 	return {
-		messages: state.messages, 
-		username: state.user.name, 
-		roomId: state.id, 
-		users: state.users, 
-		loading: state.loading
+		nowPlaying: nowPlaying
 	};
 };
 
 class DjContainer extends React.Component {
-	playMessage = data => {
-		if (data != null) {
-			let nowDate = new Date();
-			let queueItemStartDate = new Date(data.playTime);
-			console.log(`nowDate: ${nowDate} start date ${queueItemStartDate}`);
-			let dateDifference = (nowDate - queueItemStartDate) / 1000;
-			if (dateDifference > data.lengthSeconds) {
-				this.onEnded(true);
-				return;
-			}
-			let secondsDifferent = dateDifference;
-			console.log(`seeking to ${secondsDifferent}`);
-			this.setState({
-				playing: true,
-				nowPlaying: {
-					url: data.playUrl,
-					secondsElapsed: secondsDifferent,
-					totalLength: data.lengthSeconds,
-				},
-				seeking: true
-			});
-		}
-	}
 
 	constructor(props) {
 		super(props);
@@ -60,7 +37,7 @@ class DjContainer extends React.Component {
 		const {dispatch} = this.props
 
 
-		let nowPlayingUrl = 'https://www.youtube.com/watch?v=R0rKB_bsUNg';
+		let nowPlayingUrl = "https://www.youtube.com/watch?v=R0rKB_bsUNg";
 		const room = this.props.room ? this.props.room :  null;
 		if (room) {
 			nowPlayingUrl = room.queue ? room.queue[0] : null;
@@ -82,7 +59,6 @@ class DjContainer extends React.Component {
 			console.log("PLAYING ");
 			console.log(data);
 			dispatch(nowPlaying(data))
-			self.playMessage(data);
 		});
 		
 		this.socket.on('no_queue', function() {
@@ -110,16 +86,22 @@ class DjContainer extends React.Component {
 	 * This is because we need to first render the player, before we can access the seekTo method on it.
 	 */
 	componentDidUpdate() {
-		if (!(this.player === undefined || this.player === null) && this.state.seeking) {
-			this.setState({
-				seeking: false
-			});
-			let seekFraction = this.state.nowPlaying.secondsElapsed / this.state.nowPlaying.totalLength;
-			console.log(`seeking to fraction ${seekFraction}`);
-			this.player.seekTo(seekFraction);
+		if (!(this.player === undefined || this.player === null)	&& this.state.seeking) {
+			let nowDate = new Date();
+			let queueItemStartDate = new Date(this.props.nowPlaying.playTime);
+			console.log(`nowDate: ${nowDate} start date ${queueItemStartDate}`);
+			let dateDifference = (nowDate - queueItemStartDate) / 1000;
+			if (dateDifference > this.props.nowPlaying.lengthSeconds) {
+				this.onEnded(true);
+				return;
+			}
+			let secondsDifferent = dateDifference;
+			console.log(`seeking to ${secondsDifferent}`);
+			this.player.seekTo(secondsDifferent)
 		}
 	}
 
+	
 	getNowPlayingUrl(optionalRoom) {
 		let nowPlayingUrl = null;
 		const room = optionalRoom ? optionalRoom : null;
@@ -170,17 +152,17 @@ class DjContainer extends React.Component {
 	render() {
 
 		const timeRemainingStyle = {
-			width: this.state.nowPlaying ? (this.state.songPlayed / this.state.songLength) * 100 + '%' : 0
+			width: this.props.nowPlaying ? (this.state.songPlayed / this.state.songLength) * 100 + '%' : 0
 		}
 
-		const playerOrNothing = this.state.nowPlaying ?
+		const playerOrNothing = this.props.nowPlaying ?
 				<div className="row video">
 					<ReactPlayer ref={(input) => { this.player = input; }}
 								controls={false}
 								playing={this.state.playing}
 								className="youtubeEmbed"
 								volume={this.state.volume}
-								url={this.state.nowPlaying.url}
+								url={this.props.nowPlaying.playUrl}
 								onProgress={this.onProgress.bind(this)}
 								onDuration={this.onDuration.bind(this)}
 								onPause={this.onPause.bind(this)}
@@ -211,15 +193,7 @@ class DjContainer extends React.Component {
 						<small className="justify-content-center d-flex position-absolute w-100 timeRemainingText">{this.state.secondsPlayed} /  {this.state.totalLength}</small>
 					</div>
 				</div>
-				<div className="row info">
-					<div className="col-md-6 left-half no-padding queue">
-						<DjQueue socket={this.socket} queue={queue} />
-					</div>
-					<div className="col-md-6">
-						<div className="top-queue">
-						</div>
-					</div>
-				</div>
+				<RoomInfo socket={this.socket} queue={queue} />
 			</div>
 		);
 	}

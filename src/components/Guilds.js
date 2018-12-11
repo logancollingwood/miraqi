@@ -11,6 +11,7 @@ const mapStateToProps = (state = {}) => {
 
     return {guilds: state.user.profile.guilds, user: state.user};
 };
+
 class Guilds extends React.Component {
 
     constructor(props) {
@@ -56,6 +57,8 @@ class Guilds extends React.Component {
                     </div>
                 </li>
             );
+            console.log("guilds list");
+            console.log(guildsList);
             return (
                 
                 <div className="guildQueue">

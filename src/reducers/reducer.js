@@ -9,6 +9,7 @@ const initialState = {
     nowPlaying: null,
     users: [],
     id: id,
+    queue: [],
     user: {
         guilds: []
     },
@@ -33,6 +34,7 @@ const reducer = (state=initialState, action) => {
             roomProviderType: action.data.room.roomProviderType,
             id: action.data.room._id,
             user: action.data.user,
+            queue: action.data.room.queue,
             loading: false
         });
     case 'NOT_AUTH': 
@@ -51,6 +53,14 @@ const reducer = (state=initialState, action) => {
         return Object.assign({}, state, {
             nowPlaying: action.data
         });
+    case 'NEW_QUEUE' : 
+        return Object.assign({}, state, {
+            queue: action.data
+        })
+    case 'IS_SKIPPING' : 
+        return Object.assign({}, state, {
+            skipping: action.data
+        })
     default:
       return state
   }
