@@ -46,6 +46,10 @@ function setup(io, database, sessionStore) {
                             message: `queued up ${data.queueItem.trackName}`,
                             timestamp: moment().format(TIME_FORMAT)
                         }
+                        API.getTopRoomStats(socketSession.room._id, 5)
+                            .then(topStats => {
+                                socketSession.emitToRoom('stats', topStats);
+                            })
                     } else {
                         broadcastMessage = {
                             serverMessage: false,
@@ -72,6 +76,10 @@ function setup(io, database, sessionStore) {
             }
             if (readyToSkip) {
                 dj.handleNextTrack()
+                API.getTopRoomStats(socketSession.room._id, 5)
+                    .then(topStats => {
+                        socketSession.emitToRoom('stats', topStats);
+                    })
                 numberOfUsersWhoVoteToSkip = 0;
                 broadcastMessage.message = `voted to skip the current song. Skipping now...`
             } else {
@@ -93,6 +101,10 @@ function setup(io, database, sessionStore) {
             console.log(`numUsers: ${io.engine.clientsCount}, number who finished song: ${numberOfUsersWhoFinishedSong}, so readyToPlay is: ${readyToRemoveFromQueueAndPlay}`);
             if (readyToRemoveFromQueueAndPlay) {
                 dj.handleNextTrack()
+                API.getTopRoomStats(socketSession.room._id, 5)
+                    .then(topStats => {
+                        socketSession.emitToRoom('stats', topStats);
+                    })
                 numberOfUsersWhoFinishedSong = 0;
             }
             
@@ -138,7 +150,7 @@ function setup(io, database, sessionStore) {
                 .then(user => {
                     return API.addUserToRoom(user._id, roomId);
                 })
-                .then(({user, room, nowPlaying}) => {
+                .then(({user, room, nowPlaying, stats}) => {
                     socketSession.room = room;
                     _roomId = room._id;
                     socketSession.user = user;
@@ -151,7 +163,8 @@ function setup(io, database, sessionStore) {
                     socketSession.joinRoom(room);
                     socketSession.emitToClient('initialize', {
                         user: user,
-                        room: room
+                        room: room,
+                        stats: stats
                     });
                     if (nowPlaying !== undefined) {
                         socketSession.emitToClient('nowPlaying', nowPlaying);

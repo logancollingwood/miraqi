@@ -18,9 +18,9 @@ class RoomInfo extends React.Component {
 					<div className="col-md-6 left-half no-padding queue">
 						<DjQueue socket={this.props.socket} queue={null} />
 					</div>
-					<div className="col-md-6">
+					<div className="col-md-6 no-padding">
 						<div className="top-queue">
-							<RoomStats />
+							<RoomStats socket={this.props.socket}/>
 							<TopSongs />
 						</div>
 					</div>

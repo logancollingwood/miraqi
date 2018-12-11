@@ -53,6 +53,8 @@ class MerakiApi {
     }
 
 
+
+
     IsUsernameAdmin(userName) {
         return userName.toUpperCase() == 'logan'.toUpperCase();
     }
@@ -121,6 +123,7 @@ class MerakiApi {
     }
 
     addUserToRoom(userId, roomId) {
+        const api = this;
         return new Promise((resolve, reject) => {
             this.db.addUserToRoom(userId, roomId)
                 .then(({user, room}) => {
@@ -128,10 +131,18 @@ class MerakiApi {
                     if (room.queue.length > 0) {
                         nowPlaying = room.queue[0];
                     }
-                    resolve({user: user, room: room, nowPlaying: nowPlaying});
+                    api.getTopRoomStats(room._id, 5)
+                        .then(stats => {
+                            resolve({user: user, room: room, nowPlaying: nowPlaying, stats: stats});
+                        })
+                        .catch(err => reject(err));
                 })
                 .catch(err => {reject(err)});
         })
+    }
+
+    getTopRoomStats(roomId, numStats) {
+        return this.db.getTopStats(roomId, numStats);
     }
 
 }

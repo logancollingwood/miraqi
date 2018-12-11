@@ -49,7 +49,7 @@ class DjContainer extends React.Component {
 			songPlayed: 0, // the amount in seconds that the song has progressed
 			songLength: 0, // the length of the song in seconds
 			totalLength: 0,
-			volume: 0.5,
+			volume: 0.1,
 			playing: true
 		}
 

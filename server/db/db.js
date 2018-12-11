@@ -200,6 +200,7 @@ class DataBase {
      * @param {url, userId, roomId, trackName, type, lengthSeconds} addQueueItemRequest 
      */
     addQueueItem(addQueueItemRequest) {
+        var db = this;
         return new Promise((resolve, reject) => {
             const url = addQueueItemRequest.url;
             const userId = addQueueItemRequest.userId;
@@ -273,9 +274,60 @@ class DataBase {
                             return;
                         });
                     }
-
+                    db.addRoomStat(queueItem, model._id);
                 }
             );
+        });
+    }
+
+
+    getTopStats(roomId, numberOfStats) {
+        return new Promise((resolve, reject) => {
+            console.log(`Getting ${numberOfStats} stats for roomId ${roomId}`);
+            let query = Models.RoomStat.find({roomId: roomId}).sort({'count': -1}).limit(numberOfStats);
+            query.exec(function(error, stats) {
+                if (error) {
+                    console.log(error);
+                    reject();
+                }
+                resolve(stats);
+            })
+        });
+    }
+
+    addRoomStat(queueItem, roomId) {
+        return new Promise((resolve, reject) => {
+            console.log(`Adding stat to roomId ${roomId}`);
+            console.log(`queueItem PLAYURL: ${queueItem.playUrl}`);
+            Models.RoomStat.find({roomId: roomId, playUrl: queueItem.playUrl}, function(err, roomStat) {
+                if (err) {
+                    console.log(err);
+                    resolve();
+                }
+                console.log("found roomStat");
+                console.log(roomStat);
+                if (roomStat.length == 0) {
+                    roomStat = new Models.RoomStat({
+                        roomId: roomId,
+                        playUrl: queueItem.playUrl,
+                        title: queueItem.trackName,
+                        type: queueItem.type,
+                        count: 1
+                    });
+                } else {
+                    roomStat = roomStat[0];
+                    roomStat.count++;
+                }
+
+                roomStat.save(function (error, roomStatSaved) {
+                    if (error) {
+                        console.log(error);
+                        resolve();
+                    }
+                    resolve(roomStat);
+                });
+
+            })
         });
     }
 

@@ -50,9 +50,20 @@ var RoomSchema   = new Schema({
 }
 );
 
+var RoomStatSchema = new Schema({
+    roomId: mongoose.Schema.Types.ObjectId,
+    playUrl: String,
+    title: String,
+    type: String,
+    count: Number
+}, {
+    timestamps: true
+})
+
 module.exports = {
     Room: mongoose.model('Room', RoomSchema),
     User: mongoose.model('User', UserSchema),
     Message: mongoose.model('Message', MessageSchema),
-    QueueItem: mongoose.model('QueueItem', QueueItemSchema)
+    QueueItem: mongoose.model('QueueItem', QueueItemSchema),
+    RoomStat: mongoose.model('RoomStat', RoomStatSchema)
 }

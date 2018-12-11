@@ -11,6 +11,7 @@ const initialState = {
     users: [],
     id: id,
     queue: [],
+    stats: null,
     user: {
         guilds: []
     },
@@ -37,6 +38,7 @@ const reducer = (state=initialState, action) => {
             id: action.data.room._id,
             user: action.data.user,
             queue: action.data.room.queue,
+            stats: action.data.stats,
             loading: false
         });
     case 'NOT_AUTH': 
@@ -62,6 +64,10 @@ const reducer = (state=initialState, action) => {
     case 'IS_SKIPPING' : 
         return Object.assign({}, state, {
             skipping: action.data
+        })
+    case 'NEW_STATS' : 
+        return Object.assign({}, state, {
+            stats: action.data
         })
     default:
       return state

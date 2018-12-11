@@ -33,3 +33,8 @@ export const setSkipping = (skipping) => ({
     type: "IS_SKIPPING",
     data: skipping
 })
+
+export const setStats = (stats) => ({
+    type: "NEW_STATS",
+    data: stats
+})
