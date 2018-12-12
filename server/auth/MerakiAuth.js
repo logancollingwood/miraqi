@@ -17,9 +17,9 @@ function InitializePassportWeb(app, dbInstance, sessionStore, cookieParser) {
     console.log(`using hostName: ${hostName}`);
 
     passport.use(new DiscordStrategy({
+        callbackURL: hostName + 'login/discord/return',
         clientID: process.env.DISCORD_CLIENT_ID,
         clientSecret: process.env.DISCORD_CLIENT_SECRET,
-        callbackURL: hostName + 'login/discord/return',
         proxy: true,
         scope: scopes
     }, function(accessToken, refreshToken, profile, done) {
@@ -34,20 +34,22 @@ function InitializePassportWeb(app, dbInstance, sessionStore, cookieParser) {
 
     app.use(cookieParser())
     app.use(session({
-        secret: 'keyboard cat',
-        resave: false,
-        saveUninitialized: false,
-        store: sessionStore,
         cookie: {
             httpOnly: false
-        }
+        },
+        resave: false,
+        secret: 'keyboard cat',
+        saveUninitialized: false,
+        store: sessionStore,
     }));
 
     app.use(passport.initialize());
     app.use(passport.session());
 
     function checkAuth(req, res, next) {
-        if (req.isAuthenticated()) return next();
+        if (req.isAuthenticated()) {
+            return next();
+        }
         res.send('not logged in :(');
     }
 
@@ -86,8 +88,9 @@ function onAuthorizeSuccess(data, accept) {
 }
 
 function onAuthorizeFail(data, message, error, accept){
-  if(error)
+  if(error) {
     throw new Error(message);
+  }
   console.log('FAILED CONNECTION TO SOCKET.IO: ' + message);
 
   // We use this callback to log all of our failed connections.

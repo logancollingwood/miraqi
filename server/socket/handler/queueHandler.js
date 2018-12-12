@@ -9,7 +9,7 @@ class QueueHandler {
 
 
     processQueue() {
-        if (this.queue.length == 0) {
+        if (this.queue.length === 0) {
             return;
         }
 
@@ -24,7 +24,7 @@ class QueueHandler {
             playId: youtubeVideoId
         }
         this.queue.push(queueItem);
-        if (this.queue.length == 1) {
+        if (this.queue.length === 1) {
             this.processQueue();
         }
     }

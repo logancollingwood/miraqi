@@ -6,7 +6,7 @@ import {connect} from 'react-redux'
 import moment from "moment";
 import { create } from "domain";
 import { VolumeSlider, ControlDirection } from "react-player-controls";
-import {nowPlaying} from '../actions/action'
+import {NowPlayingAction} from '../actions/action'
 import RoomInfo  from "./roomInfo/RoomInfo.js";
 
 
@@ -58,12 +58,12 @@ class DjContainer extends React.Component {
 		this.socket.on('play', function (data) {
 			console.log("PLAYING ");
 			console.log(data);
-			dispatch(nowPlaying(data))
+			dispatch(NowPlayingAction(data))
 		});
 		
 		this.socket.on('no_queue', function() {
 			console.log('no_queue');
-			dispatch(nowPlaying(null))
+			dispatch(NowPlayingAction(null))
 			self.setState({
 				nowPlaying: null,
 				songPlayed: 0,
@@ -90,7 +90,7 @@ class DjContainer extends React.Component {
 	}
 
 	onProgress(status) {
-		if (status.loaded != 0) {
+		if (status.loaded !== 0) {
 			let secondsPlayed = secondsToString(status.playedSeconds.toFixed(0));
 			let secondsPlayedString = secondsPlayed.numseconds + "s";
 			if (secondsPlayed.numminutes > 0) {

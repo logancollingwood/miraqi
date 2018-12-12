@@ -21,14 +21,16 @@ class ChatInput extends React.Component {
         }
         this.socket = this.props.socket;
         this.processSend = () => {
-            if(this.state.message === null || this.state.message === '' || this.props.userName === null) return;
-                console.log(`sending message : ${this.state.message}`)
-                this.socket.emit('SEND_MESSAGE', {
-                    author: this.props.userId,
-                    message: this.state.message,
-                    timestamp: moment().format(TIME_FORMAT)
-                });
-				this.setState({message: ''});
+            if(this.state.message === null || this.state.message === '' || this.props.userName === null) {
+                return;
+            }
+            console.log(`sending message : ${this.state.message}`)
+            this.socket.emit('SEND_MESSAGE', {
+                author: this.props.userId,
+                message: this.state.message,
+                timestamp: moment().format(TIME_FORMAT)
+            });
+            this.setState({message: ''});
         }
 
         this.enterKey = ev => {

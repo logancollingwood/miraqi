@@ -1,6 +1,6 @@
 import React from "react";
 import {connect} from 'react-redux';
-import {setStats} from "../../actions/action";
+import {SetStatsAction} from "../../actions/action";
 
 const mapStateToProps = (state = {}) => {
 	return {
@@ -16,15 +16,9 @@ class RoomStats extends React.Component {
 		const {dispatch} = this.props;
 
 		this.socket.on('stats', function(data) {
-			dispatch(setStats(data));
+			dispatch(SetStatsAction(data));
 		})
 	}
-
-
-	requeue() {
-
-	}
-
 
 	render() {
         let statsList;

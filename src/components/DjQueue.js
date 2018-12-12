@@ -1,5 +1,5 @@
 import React from "react";
-import {updateQueue, setSkipping} from "../actions/action";
+import {UpdateQueueAction, SetSkippingAction} from "../actions/action";
 import {connect} from 'react-redux'
 
 const mapStateToProps = (state = {}) => {
@@ -18,11 +18,11 @@ class DjQueue extends React.Component {
         const {dispatch} = this.props
         
         const newQueue = queue => {
-            dispatch(updateQueue(queue));
+            dispatch(UpdateQueueAction(queue));
         };
 
         const resetSkip = () => {
-            dispatch(setSkipping(false));
+            dispatch(SetSkippingAction(false));
         }
 
         this.socket.on('queue', function(queue){
@@ -45,9 +45,11 @@ class DjQueue extends React.Component {
         
         this.skip = () => {
             // don't force re-render if already skipping
-            if (this.props.skipping) return;
+            if (this.props.skipping) {
+                return;
+            }
             this.socket.emit('skip_track', {});
-            dispatch(setSkipping(true));
+            dispatch(SetSkippingAction(true));
         }
     }
 

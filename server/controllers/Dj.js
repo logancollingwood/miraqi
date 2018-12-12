@@ -28,7 +28,7 @@ class Dj {
     }
 
     addQueueItem(queueItem, currentQueue) {
-        let isFirst = currentQueue.length == 1;
+        let isFirst = currentQueue.length === 1;
         console.log(`is first: ${isFirst}`);
         console.log(queueItem);
         // We only need to add the song on the first 
@@ -42,9 +42,9 @@ class Dj {
     }
 
 
-    expireQueueItemIfNotExpired() {
+    // expireQueueItemIfNotExpired() {
 
-    }
+    // }
 
 
     /**
@@ -65,7 +65,7 @@ class Dj {
                 let leftOverQueue = data.queue;
                 
                 // if we popped the last item (the leftOverQueue was null), then the queue is just the currently playing track
-                if (leftOverQueue.length == 0) {
+                if (leftOverQueue.length === 0) {
                     leftOverQueue.push(queueItem);
                 }
                 

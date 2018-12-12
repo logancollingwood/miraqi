@@ -10,7 +10,7 @@ class QueueUtil {
     getStartTimeForTimeInQueue(queue, durationInSeconds) {
         let timeUntilPlay = 0;
         queue.map((queueItem, index) => {
-            if (index == 0) {
+            if (index === 0) {
                 timeUntilPlay += getSecondsSinceTimestamp(queueItem.inserDate);
                 return;
             }

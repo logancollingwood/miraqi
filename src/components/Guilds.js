@@ -40,7 +40,7 @@ class Guilds extends React.Component {
         } else {
             console.log(this.props);
             guildsList = this.props.guilds.slice(0).map((guild, i) => 
-                <li className={`row listItem ${currentRoomId == guild.id ? 'active' : ''}`} key={i}>
+                <li className={`row listItem ${currentRoomId === guild.id ? 'active' : ''}`} key={i}>
                     <div className="col-md-2">
                         <div className="name"> 
                             { guild.icon ? 

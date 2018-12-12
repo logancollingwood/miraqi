@@ -5,12 +5,12 @@ import Nav from "../Nav.js";
 import Guilds from "../components/Guilds.js";
 import Api from "../components/Api.js";
 import GuildProfile from "../components/guilds/GuildProfile.js";
-import Profile from "../profile/Profile.js";
+import Profile  from "../profile/Profile";
 import Provider from "react-redux";
 import {connect} from 'react-redux'
 import reducer from '../reducers/reducer'
 import { createStore } from 'redux'
-import { setUser } from "../actions/action";
+import { SetUserAction } from "../actions/action";
 
 
 const store = createStore(reducer);
@@ -32,7 +32,7 @@ class UserProfile extends React.Component {
 
 	async requestUser(dispatch) {
 		let user = await Api.getUser();
-		dispatch(setUser(user));
+		dispatch(SetUserAction(user));
 	}
 
 
