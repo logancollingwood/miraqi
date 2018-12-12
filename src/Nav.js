@@ -12,7 +12,8 @@ const mapStateToProps = (state = {}) => {
   console.log('mapping state to nav');
   console.log(state);
 	return {
-		nowPlaying: state.nowPlaying
+    nowPlaying: state.nowPlaying,
+    user: state.user
 	};
 };
 
@@ -52,15 +53,14 @@ class Nav extends React.Component {
   render() {
     let isCreate = this.props.isCreate;
     let loginLink = Config.WEB_HOST + "login/discord";
-    let logoutLink = Config.WEB_HOST + 'logout';
     const isLoggedIn = this.props.user != null;
     const authHeaderToShow = isLoggedIn ? 
         <div>
-          <a href={logoutLink} className="nav-link">Logout</a>
+          <Link to="/home" className="nav-link">Home</Link>
         </div>
     : 
         <div>
-          <a href={loginLink} className="nav-link"><i className="fab fa-discord" /> Login </a>
+          <Link to={loginLink} className="nav-link"><i className="fab fa-discord" /> Login </Link>
         </div>
     ;
     if (this.props.nowPlaying) {
