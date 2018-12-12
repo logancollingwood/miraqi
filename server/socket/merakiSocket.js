@@ -35,17 +35,21 @@ function setup(io, database, sessionStore) {
         socket.on('SEND_MESSAGE', function (data) {
             const message = data.message;
             API.sendMessageToRoom(socketSession.room._id, socketSession.user._id, message)
-                .then(data => {
+                .then(sendMessageReturned => {
                     let broadcastMessage = null;
-                    if (data.isPlay) {
-                        console.log(data.queue);
-                        dj.addQueueItem(data.queueItem, data.queue);
+                    if (sendMessageReturned.isPlay) {
+                        console.log(sendMessageReturned.queue);
+                        dj.addQueueItem(sendMessageReturned.queueItem, sendMessageReturned.queue);
                         broadcastMessage = {
                             serverMessage: true,
                             author: socketSession.user.profile.username,
-                            message: `queued up ${data.queueItem.trackName}`,
+                            message: `queued up ${sendMessageReturned.queueItem.trackName}`,
                             timestamp: moment().format(TIME_FORMAT)
                         }
+                        API.getTopRoomStats(socketSession.room._id, 5)
+                            .then(topStats => {
+                                socketSession.emitToRoom('stats', topStats);
+                            })
                     } else {
                         broadcastMessage = {
                             serverMessage: false,
@@ -72,6 +76,10 @@ function setup(io, database, sessionStore) {
             }
             if (readyToSkip) {
                 dj.handleNextTrack()
+                API.getTopRoomStats(socketSession.room._id, 5)
+                    .then(topStats => {
+                        socketSession.emitToRoom('stats', topStats);
+                    })
                 numberOfUsersWhoVoteToSkip = 0;
                 broadcastMessage.message = `voted to skip the current song. Skipping now...`
             } else {
@@ -93,6 +101,10 @@ function setup(io, database, sessionStore) {
             console.log(`numUsers: ${io.engine.clientsCount}, number who finished song: ${numberOfUsersWhoFinishedSong}, so readyToPlay is: ${readyToRemoveFromQueueAndPlay}`);
             if (readyToRemoveFromQueueAndPlay) {
                 dj.handleNextTrack()
+                API.getTopRoomStats(socketSession.room._id, 5)
+                    .then(topStats => {
+                        socketSession.emitToRoom('stats', topStats);
+                    })
                 numberOfUsersWhoFinishedSong = 0;
             }
             
@@ -135,13 +147,13 @@ function setup(io, database, sessionStore) {
             let profile = user.profile;
             let loginProviderType = 'discord';
             API.getOrCreateUser(userName, profile, loginProviderType)
-                .then(user => {
-                    return API.addUserToRoom(user._id, roomId);
+                .then(getOrCreatedUser => {
+                    return API.addUserToRoom(getOrCreatedUser._id, roomId);
                 })
-                .then(({user, room, nowPlaying}) => {
+                .then(({userAddedToRoom, room, nowPlaying, stats}) => {
                     socketSession.room = room;
                     _roomId = room._id;
-                    socketSession.user = user;
+                    socketSession.user = userAddedToRoom;
                     var broadcastMessage = {
                         serverMessage: true,
                         author: socketSession.user.profile.username,
@@ -150,14 +162,18 @@ function setup(io, database, sessionStore) {
                     console.log(`got connect. Number of users here: ${io.engine.clientsCount}`);
                     socketSession.joinRoom(room);
                     socketSession.emitToClient('initialize', {
-                        user: user,
-                        room: room
+                        user: userAddedToRoom,
+                        room: room,
+                        stats: stats
                     });
                     if (nowPlaying !== undefined) {
                         socketSession.emitToClient('nowPlaying', nowPlaying);
                     }
                     socketSession.emitToRoom('message', broadcastMessage);
                     socketSession.emitToRoom('users', room.users);
+                })
+                .catch(error => {
+                    console.log(error);
                 });
         });
             
@@ -170,7 +186,7 @@ function UserRequiresLogoff(userModel, roomModel) {
 }
 
 function socketLog(msg) {
-    if (typeof msg == 'string') {
+    if (typeof msg === 'string') {
         console.info('ws: ' + msg);
     } else {
         console.info('ws object: ');
@@ -179,7 +195,7 @@ function socketLog(msg) {
 }
 
 function IsUsernameAdmin(userName) {
-    return userName.toUpperCase() == 'logan'.toUpperCase();
+    return userName.toUpperCase() === 'logan'.toUpperCase();
 }
 
 module.exports = {

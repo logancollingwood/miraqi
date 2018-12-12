@@ -6,7 +6,7 @@ import {connect} from 'react-redux'
 import moment from "moment";
 import { create } from "domain";
 import { VolumeSlider, ControlDirection } from "react-player-controls";
-import {nowPlaying} from '../actions/action'
+import {NowPlayingAction} from '../actions/action'
 import RoomInfo  from "./roomInfo/RoomInfo.js";
 
 
@@ -29,6 +29,8 @@ const mapStateToProps = (state = {}) => {
 	};
 };
 
+const VOLUME_LOCAL_STORAGE_KEY = "PLAYER_VOLUME";
+
 class DjContainer extends React.Component {
 
 	constructor(props) {
@@ -43,29 +45,29 @@ class DjContainer extends React.Component {
 			nowPlayingUrl = room.queue ? room.queue[0] : null;
 		}
 
+		let initialVolume = 
+			localStorage.getItem(VOLUME_LOCAL_STORAGE_KEY) ? 
+			localStorage.getItem(VOLUME_LOCAL_STORAGE_KEY) : 0.1;
+		
 		this.state = {
 			nowPlaying: null,
 			secondsPlayed: 0,
 			songPlayed: 0, // the amount in seconds that the song has progressed
 			songLength: 0, // the length of the song in seconds
 			totalLength: 0,
-			volume: 0.5,
+			volume: Number.parseFloat(initialVolume),
 			playing: true
 		}
 
 		this.socket = this.props.socket;
 
 		this.socket.on('play', function (data) {
-			console.log("PLAYING ");
-			console.log(data);
-			dispatch(nowPlaying(data))
+			dispatch(NowPlayingAction(data))
 		});
 		
 		this.socket.on('no_queue', function() {
-			console.log('no_queue');
-			dispatch(nowPlaying(null))
+			dispatch(NowPlayingAction(null))
 			self.setState({
-				nowPlaying: null,
 				songPlayed: 0,
 				songLength: 0,
 			});
@@ -76,32 +78,11 @@ class DjContainer extends React.Component {
 			self.setState({
 				volume: event
 			})
+			localStorage.setItem(VOLUME_LOCAL_STORAGE_KEY, event);
 		}
 	}
 
-	/**
-	 * This method handles the seeking logic for the react-player.
-	 * The seeking logic is only triggered after the component is updated and if seeking has been set to true.
-	 * 
-	 * This is because we need to first render the player, before we can access the seekTo method on it.
-	 */
-	componentDidUpdate() {
-		if (!(this.player === undefined || this.player === null)	&& this.state.seeking) {
-			let nowDate = new Date();
-			let queueItemStartDate = new Date(this.props.nowPlaying.playTime);
-			console.log(`nowDate: ${nowDate} start date ${queueItemStartDate}`);
-			let dateDifference = (nowDate - queueItemStartDate) / 1000;
-			if (dateDifference > this.props.nowPlaying.lengthSeconds) {
-				this.onEnded(true);
-				return;
-			}
-			let secondsDifferent = dateDifference;
-			console.log(`seeking to ${secondsDifferent}`);
-			this.player.seekTo(secondsDifferent)
-		}
-	}
 
-	
 	getNowPlayingUrl(optionalRoom) {
 		let nowPlayingUrl = null;
 		const room = optionalRoom ? optionalRoom : null;
@@ -112,7 +93,7 @@ class DjContainer extends React.Component {
 	}
 
 	onProgress(status) {
-		if (status.loaded != 0) {
+		if (status.loaded !== 0) {
 			let secondsPlayed = secondsToString(status.playedSeconds.toFixed(0));
 			let secondsPlayedString = secondsPlayed.numseconds + "s";
 			if (secondsPlayed.numminutes > 0) {
@@ -144,9 +125,7 @@ class DjContainer extends React.Component {
 	}
 
 	onEnded(isBehind) {
-		let request = isBehind ? {isBehind: true} : {};
-		console.log(`making request for next track, but isBehind: ${isBehind}`);
-		this.socket.emit('next_track', request);
+		this.socket.emit('next_track', {});
 	}
 
 	render() {

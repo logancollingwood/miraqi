@@ -528,4 +528,19 @@ p.time {
     padding-bottom: 2vh;
     font-family: 'Raleway';
     border-bottom: 1px solid #72D687;
+    max-height: 6.5vh;
+}
+
+i.fab {
+  color: #aaa;
+}
+i.fab:hover {
+  color: #ccc;
+}
+
+i.fas {
+  color: #aaa;
+}
+i.fas:hover {
+  color: #ccc;
 }

@@ -30,8 +30,8 @@ class MerakiApi {
     createSocketUserAndAddToRoom(socketId, roomId) {
         return new Promise((resolve, reject) => {
             this.db.createUser(socketId)
-                .then(user => {
-                    db.addUserToRoom(user._id, roomId)
+                .then(newUser => {
+                    db.addUserToRoom(newUser._id, roomId)
                         .then(data => {
                             const { user, room } = data;
                             resolve(data);
@@ -53,8 +53,10 @@ class MerakiApi {
     }
 
 
+
+
     IsUsernameAdmin(userName) {
-        return userName.toUpperCase() == 'logan'.toUpperCase();
+        return userName.toUpperCase() === 'logan'.toUpperCase();
     }
 
     sendMessageToRoom(roomId, userId, message) {
@@ -68,7 +70,9 @@ class MerakiApi {
                 if (vidId) {
                     if (roomId && userId) {
                         fetchVideoInfo(vidId, function (err, videoInfo) {
-                            if (videoInfo == null) return;
+                            if (videoInfo == null) {
+                                return;
+                            }
                             let queueItem = {
                                 url: playUrl,
                                 userId: userId,
@@ -86,7 +90,7 @@ class MerakiApi {
                                         queue: data.queue,
                                     })
                                 })
-                                .catch(err => console.log(err));
+                                .catch(err2 => console.log(err2));
                         });
                     }
                 }
@@ -100,9 +104,6 @@ class MerakiApi {
     getNextTrack(roomId) {
         return new Promsise((resolve, reject) => {
             this.db.getFirstQueueItem(roomId)
-                .then(queueItem => {
-                    
-                })
                 .catch(error => {
                     reject(error);
                 })
@@ -121,6 +122,7 @@ class MerakiApi {
     }
 
     addUserToRoom(userId, roomId) {
+        const api = this;
         return new Promise((resolve, reject) => {
             this.db.addUserToRoom(userId, roomId)
                 .then(({user, room}) => {
@@ -128,10 +130,18 @@ class MerakiApi {
                     if (room.queue.length > 0) {
                         nowPlaying = room.queue[0];
                     }
-                    resolve({user: user, room: room, nowPlaying: nowPlaying});
+                    api.getTopRoomStats(room._id, 5)
+                        .then(stats => {
+                            resolve({userAddedToRoom: user, room: room, nowPlaying: nowPlaying, stats: stats});
+                        })
+                        .catch(err => reject(err));
                 })
                 .catch(err => {reject(err)});
         })
+    }
+
+    getTopRoomStats(roomId, numStats) {
+        return this.db.getTopStats(roomId, numStats);
     }
 
 }

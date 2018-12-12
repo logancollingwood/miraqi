@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import Nav from "../Nav";
 
-export default class PageNotFound extends React.Component {
+export default class PageNotFound extends Component {
     
     constructor(props) {
         super(props);

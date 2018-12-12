@@ -2,7 +2,7 @@ import React from "react";
 import {connect} from 'react-redux'
 import ChatMessage from "./ChatMessage";
 import ChatInput from "./ChatInput";
-import {addMessage} from '../../actions/action'
+import {AddMessageAction} from '../../actions/action'
 
 const mapStateToProps = (state = {}) => {
 	return {
@@ -23,7 +23,7 @@ export class Chat extends React.Component {
 		this.socket.on('message', function(data){
 			console.log('got message');
 			console.log(data);
-			dispatch(addMessage(data))
+			dispatch(AddMessageAction(data))
 		});
 
 		const newUserList = userList => {

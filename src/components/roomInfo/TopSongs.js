@@ -12,7 +12,7 @@ class TopSongs extends React.Component {
 	render() {
 		return (
 				<div>
-						Top Songs
+						
 				</div>
 		);
 	}

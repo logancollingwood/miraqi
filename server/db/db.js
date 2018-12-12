@@ -20,7 +20,9 @@ class DataBase {
         return new Promise((resolve, reject) => {
             Models.Room.findById(roomId, function (err, room) {
                 console.log(err);
-                if (err) reject(err);
+                if (err) {
+                    reject(err);
+                }
                 resolve(room);
             })
         });
@@ -31,7 +33,9 @@ class DataBase {
         return new Promise((resolve, reject) => {
             Models.User.findById(userId, function (err, user) {
                 console.log(err);
-                if (err) reject(err);
+                if (err) {
+                    reject(err);
+                }
                 resolve(user);
             })
         });
@@ -58,9 +62,14 @@ class DataBase {
                     user.lastLogin = new Date();
                 }
                 user.save(function (err) {
-                    if (err) reject(err);
+                    if (err) {
+                        reject(err);
+                    }
                     resolve(user);
                 });
+            })
+            .catch(error2 => {
+                console.log(error2);
             });
         });
     }
@@ -85,7 +94,9 @@ class DataBase {
                 console.log(user);
 
                 user.save(function (err) {
-                    if (err) reject(err);
+                    if (err) {
+                        reject(err);
+                    }
                     resolve(user);
                 });
             });
@@ -128,7 +139,9 @@ class DataBase {
                 }
 
                 room.save(function (err) {
-                    if (err) reject(err);
+                    if (err) {
+                        reject(err);
+                    }
                     resolve(room);
                 });
             });
@@ -143,7 +156,9 @@ class DataBase {
         let self = this;
         return new Promise((resolve, reject) => {
             Models.User.findById(userId, function (err, user) {
-                if (err) reject(err);
+                if (err) {
+                    reject(err);
+                }
                 if (user == null) {
                     reject(`No user found with id ${userId}`);
                 }
@@ -153,13 +168,13 @@ class DataBase {
                     roomProviderType: 'discord'
                 }).then(room => {
                     console.log(`updated room ${room._id} and added user ${user._id}`)
-                    Models.Room.findByIdAndUpdate(room._id, {'users': {'$push': user}},{'new': true}, function(err, room) {
+                    Models.Room.findByIdAndUpdate(room._id, {'users': {'$push': user}},{'new': true}, function(err2, room2) {
                         resolve({
                             user: user,
-                            room: room});
+                            room: room2});
                         });
-                }).catch((err) => {
-                    reject(err);
+                }).catch((err3) => {
+                    reject(err3);
                 })
             })
         });
@@ -173,14 +188,18 @@ class DataBase {
         
         return new Promise((resolve, reject) => {
             Models.User.findById(userId, function (err, user) {
-                if (err) reject(err);
+                if (err) {
+                    reject(err);
+                }
 
                 Models.Room.findByIdAndUpdate(
                     roomId,
                     { $pull: { users: user } },
                     { new: true },
-                    function (err, room) {
-                        if (err) reject(err);
+                    function (err2, room) {
+                        if (err2) {
+                            reject(err2);
+                        }
                         if (room == null) {
                             reject(`room was not found with id: ${roomId}`);
                         }
@@ -200,6 +219,7 @@ class DataBase {
      * @param {url, userId, roomId, trackName, type, lengthSeconds} addQueueItemRequest 
      */
     addQueueItem(addQueueItemRequest) {
+        var db = this;
         return new Promise((resolve, reject) => {
             const url = addQueueItemRequest.url;
             const userId = addQueueItemRequest.userId;
@@ -220,10 +240,12 @@ class DataBase {
                 { $push: { queue: queueItem } },
                 { new: true },
                 function (err, model) {
-                    if (err) reject(err);
+                    if (err) {
+                        reject(err);
+                    }
                     const firstQueueItem = model.queue.length > 0 ?
                         model.queue[0] : null;
-                    let isFirstSong = model.queue.length == 1;
+                    let isFirstSong = model.queue.length === 1;
 
                     let timeTillPlay = 0;
                     if (!isFirstSong) {
@@ -273,9 +295,60 @@ class DataBase {
                             return;
                         });
                     }
-
+                    db.addRoomStat(queueItem, model._id);
                 }
             );
+        });
+    }
+
+
+    getTopStats(roomId, numberOfStats) {
+        return new Promise((resolve, reject) => {
+            console.log(`Getting ${numberOfStats} stats for roomId ${roomId}`);
+            let query = Models.RoomStat.find({roomId: roomId}).sort({'count': -1}).limit(numberOfStats);
+            query.exec(function(error, stats) {
+                if (error) {
+                    console.log(error);
+                    reject();
+                }
+                resolve(stats);
+            })
+        });
+    }
+
+    addRoomStat(queueItem, roomId) {
+        return new Promise((resolve, reject) => {
+            console.log(`Adding stat to roomId ${roomId}`);
+            console.log(`queueItem PLAYURL: ${queueItem.playUrl}`);
+            Models.RoomStat.find({roomId: roomId, playUrl: queueItem.playUrl}, function(err, roomStat) {
+                if (err) {
+                    console.log(err);
+                    resolve();
+                }
+                console.log("found roomStat");
+                console.log(roomStat);
+                if (roomStat.length === 0) {
+                    roomStat = new Models.RoomStat({
+                        roomId: roomId,
+                        playUrl: queueItem.playUrl,
+                        title: queueItem.trackName,
+                        type: queueItem.type,
+                        count: 1
+                    });
+                } else {
+                    roomStat = roomStat[0];
+                    roomStat.count++;
+                }
+
+                roomStat.save(function (error, roomStatSaved) {
+                    if (error) {
+                        console.log(error);
+                        resolve();
+                    }
+                    resolve(roomStat);
+                });
+
+            })
         });
     }
 
@@ -298,27 +371,29 @@ class DataBase {
 
                 const queue = room.queue;
                 // if queue is empty, return empty queue
-                if (queue.length === 0) resolve({queue: queue});
+                if (queue.length === 0) { resolve({queue: queue}); }
                
                 // Pop the queue, and then save the room
                 queue.shift();
                
                 room.save()
-                    .then(room => {
+                    .then(room2 => {
                         // The queueItem we want is now on top
-                        let queueItem = room.queue.shift();
+                        let queueItem = room2.queue.shift();
+
+                        // We just popped the last item off the queue
                         if (queueItem === undefined || queueItem === null) {
                             resolve(null);
                             return;
                         }
                         queueItem.playTime = new Date();
                         room.queue.unshift(queueItem);
-                        queueItem.save(function(error, queueItem) {
+                        queueItem.save(function(error, newQueueItem) {
                             if (error) {
                                 console.log(error);
                                 return;
                             }
-                            resolve({queueItem: queueItem, queue: room.queue});
+                            resolve({queueItem: newQueueItem, queue: room.queue});
                         });
                         
                     })  
@@ -351,7 +426,7 @@ class DataBase {
 
                 const queue = room.queue;
                 // if queue is empty, return empty queue
-                if (queue.length === 0) resolve({queue: queue});
+                if (queue.length === 0) { resolve({queue: queue}); }
 
                 let queueItem = queue.shift();
                 resolve(queueItem);
@@ -380,16 +455,14 @@ class DataBase {
                 function (err, model) {
                     console.log('error');
                     console.log(err);
-                    if (err) reject(err);
+                    if (err) {
+                        reject(err);
+                    }
                     console.log(model);
                     resolve(model);
                 }
             );
         });
-    }
-
-    clearQueue(roomId, userId) {
-
     }
 
     getNextSongForRoom(roomId) {
@@ -402,19 +475,19 @@ class DataBase {
                 }
 
                 const queue = room.queue;
-                if (queue.length === 0) resolve({});
+                if (queue.length === 0) { resolve({}); }
                 console.log(queue);
 
-                queue.findOne().sort('-insertDate').exec(function (err, queueItem) {
-                    if (err) {
-                        reject(err);
+                queue.findOne().sort('-insertDate').exec(function (findQueueIssue, queueItem) {
+                    if (findQueueIssue) {
+                        reject(findQueueIssue);
                     }
                     console.log(`found queueItem in roomId: ${roomId}`);
                     console.log(queueItem);
                     queue.id(queueItem.id).remove();
 
-                    room.save(function (err) {
-                        reject(err);
+                    room.save(function (roomSaveError) {
+                        reject(roomSaveError);
                     });
                     resolve(queueItem);
                 });

@@ -6,10 +6,12 @@ const initialState = {
     name: '',
     roomProviderType: 'discord',
     messages: [],
+    room: null,
     nowPlaying: null,
     users: [],
     id: id,
     queue: [],
+    stats: null,
     user: {
         guilds: []
     },
@@ -27,6 +29,7 @@ const reducer = (state=initialState, action) => {
         })
     case 'UPDATE_ROOM':
         return Object.assign({}, state, {
+            room: action.data.room,
             createdAt: action.data.room.createdAt,
             messages: action.data.room.messages,
             name: action.data.room.name,
@@ -35,6 +38,7 @@ const reducer = (state=initialState, action) => {
             id: action.data.room._id,
             user: action.data.user,
             queue: action.data.room.queue,
+            stats: action.data.stats,
             loading: false
         });
     case 'NOT_AUTH': 
@@ -60,6 +64,10 @@ const reducer = (state=initialState, action) => {
     case 'IS_SKIPPING' : 
         return Object.assign({}, state, {
             skipping: action.data
+        })
+    case 'NEW_STATS' : 
+        return Object.assign({}, state, {
+            stats: action.data
         })
     default:
       return state

@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { Component } from "react";
 import Nav from "./Nav";
 import Api from "./components/Api";
 import {Redirect} from 'react-router';
 import FontAwesome from 'react-fontawesome'
-import ip from 'ip';
+import ip from "ip";
 
-class Home extends React.Component {
+class Home extends Component {
 
   constructor(props) {
     super(props);
