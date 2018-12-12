@@ -29,6 +29,8 @@ const mapStateToProps = (state = {}) => {
 	};
 };
 
+const VOLUME_LOCAL_STORAGE_KEY = "PLAYER_VOLUME";
+
 class DjContainer extends React.Component {
 
 	constructor(props) {
@@ -43,29 +45,29 @@ class DjContainer extends React.Component {
 			nowPlayingUrl = room.queue ? room.queue[0] : null;
 		}
 
+		let initialVolume = 
+			localStorage.getItem(VOLUME_LOCAL_STORAGE_KEY) ? 
+			localStorage.getItem(VOLUME_LOCAL_STORAGE_KEY) : 0.1;
+		
 		this.state = {
 			nowPlaying: null,
 			secondsPlayed: 0,
 			songPlayed: 0, // the amount in seconds that the song has progressed
 			songLength: 0, // the length of the song in seconds
 			totalLength: 0,
-			volume: 0.1,
+			volume: Number.parseFloat(initialVolume),
 			playing: true
 		}
 
 		this.socket = this.props.socket;
 
 		this.socket.on('play', function (data) {
-			console.log("PLAYING ");
-			console.log(data);
 			dispatch(NowPlayingAction(data))
 		});
 		
 		this.socket.on('no_queue', function() {
-			console.log('no_queue');
 			dispatch(NowPlayingAction(null))
 			self.setState({
-				nowPlaying: null,
 				songPlayed: 0,
 				songLength: 0,
 			});
@@ -76,6 +78,7 @@ class DjContainer extends React.Component {
 			self.setState({
 				volume: event
 			})
+			localStorage.setItem(VOLUME_LOCAL_STORAGE_KEY, event);
 		}
 	}
 
