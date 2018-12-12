@@ -19,6 +19,7 @@
     "forever": "^0.15.3",
     "get-youtube-title": "^1.0.0",
     "mongoose": "^5.0.11",
+    "nodemon": "^1.18.8",
     "passport.socketio": "^3.7.0",
     "socket.io": "^2.0.4",
     "youtube-info": "^1.2.0"

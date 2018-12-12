@@ -18,12 +18,19 @@ class GuildProfile extends React.Component {
         if (this.props.loading) {
             return null;
         }
-    
+        
+        let url = 'https://cdn.discordapp.com/'
+        if(this.props.user.avatar) {
+            url += `avatars/${this.props.user.id}/${this.props.user.avatar}.png?size=64`
+        } else {
+            url += `embed/avatars/${this.props.user.discriminator%5}.png?size=64`
+        }
+
         return (
             <div className="container no-padding">
                 <div className="row profile">
                 <div className="col-md-4 profilePic">
-                    <img style={{borderRadius: "50px"}} src={`https://cdn.discordapp.com/avatars/${this.props.user.id}/${this.props.user.avatar}.png?size=64`}/>
+                    <img style={{borderRadius: "50px", width: "64px"}} src={url}/>
                 </div>
                 <div className="col-md-4 no-padding userName">
                     <p className='name'>{this.props.user.username}</p>
