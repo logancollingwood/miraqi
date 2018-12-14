@@ -67,9 +67,6 @@ class DataBase {
                     }
                     resolve(user);
                 });
-            })
-            .catch(error2 => {
-                console.log(error2);
             });
         });
     }

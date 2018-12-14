@@ -1,5 +1,5 @@
 import React from "react";
-import Link from "react-router";
+import { Link } from 'react-router-dom'
 import GuildProfile from "./guilds/GuildProfile.js";
 import {connect} from 'react-redux'
 
@@ -56,7 +56,7 @@ class Guilds extends React.Component {
                     </div>
                     <div className="col-md-9">
                         <div className="type">
-                            <a href={`/rooms/discord/${guild.id}`}>{guild.name}</a>
+                            <Link to={`/rooms/discord/${guild.id}`}>{guild.name}</Link>
                         </div>
                     </div>
                 </li>
