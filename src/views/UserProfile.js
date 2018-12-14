@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import Redirect from "react-router-dom";
+import { Redirect } from "react-router-dom";
 import Config from "../Config.js";
 import Nav from "../Nav.js";
 import Guilds from "../components/Guilds.js";
@@ -15,43 +15,69 @@ import { SetUserAction } from "../actions/action";
 
 const store = createStore(reducer);
 const mapStateToProps = (state = {}) => {
-    console.log(state)
-    if (state.loading) {
-        return {loading: true}
-    }
 
-    return {};
+    return {loggedIn: false, loading: true};
 };
 class UserProfile extends React.Component {
 
 	constructor(props) {
 		super(props);
-		const { dispatch } = this.props;
-		this.requestUser(dispatch);
+		this.dispatch  = this.props.dispatch;
+		this.state = {
+			loading: true,
+			loggedIn: false
+		}
 	}
 
-	async requestUser(dispatch) {
+	componentDidMount() {
+		const self = this;
+		this.requestUser()
+			.then(user => {
+				if (!user) {
+					self.setState({
+						loggedIn: false,
+						loading: false
+					});
+				} else {
+					self.setState({
+						loggedIn: true,
+						loading: false
+					});
+					self.dispatch(SetUserAction(user));
+				}
+			}).catch(err => {console.log(err) });
+	}
+
+	async requestUser() {
 		let user = await Api.getUser();
-		dispatch(SetUserAction(user));
+		return user;
 	}
 
 
 	render() {
-		return (
-				<div>
-					<Nav isHome={false} isRoom={false}/>
-						<div className="container-fluid">
-							<div className="row justify-content-center main-content">
-								<div className="col-md-2 no-padding">
-									<Guilds />
+		console.log('render');
+		console.log(this.state);
+		if (!this.state.loading && !this.state.loggedIn) {
+			return (
+				<Redirect to='/login/discord' />
+			)
+		} else {
+			return (
+					<div>
+						<Nav isHome={false} isRoom={false}/>
+							<div className="container-fluid">
+								<div className="row justify-content-center main-content">
+									<div className="col-md-2 no-padding">
+										<Guilds />
+									</div>
+									<div className="col-md-10 no-padding">
+										<Profile />
+									</div>
 								</div>
-								<div className="col-md-10 no-padding">
-									<Profile />
-								</div>
-							</div>
+						</div>
 					</div>
-				</div>
-		)
+			)
+		}
 	}
 }
 

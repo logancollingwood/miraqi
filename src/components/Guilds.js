@@ -9,7 +9,11 @@ const mapStateToProps = (state = {}) => {
         return {loading: true}
     }
 
-    return {guilds: state.user.profile.guilds, user: state.user, room: state.room};
+    return {
+        guilds: state.user.profile.guilds, 
+        user: state.user, 
+        room: state.room
+    };
 };
 
 class Guilds extends React.Component {

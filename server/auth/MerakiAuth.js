@@ -50,7 +50,7 @@ function InitializePassportWeb(app, dbInstance, sessionStore, cookieParser) {
         if (req.isAuthenticated()) {
             return next();
         }
-        res.send('not logged in :(');
+        res.send({loggedIn: false});
     }
 
     app.get('/login/discord', passport.authenticate('discord'));
@@ -66,7 +66,9 @@ function InitializePassportWeb(app, dbInstance, sessionStore, cookieParser) {
         res.redirect('/');
     });
     app.get('/user/info', checkAuth, function(req, res) {
-        res.json(req.user);
+        console.log('user requested info');
+        console.log(req.user);
+        res.json({loggedIn: true, user: req.user});
     });
 }
 
