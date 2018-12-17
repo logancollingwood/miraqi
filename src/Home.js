@@ -61,7 +61,7 @@ class Home extends Component {
                 { displayDiv }
               </div>
             </div>
-            <div className="arrow-container"><div class="arrow bounce"></div></div>
+            <div className="arrow-container"><div className="arrow bounce"></div></div>
           </section>
           <section className="content">
             <div className="row justify-content-md-center">

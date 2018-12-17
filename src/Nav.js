@@ -11,6 +11,7 @@ const TIME_FORMAT = "h:mm:ss a";
 const mapStateToProps = (state = {}) => {
   console.log('mapping state to nav');
   console.log(state);
+
 	return {
     nowPlaying: state.nowPlaying,
     user: state.user
@@ -53,7 +54,8 @@ class Nav extends React.Component {
   render() {
     let isCreate = this.props.isCreate;
     let loginLink = Config.WEB_HOST + "login/discord";
-    const isLoggedIn = this.props.user != null;
+    const isLoggedIn = !(this.props.user.profile === null || this.props.user.profile === undefined);
+    console.log(`IsloggedIn: ${isLoggedIn}`);
     const authHeaderToShow = isLoggedIn ? 
         <div>
           <Link to="/home" className="nav-link">Home</Link>
