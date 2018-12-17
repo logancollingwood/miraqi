@@ -1,6 +1,7 @@
 import React from "react";
 import {connect} from 'react-redux'
 import Config from "../../Config.js";
+import { Link } from 'react-router-dom';
 
 const mapStateToProps = (state = {}) => {
     if (state.loading) {
@@ -33,7 +34,7 @@ class GuildProfile extends React.Component {
                     <img style={{borderRadius: "50px", width: "64px"}} src={url}/>
                 </div>
                 <div className="col-md-4 no-padding userName">
-                    <p className='name'>{this.props.user.username}</p>
+                    <Link to="/home"><p className='name'>{this.props.user.username}</p></Link>
                 </div>
                 <div className="col-md-4 no-padding logout left-half">
                     <a href={Config.WEB_HOST + "auth/logout"}> logout </a>

@@ -1,4 +1,6 @@
 import React  from "react";
+import ProfileSidebar from "./components/ProfileSidebar";
+import ProfileMain from "./components/ProfileMain";
 
 class Profile extends React.Component {
 
@@ -6,11 +8,11 @@ class Profile extends React.Component {
         return (
             <div> 
                 <div className="row justify-content-md-center profile-content">
-                    <div className="col-2 col-md-offset-2">
-                        <i className="fas fa-arrow-left fa-2x bounce"></i>
+                    <div className="col-3 profile-sidebar">
+                        <ProfileSidebar />
                     </div>
-                    <div className="col-8 col-md-offset-2">
-                    <h1 className="banner"> Join one of your discord servers </h1>
+                    <div className="col-8 offset-md-1 profile-main">
+                        <ProfileMain />
                     </div>
                 </div>
             </div>
