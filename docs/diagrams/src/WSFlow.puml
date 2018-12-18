@@ -1,0 +1,59 @@
+@startuml web socket flow
+actor client1
+actor client2
+entity allClients
+database db
+actor socketserver
+
+client1->socketserver: join(credentials)
+socketserver->client1: initialize(room, nowPlaying)
+
+alt nowPlaying not null
+client1->client1: determinePlayTime(nowPlaying)
+alt nowPlaying.playTime+nowPlaying.duration < now
+client1->socketserver: next_track
+socketserver->allClients: now_playing(nowPlaying or null)
+end
+client1->client1: play(nowPlaying, timestamp)
+end
+
+... client1 clicks send message ...
+client1->socketserver: sendMessage(message)
+socketserver->socketserver: isPlayMessage(message)
+alt isPlayMessage
+socketserver->db: getQueue(roomId)
+alt queue is empty
+socketserver->socketserver: addToQueue(playItem)
+socketserver->
+end
+socketserver->db: addToQueue()
+
+end
+
+...
+
+... client1 disconnects ...
+socketserver->socketserver: disconnect
+socketserver->socketserver: removeUserFromRoom(userId, roomId)
+socketserver->allClients: newUserList(userList)
+...
+
+
+... client1 joins room with nowPlaying old ...
+client1->socketserver: join()
+socketServer->client1: initialize(room, nowPlaying)
+...
+
+... client1 finishes ...
+client1->socketserver: next_track
+socketserver->socketserver: areAllClientsDonePlaying = false
+... client2 finishes ...
+client2->socketserver: next_track
+socketserver->socketserver: areAllClientsDonePlaying = true
+socketserver->db: popQueueItem()
+alt new queue item is not null
+socketserver->allClients: now_playing
+end
+
+
+@enduml
