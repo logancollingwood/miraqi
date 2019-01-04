@@ -13,8 +13,7 @@ const setupWebEndpoints = require('./webEndpoints.js');
 require('dotenv').config()
 
 
-function setup(app, dbInstance, sessionStore, cookieParser) {
-    const db = new DataBase(dbInstance);
+function setup(app, db, sessionStore, cookieParser) {
 
     app.use(bodyParser.json());
     app.use(cors({credentials: true, origin: 'http://localhost:3000'}));
