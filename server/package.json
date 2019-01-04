@@ -3,12 +3,12 @@
   "version": "1.0.0",
   "description": "",
   "author": "",
-  "main": "server.js",
+  "main": "dist/server.js",
   "scripts": {
     "build": "rimraf dist/ && babel ./ --out-dir dist/ --ignore ./node_modules,./.babelrc,./package.json,./npm-debug.log --copy-files",
     "start": "forever index.js",
     "dev-start": "nodemon index.js",
-    "dev-start-ts": "tsc-watch ./src/server.ts --outDir ./dist --onSuccess 'nodemon dist/server.js' --compiler typescript/bin/tsc"
+    "dev-start-ts": "tsc-watch src/server.ts --onSuccess 'nodemon dist/server.js'"
   },
   "dependencies": {
     "connect-mongo": "^2.0.1",
@@ -29,6 +29,7 @@
   "devDependencies": {
     "@types/connect-mongo": "0.0.40",
     "@types/cookie-parser": "^1.4.1",
+    "@types/dotenv": "^6.1.0",
     "@types/express-session": "^1.15.11",
     "@types/mongoose": "^5.3.5",
     "@types/socket.io": "^2.1.2",

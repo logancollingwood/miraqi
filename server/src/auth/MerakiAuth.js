@@ -15,6 +15,7 @@ function InitializePassportWeb(app, dbInstance, sessionStore, cookieParser) {
 
     let hostName = process.env.HOST_NAME
     console.log(`using hostName: ${hostName}`);
+    console.log(process.env);
 
     passport.use(new DiscordStrategy({
         callbackURL: hostName + 'login/discord/return',

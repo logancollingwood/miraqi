@@ -34,4 +34,4 @@ function MiraqiWeb(app, dbInstance, sessionStore, cookieParser) {
 
 }
 
-module.exports.default = MiraqiWeb;
+module.exports.MiraqiWeb = MiraqiWeb;
