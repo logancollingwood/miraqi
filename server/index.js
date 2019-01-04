@@ -17,13 +17,13 @@ const WEB_PORT = process.env.PORT || 3001;
 
 const uri = process.env.MONGODB_URI;
 console.log("Connecting to mongodb: " + uri);
-let db = new DataBase(mongoose.connect(uri));
+mongoose.connect(uri)
 
 
 const sessionStore = new MongoStore({mongooseConnection: mongoose.connection});
 
-SocketService(io, db, sessionStore);
-MerakiSocket.setup(io, db, sessionStore, cookieParser);
-MerakiWeb.setup(app, db, sessionStore, cookieParser);
+SocketService(io, sessionStore);
+MerakiSocket.setup(io, sessionStore);
+MerakiWeb.setup(app, sessionStore, cookieParser);
 
 server.listen(WEB_PORT);

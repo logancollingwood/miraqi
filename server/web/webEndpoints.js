@@ -1,4 +1,6 @@
-function setupWebEndpoints(app, db) {
+const db = require('../db/db');
+
+function setupWebEndpoints(app) {
     app.get('/api/room/:id', function(req, res) {
         db.getRoomById(req.params.id)
             .then(room => {

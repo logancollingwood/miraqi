@@ -4,14 +4,13 @@ const moment = require('moment');
 
 const SOCKET_DISCONNECT_TIMEOUT_MS = 5000;
 let TIME_FORMAT = "MM YY / h:mm:ss a";
-
+let LOGIN_PROVIDER_TYPE_DISCORD = 'discord';
 
 class SocketConnection {
     constructor(io, socket) {
-        console.log(`constructing socket connection`);
         this._io = io;
         this._socket = socket;
-        this._disconnectIntervalId = setTimeout(this.disconnect.bind(this), SOCKET_DISCONNECT_TIMEOUT_MS)
+        this._disconnectTimeout = setTimeout(this.disconnect.bind(this), SOCKET_DISCONNECT_TIMEOUT_MS)
         this._user = socket.request.user;
         this._socketSession = new SocketSession(io, socket);
 
@@ -21,8 +20,6 @@ class SocketConnection {
         socket.on('next_track', this.handleNextTrack.bind(this));
         socket.on('disconnect',  this.handleDisconnect.bind(this));
         socket.on('join', this.handleJoin.bind(this));
-        clearTimeout(this._disconnectIntervalId);
-
     }
 
     disconnect() {
@@ -30,7 +27,7 @@ class SocketConnection {
     }
 
     async handleJoin(data) {
-        clearTimeout(this._disconnectIntervalId);
+        clearTimeout(this._disconnectTimeout);
         if(!data.roomId) {
             this.disconnect();
         }
@@ -38,31 +35,26 @@ class SocketConnection {
             this._socketSession.emitToClient('notauth', {});
             this.disconnect();
         }
-        console.log(`got join request from ${data.roomId} user: ${this._user.profile.username}`)
         let userName = this._user.profile.username;
         let profile = this._user.profile;
-        let loginProviderType = 'discord';
-        let getOrCreatedUser = await API.getOrCreateUser(userName, profile, loginProviderType);
+        let getOrCreatedUser = await API.getOrCreateUser(userName, profile, LOGIN_PROVIDER_TYPE_DISCORD);
         let {userAddedToRoom, room, nowPlaying, stats} = await API.addUserToRoom(getOrCreatedUser._id, data.roomId);
         this._socketSession.room = room;
         this._socketSession.user = userAddedToRoom;
-        var broadcastMessage = {
-            serverMessage: true,
-            author: this._socketSession.user.profile.username,
-            message: "has joined the room"
-        }
-        console.log(`got connect. Number of users here: ${room.users.length}`);
         this._socketSession.joinRoom(room);
         this._socketSession.emitToClient('initialize', {
             user: userAddedToRoom,
             room: room,
             stats: stats
         });
-        if (nowPlaying !== undefined) {
+        if (nowPlaying) {
             this._socketSession.emitToClient('nowPlaying', nowPlaying);
         }
-        this._socketSession.emitToRoom('message', broadcastMessage);
-        this._socketSession.emitToRoom('users', room.users);
+        this._socketSession.emitToRoom('message', {
+            serverMessage: true,
+            author: userName,
+            message: "has joined the room"
+        });
     }
 
     async handleMessageSent(data) {

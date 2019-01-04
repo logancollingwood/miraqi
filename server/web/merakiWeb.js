@@ -4,7 +4,6 @@ const passport = require('passport');
 const bodyParser = require('body-parser')
 const path = require('path');
 
-const DataBase = require('../db/db.js');
 const { WebAuth, SocketAuth } = require('../auth/MerakiAuth.js');
 
 const cors = require('cors');
@@ -13,7 +12,7 @@ const setupWebEndpoints = require('./webEndpoints.js');
 require('dotenv').config()
 
 
-function setup(app, db, sessionStore, cookieParser) {
+function setup(app, sessionStore, cookieParser) {
 
     app.use(bodyParser.json());
     app.use(cors({credentials: true, origin: 'http://localhost:3000'}));
@@ -23,13 +22,13 @@ function setup(app, db, sessionStore, cookieParser) {
         res.sendFile(path.join(__dirname, '../../build', 'index.html'));
     });
 
-    WebAuth(app, db, sessionStore, cookieParser);
+    WebAuth(app, sessionStore, cookieParser);
 
     app.get('*', function(req, res) {
         res.sendFile(path.join(__dirname, '../../build', 'index.html'));
     });
 
-    setupWebEndpoints(app, db);
+    setupWebEndpoints(app);
 
 }
 

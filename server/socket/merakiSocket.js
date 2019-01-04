@@ -16,7 +16,7 @@ let users = [];
 const SKIP_VOTE_PERCENT = 65;
 const SOCKET_TIMEOUT_MS = 5000;
 
-function setup(io, database, sessionStore) {
+function setup(io, sessionStore) {
 
     SocketAuth(io, sessionStore);
 

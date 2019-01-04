@@ -2,8 +2,9 @@ const passport = require('passport');
 const DiscordStrategy = require('passport-discord').Strategy;
 const session = require('express-session');
 const passportSocketIo = require("passport.socketio");
+const dbInstance = require('../db/db');
 
-function InitializePassportWeb(app, dbInstance, sessionStore, cookieParser) {
+function InitializePassportWeb(app, sessionStore, cookieParser) {
     const scopes = ['identify', 'email', 'guilds'];
         
     passport.serializeUser(function(user, done) {
@@ -24,7 +25,6 @@ function InitializePassportWeb(app, dbInstance, sessionStore, cookieParser) {
         scope: scopes
     }, function(accessToken, refreshToken, profile, done) {
         process.nextTick(function() {
-            console.log(profile);
             dbInstance.createUser(profile, 'discord')
             .then(user=> {
                 return done(null, user);
@@ -38,7 +38,7 @@ function InitializePassportWeb(app, dbInstance, sessionStore, cookieParser) {
             httpOnly: false
         },
         resave: false,
-        secret: 'keyboard cat',
+        secret: process.env.SESSION_SECRET,
         saveUninitialized: false,
         store: sessionStore,
     }));
