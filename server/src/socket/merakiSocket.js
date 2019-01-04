@@ -5,8 +5,6 @@ const moment = require('moment');
 const MerakiApi = require("../controllers/MerakiApi");
 const DJ = require('../controllers/Dj');
 const SocketSession = require("./socketSession");
-const { WebAuth, SocketAuth } = require('../auth/MerakiAuth.js');
-
 let TIME_FORMAT = "MM YY / h:mm:ss a";
 function ytVidId(url) {
     var p = /^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
@@ -16,9 +14,7 @@ function ytVidId(url) {
 let users = [];
 const SKIP_VOTE_PERCENT = 65;
 
-function setup(io, database, sessionStore) {
-
-    SocketAuth(io, sessionStore);
+module.exports.MerakiSocket = (io, database, sessionStore) => {
 
     let numberOfUsersWhoFinishedSong = 0;
     let numberOfUsersWhoVoteToSkip = 0;
@@ -198,6 +194,3 @@ function IsUsernameAdmin(userName) {
     return userName.toUpperCase() === 'logan'.toUpperCase();
 }
 
-module.exports = {
-    setup: setup
-}

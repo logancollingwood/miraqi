@@ -7,7 +7,8 @@
   "scripts": {
     "build": "rimraf dist/ && babel ./ --out-dir dist/ --ignore ./node_modules,./.babelrc,./package.json,./npm-debug.log --copy-files",
     "start": "forever index.js",
-    "dev-start": "nodemon index.js"
+    "dev-start": "nodemon index.js",
+    "dev-start-ts": "tsc-watch ./src/server.ts --outDir ./dist --onSuccess 'nodemon dist/server.js' --compiler typescript/bin/tsc"
   },
   "dependencies": {
     "connect-mongo": "^2.0.1",
@@ -22,11 +23,18 @@
     "nodemon": "^1.18.8",
     "passport.socketio": "^3.7.0",
     "socket.io": "^2.0.4",
+    "typescript": "^3.2.2",
     "youtube-info": "^1.2.0"
   },
   "devDependencies": {
+    "@types/connect-mongo": "0.0.40",
+    "@types/cookie-parser": "^1.4.1",
+    "@types/express-session": "^1.15.11",
+    "@types/mongoose": "^5.3.5",
+    "@types/socket.io": "^2.1.2",
     "babel-cli": "^6.26.0",
     "babel-preset-es2015": "^6.24.1",
-    "rimraf": "^2.6.2"
+    "rimraf": "^2.6.2",
+    "tsc-watch": "^1.0.31"
   }
 }

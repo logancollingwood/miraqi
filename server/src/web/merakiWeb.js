@@ -13,7 +13,7 @@ const setupWebEndpoints = require('./webEndpoints.js');
 require('dotenv').config()
 
 
-function setup(app, dbInstance, sessionStore, cookieParser) {
+function MiraqiWeb(app, dbInstance, sessionStore, cookieParser) {
     const db = new DataBase(dbInstance);
 
     app.use(bodyParser.json());
@@ -34,6 +34,4 @@ function setup(app, dbInstance, sessionStore, cookieParser) {
 
 }
 
-module.exports = {
-    setup: setup
-}
+module.exports.default = MiraqiWeb;
