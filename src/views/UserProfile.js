@@ -59,7 +59,7 @@ class UserProfile extends React.Component {
 		console.log(this.state);
 		if (!this.state.loading && !this.state.loggedIn) {
 			return (
-				<Redirect to='/login/discord' />
+				<Redirect to="/" />
 			)
 		} else {
 			return (

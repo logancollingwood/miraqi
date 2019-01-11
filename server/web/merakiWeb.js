@@ -12,7 +12,7 @@ const setupWebEndpoints = require('./webEndpoints.js');
 require('dotenv').config()
 
 
-function setup(app, sessionStore, cookieParser) {
+function setup(app, sessionStore) {
 
     app.use(bodyParser.json());
     app.use(cors({credentials: true, origin: 'http://localhost:3000'}));
@@ -22,7 +22,7 @@ function setup(app, sessionStore, cookieParser) {
         res.sendFile(path.join(__dirname, '../../build', 'index.html'));
     });
 
-    WebAuth(app, sessionStore, cookieParser);
+    WebAuth(app, sessionStore);
 
     app.get('*', function(req, res) {
         res.sendFile(path.join(__dirname, '../../build', 'index.html'));

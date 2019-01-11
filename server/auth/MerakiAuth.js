@@ -3,8 +3,9 @@ const DiscordStrategy = require('passport-discord').Strategy;
 const session = require('express-session');
 const passportSocketIo = require("passport.socketio");
 const dbInstance = require('../db/db');
+const cookieParser = require('cookie-parser');
 
-function InitializePassportWeb(app, sessionStore, cookieParser) {
+function InitializePassportWeb(app, sessionStore) {
     const scopes = ['identify', 'email', 'guilds'];
         
     passport.serializeUser(function(user, done) {
@@ -57,6 +58,7 @@ function InitializePassportWeb(app, sessionStore, cookieParser) {
 
     app.get('/login/discord/return', passport.authenticate('discord', {failureRedirect: '/login'}),
         function(req, res) {
+            console.log('successful auth return');
             res.redirect('/home');
         }
     );
@@ -72,10 +74,10 @@ function InitializePassportWeb(app, sessionStore, cookieParser) {
     });
 }
 
-function InitializePassportSocket(io, sessionStore, cookieParser) {
+function InitializePassportSocket(io, sessionStore) {
     io.use(passportSocketIo.authorize({
         cookieParser: cookieParser,
-        secret:       'keyboard cat',    // the session_secret to parse the cookie
+        secret:       process.env.SESSION_SECRET,    // the session_secret to parse the cookie
         key:          'connect.sid',
         store:        sessionStore,        // we NEED to use a sessionstore. no memorystore please
         success:      onAuthorizeSuccess,  // *optional* callback on success - read more below
@@ -93,6 +95,7 @@ function onAuthorizeFail(data, message, error, accept){
   if(error) {
     throw new Error(message);
   }
+  console.log(error);
   console.log('FAILED CONNECTION TO SOCKET.IO: ' + message);
 
   // We use this callback to log all of our failed connections.

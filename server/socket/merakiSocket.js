@@ -18,8 +18,6 @@ const SOCKET_TIMEOUT_MS = 5000;
 
 function setup(io, sessionStore) {
 
-    SocketAuth(io, sessionStore);
-
     let numberOfUsersWhoFinishedSong = 0;
     let numberOfUsersWhoVoteToSkip = 0;
 
@@ -27,53 +25,7 @@ function setup(io, sessionStore) {
         let user = socket.request.user;
         socketLog('socketId: ' + socket.id + ' connected.');
         const socketSession = new SocketSession(io, socket);
-        const dj = new DJ(socketSession, db);
-
-        socket.on('skip_track', function(data) {
-            numberOfUsersWhoVoteToSkip++;
-            let readyToSkip =  ((numberOfUsersWhoVoteToSkip / io.engine.clientsCount) * 100) > SKIP_VOTE_PERCENT;
-            let numUsersRequiredToSkip = Math.ceil((io.engine.clientsCount * SKIP_VOTE_PERCENT) / 100);
-            console.log(`numUsers: ${io.engine.clientsCount}, number who skipped song: ${numberOfUsersWhoVoteToSkip}, so readyToSkip is: ${readyToSkip}. ${numUsersRequiredToSkip} required to skip`);
-            var broadcastMessage = {
-                serverMessage: true,
-                author: socketSession.user.profile.username,
-                message: `voted to skip the currently playing song. ${numUsersRequiredToSkip} more votes to skip`
-            }
-            if (readyToSkip) {
-                dj.handleNextTrack()
-                API.getTopRoomStats(socketSession.room._id, 5)
-                    .then(topStats => {
-                        socketSession.emitToRoom('stats', topStats);
-                    })
-                numberOfUsersWhoVoteToSkip = 0;
-                broadcastMessage.message = `voted to skip the current song. Skipping now...`
-            } else {
-                broadcastMessage.message = `voted to skip the currently playing song. ${numUsersRequiredToSkip} more votes to skip`
-            }
-            socketSession.emitToRoom('message', broadcastMessage);
-        });
-
-        socket.on('next_track', function(data) {
-            let isBehind = data.isBehind ? data.isBehind : false;
-            if (isBehind) {
-                // if the user is asking for the next track, but is currently parsing an old song, 
-                // just finish
-                return;
-            }
-            numberOfUsersWhoFinishedSong++;
-            let readyToRemoveFromQueueAndPlay = 
-                io.engine.clientsCount >= numberOfUsersWhoFinishedSong;
-            console.log(`numUsers: ${io.engine.clientsCount}, number who finished song: ${numberOfUsersWhoFinishedSong}, so readyToPlay is: ${readyToRemoveFromQueueAndPlay}`);
-            if (readyToRemoveFromQueueAndPlay) {
-                dj.handleNextTrack()
-                API.getTopRoomStats(socketSession.room._id, 5)
-                    .then(topStats => {
-                        socketSession.emitToRoom('stats', topStats);
-                    })
-                numberOfUsersWhoFinishedSong = 0;
-            }
-            
-        });
+        const dj = new DJ(socketSession);
 
         socket.on('subscribe', function (data) {
             console.log('got subscribe');

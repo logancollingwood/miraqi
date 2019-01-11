@@ -5,7 +5,7 @@ import DjContainer from "./DjContainer.js";
 import Api from "../components/Api.js";
 import Guilds from "../components/Guilds.js";
 import {UpdateRoomAction, NotAuthorizedAction} from "../actions/action";
-import {connect} from 'react-redux'
+import {connect} from 'react-redux';
 
 const mapStateToProps = (state = {}) => {
 	console.log(state)
@@ -22,10 +22,6 @@ class ChatRoomManager extends React.Component {
 			console.log('received room initialize');
 			console.log(data);
 			dispatch(UpdateRoomAction(data));
-		});
-
-		this.socket.on('notauth', function(data) {
-			dispatch(NotAuthorizedAction());
 		});
 
 		this.state = {

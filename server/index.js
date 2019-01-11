@@ -24,6 +24,6 @@ const sessionStore = new MongoStore({mongooseConnection: mongoose.connection});
 
 SocketService(io, sessionStore);
 MerakiSocket.setup(io, sessionStore);
-MerakiWeb.setup(app, sessionStore, cookieParser);
+MerakiWeb.setup(app, sessionStore);
 
 server.listen(WEB_PORT);
