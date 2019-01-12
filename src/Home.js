@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import Nav from "./Nav";
+import Nav from "./components/nav/Nav";
 import Api from "./components/Api";
 import {Redirect} from 'react-router';
 import FontAwesome from 'react-fontawesome'

@@ -1,0 +1,19 @@
+$date-time-size: 1em; 
+$date-clock-size: 1.2em;
+
+.date {
+	color: #c5c5c5;
+	font-size: $date-time-size;
+}
+
+.dateTimeSeperator {
+	color: #fff;
+    margin-left: 6px;
+    font-size: 10px;
+}
+
+.time {
+	color: #fff;
+	font-size: $date-clock-size;
+	margin-left: 6px;
+}

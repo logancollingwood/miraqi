@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import ChatRoomManager from "../components/ChatRoomManager";
 import API from "../components/Api.js";
-import Nav from "../Nav.js";
+import Nav from "../components/nav/Nav";
 import io from "socket.io-client";
 import Config from "../Config.js";
 import cookie from 'react-cookie';

@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Redirect } from "react-router-dom";
 import Config from "../Config.js";
-import Nav from "../Nav.js";
+import Nav from "../components/nav/Nav.js";
 import Guilds from "../components/Guilds.js";
 import Api from "../components/Api.js";
 import GuildProfile from "../components/guilds/GuildProfile.js";

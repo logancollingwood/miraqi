@@ -102,7 +102,7 @@ class SocketConnection {
         this._socketSession.emitToRoom('message', broadcastMessage);
     }
 
-    handleSkipTrack(request) {
+    async handleSkipTrack(request) {
             const numUsersInRoom = this._io.engine.clientsCount;
             this._numberOfUsersWhoVoteToSkip++;
             let readyToSkip =  ((this._numberOfUsersWhoVoteToSkip / numUsersInRoom) * 100) > SKIP_VOTE_PERCENT;
@@ -111,10 +111,8 @@ class SocketConnection {
             let message;
             if (readyToSkip) {
                 this._dj.handleNextTrack()
-                API.getTopRoomStats(this._socketSession.room._id, 5)
-                    .then(topStats => {
-                        this._socketSession.emitToRoom('stats', topStats);
-                    })
+                let topStats = await API.getTopRoomStats(this._socketSession.room._id, 5)
+                this._socketSession.emitToRoom('stats', topStats);
                 this._numberOfUsersWhoVoteToSkip = 0;
                 message = `voted to skip the current song. Skipping now...`
             } else {
@@ -123,17 +121,15 @@ class SocketConnection {
             this.sendMessageToRoom(true, this._socketSession.user.profile.username, message);
     }
 
-    handleNextTrack(request) {
+    async handleNextTrack(request) {
         const numUsersInRoom = this._io.engine.clientsCount;
         this._numberOfUsersWhoFinishedSong++;
         let readyToRemoveFromQueueAndPlay = numberOfUsersWhoFinishedSong == numUsersInRoom;
         console.log(`numUsers: ${numUsersInRoom}, number who finished song: ${this._numberOfUsersWhoFinishedSong}, so readyToPlay is: ${readyToRemoveFromQueueAndPlay}`);
         if (readyToRemoveFromQueueAndPlay) {
             dj.handleNextTrack()
-            API.getTopRoomStats(socketSession.room._id, 5)
-                .then(topStats => {
-                    socketSession.emitToRoom('stats', topStats);
-                })
+            let topStats = await API.getTopRoomStats(socketSession.room._id, 5)
+            socketSession.emitToRoom('stats', topStats);
             numberOfUsersWhoFinishedSong = 0;
         }
     }
