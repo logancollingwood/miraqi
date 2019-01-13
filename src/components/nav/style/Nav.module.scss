@@ -1,3 +1,5 @@
+@import '../../global/Globals.module.scss';
+
 $date-time-size: 1em; 
 $date-clock-size: 1.2em;
 
@@ -16,4 +18,11 @@ $date-clock-size: 1.2em;
 	color: #fff;
 	font-size: $date-clock-size;
 	margin-left: 6px;
+}
+
+.nav {
+	background-color: $nav-color;
+	max-height: $nav-height;
+	min-height: $nav-height;
+	border-bottom: 1px solid $brand-bright-color;
 }

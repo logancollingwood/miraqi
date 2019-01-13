@@ -1,13 +1,14 @@
 import React, { Component } from "react";
-import ChatRoomManager from "../components/ChatRoomManager";
-import API from "../components/Api.js";
-import Nav from "../components/nav/Nav";
+import ChatRoomManager from "../../components/ChatRoomManager";
+import API from "../../components/Api.js";
+import Nav from "../../components/nav/Nav";
 import io from "socket.io-client";
-import Config from "../Config.js";
+import Config from "../../Config.js";
 import cookie from 'react-cookie';
 import { isNullOrUndefined } from "util";
 import {connect} from 'react-redux';
-import {NotAuthorizedAction} from "../actions/action";
+import {NotAuthorizedAction} from "../../actions/action";
+import styles from "../../components/global/Globals.module.scss";
 
 
 const mapStateToProps = (state = {}) => {
@@ -42,7 +43,9 @@ class Room extends Component {
     return (
         <div>
           <Nav isHome={false} isRoom={true} user={this.state.user}/>
-          <ChatRoomManager id={this.props.match.params.id} socket={this.socket}/>
+          <div className={"container-fluid " + styles.mainContent}>
+            <ChatRoomManager id={this.props.match.params.id} socket={this.socket}/>
+          </div>
         </div>
     );
   }

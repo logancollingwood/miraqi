@@ -1,6 +1,6 @@
 import React  from "react";
-import ProfileSidebar from "./components/ProfileSidebar";
-import ProfileMain from "./components/ProfileMain";
+import ProfileSidebar from "./ProfileSidebar";
+import ProfileMain from "./ProfileMain";
 
 class Profile extends React.Component {
 

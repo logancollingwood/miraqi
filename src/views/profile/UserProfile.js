@@ -1,16 +1,17 @@
 import React, { Component } from "react";
 import { Redirect } from "react-router-dom";
-import Config from "../Config.js";
-import Nav from "../components/nav/Nav.js";
-import Guilds from "../components/Guilds.js";
-import Api from "../components/Api.js";
-import GuildProfile from "../components/guilds/GuildProfile.js";
-import Profile  from "../profile/Profile";
+import Config from "../../Config.js";
+import Nav from "../../components/nav/Nav.js";
+import Guilds from "../../components/Guilds.js";
+import Api from "../../components/Api.js";
+import GuildProfile from "../../components/guilds/GuildProfile.js";
+import Profile  from "../../components/profile/Profile";
 import Provider from "react-redux";
 import {connect} from 'react-redux'
-import reducer from '../reducers/reducer'
+import reducer from '../../reducers/reducer'
 import { createStore } from 'redux'
-import { SetUserAction } from "../actions/action";
+import { SetUserAction } from "../../actions/action";
+import styles from "../../components/global/Globals.module.scss";
 
 
 const store = createStore(reducer);
@@ -64,13 +65,13 @@ class UserProfile extends React.Component {
 		} else {
 			return (
 					<div>
-						<Nav isHome={false} isRoom={false}/>
-							<div className="container-fluid">
+							<Nav isHome={false} isRoom={false}/>
+							<div className={"container-fluid " + styles.mainContent}>
 								<div className="row justify-content-center main-content">
-									<div className="col-md-2 no-padding">
+									<div className="col-2 no-padding">
 										<Guilds />
 									</div>
-									<div className="col-md-10 no-padding">
+									<div className="col-10 no-padding">
 										<Profile />
 									</div>
 								</div>

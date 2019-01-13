@@ -49,10 +49,6 @@ body {
   float: left;
 }
 
-.bg-dark {
-    background-color: #212121!important;
-}
-
 .bg-bright {
     background-color: #BDBDBD!important;
 }
@@ -150,7 +146,6 @@ body {
 .container-fluid {
 	padding-left: 0px;
     padding-right: 0px;
-    margin-top: 60px;
 }
 
 .left-half {

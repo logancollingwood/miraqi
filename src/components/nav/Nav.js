@@ -72,7 +72,7 @@ class Nav extends React.Component {
       document.title = '.eden';
     }
     return (
-        <nav className="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
+        <nav className={"navbar fixed-top navbar-expand-lg navbar-dark " + styles.nav} >
 		      <Link to="/" className="navbar-brand">miraqi</Link>
           
           <div className="collapse navbar-collapse" id="navbarNav">
