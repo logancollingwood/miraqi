@@ -1,17 +1,25 @@
 import React, { Component } from "react";
-import ChatRoomManager from "../components/ChatRoomManager";
-import API from "../components/Api.js";
-import Nav from "../Nav.js";
+import ChatRoomManager from "../../components/ChatRoomManager";
+import API from "../../components/Api.js";
+import Nav from "../../components/nav/Nav";
 import io from "socket.io-client";
-import Config from "../Config.js";
+import Config from "../../Config.js";
 import cookie from 'react-cookie';
 import { isNullOrUndefined } from "util";
+import {connect} from 'react-redux';
+import {NotAuthorizedAction} from "../../actions/action";
+import styles from "../../components/global/Globals.module.scss";
 
+
+const mapStateToProps = (state = {}) => {
+    return {};
+};
 
 class Room extends Component {
 
   constructor(props) {
     super(props);
+    const {dispatch} = this.props;
     let roomId = this.props.match.params.id;
     if (!(roomId === null || roomId === undefined)) {
       this.socket = io.connect(Config.SOCKET_API_HOST);
@@ -26,9 +34,8 @@ class Room extends Component {
     }
 
     this.socket.on('not_auth', function() {
-      this.setState({
-        
-      })
+      console.log('not_auth');
+			dispatch(NotAuthorizedAction());
     })
   }
 
@@ -36,10 +43,12 @@ class Room extends Component {
     return (
         <div>
           <Nav isHome={false} isRoom={true} user={this.state.user}/>
-          <ChatRoomManager id={this.props.match.params.id} socket={this.socket}/>
+          <div className={"container-fluid " + styles.mainContent}>
+            <ChatRoomManager id={this.props.match.params.id} socket={this.socket}/>
+          </div>
         </div>
     );
   }
 }
 
-export default Room;
+export default connect(mapStateToProps)(Room);

@@ -1,8 +1,7 @@
-const DataBase = require('../db/db.js');
-const QueueHandler = require('./handler/queueHandler.js');
+const db = require('../db/db.js');
 const moment = require('moment');
 
-const MerakiApi = require("../controllers/MerakiApi");
+const API = require("../controllers/MerakiApi");
 const DJ = require('../controllers/Dj');
 const SocketSession = require("./socketSession");
 const { WebAuth, SocketAuth } = require('../auth/MerakiAuth.js');
@@ -15,100 +14,18 @@ function ytVidId(url) {
 
 let users = [];
 const SKIP_VOTE_PERCENT = 65;
+const SOCKET_TIMEOUT_MS = 5000;
 
-function setup(io, database, sessionStore) {
-
-    SocketAuth(io, sessionStore);
+function setup(io, sessionStore) {
 
     let numberOfUsersWhoFinishedSong = 0;
     let numberOfUsersWhoVoteToSkip = 0;
 
     io.on('connection', (socket) => {
         let user = socket.request.user;
-        const db = new DataBase(database);
         socketLog('socketId: ' + socket.id + ' connected.');
-        const queueHandler = new QueueHandler(socket);
         const socketSession = new SocketSession(io, socket);
-        const API = new MerakiApi(db, socketSession);
-        const dj = new DJ(socketSession, db);
-
-        socket.on('SEND_MESSAGE', function (data) {
-            const message = data.message;
-            API.sendMessageToRoom(socketSession.room._id, socketSession.user._id, message)
-                .then(sendMessageReturned => {
-                    let broadcastMessage = null;
-                    if (sendMessageReturned.isPlay) {
-                        console.log(sendMessageReturned.queue);
-                        dj.addQueueItem(sendMessageReturned.queueItem, sendMessageReturned.queue);
-                        broadcastMessage = {
-                            serverMessage: true,
-                            author: socketSession.user.profile.username,
-                            message: `queued up ${sendMessageReturned.queueItem.trackName}`,
-                            timestamp: moment().format(TIME_FORMAT)
-                        }
-                        API.getTopRoomStats(socketSession.room._id, 5)
-                            .then(topStats => {
-                                socketSession.emitToRoom('stats', topStats);
-                            })
-                    } else {
-                        broadcastMessage = {
-                            serverMessage: false,
-                            author: socketSession.user.profile.username,
-                            message: message,
-                            timestamp: moment().format(TIME_FORMAT)
-                        }
-                    }
-                    socketSession.emitToRoom('message', broadcastMessage);
-                })
-                .catch(error => { console.error(error)});
-
-        });
-
-        socket.on('skip_track', function(data) {
-            numberOfUsersWhoVoteToSkip++;
-            let readyToSkip =  ((numberOfUsersWhoVoteToSkip / io.engine.clientsCount) * 100) > SKIP_VOTE_PERCENT;
-            let numUsersRequiredToSkip = Math.ceil((io.engine.clientsCount * SKIP_VOTE_PERCENT) / 100);
-            console.log(`numUsers: ${io.engine.clientsCount}, number who skipped song: ${numberOfUsersWhoVoteToSkip}, so readyToSkip is: ${readyToSkip}. ${numUsersRequiredToSkip} required to skip`);
-            var broadcastMessage = {
-                serverMessage: true,
-                author: socketSession.user.profile.username,
-                message: `voted to skip the currently playing song. ${numUsersRequiredToSkip} more votes to skip`
-            }
-            if (readyToSkip) {
-                dj.handleNextTrack()
-                API.getTopRoomStats(socketSession.room._id, 5)
-                    .then(topStats => {
-                        socketSession.emitToRoom('stats', topStats);
-                    })
-                numberOfUsersWhoVoteToSkip = 0;
-                broadcastMessage.message = `voted to skip the current song. Skipping now...`
-            } else {
-                broadcastMessage.message = `voted to skip the currently playing song. ${numUsersRequiredToSkip} more votes to skip`
-            }
-            socketSession.emitToRoom('message', broadcastMessage);
-        });
-
-        socket.on('next_track', function(data) {
-            let isBehind = data.isBehind ? data.isBehind : false;
-            if (isBehind) {
-                // if the user is asking for the next track, but is currently parsing an old song, 
-                // just finish
-                return;
-            }
-            numberOfUsersWhoFinishedSong++;
-            let readyToRemoveFromQueueAndPlay = 
-                io.engine.clientsCount >= numberOfUsersWhoFinishedSong;
-            console.log(`numUsers: ${io.engine.clientsCount}, number who finished song: ${numberOfUsersWhoFinishedSong}, so readyToPlay is: ${readyToRemoveFromQueueAndPlay}`);
-            if (readyToRemoveFromQueueAndPlay) {
-                dj.handleNextTrack()
-                API.getTopRoomStats(socketSession.room._id, 5)
-                    .then(topStats => {
-                        socketSession.emitToRoom('stats', topStats);
-                    })
-                numberOfUsersWhoFinishedSong = 0;
-            }
-            
-        });
+        const dj = new DJ(socketSession);
 
         socket.on('subscribe', function (data) {
             console.log('got subscribe');
@@ -117,72 +34,8 @@ function setup(io, database, sessionStore) {
         socket.on('disconnect', function () {
            console.log(`got disconnect. Number of users remaining: ${io.engine.clientsCount}`);
         });
-
-
-        /**
-         * Takes in a request object to join the room. Sent by clients
-         * on joining a room. Socket has already been created an
-         * the user property is created already for the oAuth profile
-         * 
-         * {
-         *  roomId
-         * }
-         * 
-         * Creates or retrieves a user record on our side and adds 
-         * them to the current room
-         * 
-         */
-        socket.on('join', function(data) {
-            const roomId = data.roomId;
-            if (roomId === null || roomId === undefined || roomId === '') {
-                return;
-            }
-            if (user.logged_in === false) {
-                console.log(`emitting notauth`);
-                socketSession.emitToClient('notauth', null);
-                return;
-            }
-            console.log(`got join request from ${roomId} user: ${user.profile.username}`)
-            let userName = user.profile.username;
-            let profile = user.profile;
-            let loginProviderType = 'discord';
-            API.getOrCreateUser(userName, profile, loginProviderType)
-                .then(getOrCreatedUser => {
-                    return API.addUserToRoom(getOrCreatedUser._id, roomId);
-                })
-                .then(({userAddedToRoom, room, nowPlaying, stats}) => {
-                    socketSession.room = room;
-                    _roomId = room._id;
-                    socketSession.user = userAddedToRoom;
-                    var broadcastMessage = {
-                        serverMessage: true,
-                        author: socketSession.user.profile.username,
-                        message: "has joined the room"
-                    }
-                    console.log(`got connect. Number of users here: ${io.engine.clientsCount}`);
-                    socketSession.joinRoom(room);
-                    socketSession.emitToClient('initialize', {
-                        user: userAddedToRoom,
-                        room: room,
-                        stats: stats
-                    });
-                    if (nowPlaying !== undefined) {
-                        socketSession.emitToClient('nowPlaying', nowPlaying);
-                    }
-                    socketSession.emitToRoom('message', broadcastMessage);
-                    socketSession.emitToRoom('users', room.users);
-                })
-                .catch(error => {
-                    console.log(error);
-                });
-        });
-            
     });
 
-}
-
-function UserRequiresLogoff(userModel, roomModel) {
-    return userModel._id != null && roomModel._id != null;
 }
 
 function socketLog(msg) {

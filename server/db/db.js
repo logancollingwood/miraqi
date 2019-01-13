@@ -6,16 +6,7 @@ var Models = require('./models/models');
 
 class DataBase {
 
-    constructor(databaseConnection) {
-        const db = databaseConnection;
-    }
-
-
-    close() {
-        dbClient.close();
-    }
-
-    getRoomById(roomId) {
+    static getRoomById(roomId) {
         console.log("Serving API request to find room with id: " + roomId);
         return new Promise((resolve, reject) => {
             Models.Room.findById(roomId, function (err, room) {
@@ -28,7 +19,7 @@ class DataBase {
         });
     }
 
-    getUserById(userId) {
+    static getUserById(userId) {
         console.log("Serving API request to find user with id: " + userId);
         return new Promise((resolve, reject) => {
             Models.User.findById(userId, function (err, user) {
@@ -41,11 +32,10 @@ class DataBase {
         });
     }
 
-    createOauthUser(userName, profile, loginProviderType) {
+    static createOauthUser(userName, profile, loginProviderType) {
         return new Promise((resolve, reject) => {
             Models.User.findOneAndUpdate({loginProviderId: profile.id, loginProviderType: loginProviderType}, {expire: new Date()}, { upsert: true, new: true }, function(error, result) {
                 if (!result) {
-                    console.log('new user');
                     var user = new Models.User({
                         admin: false,
                         loginProviderId: profile.id,
@@ -55,8 +45,6 @@ class DataBase {
                         profile: profile
                     });
                 } else {
-                    console.log("found user");
-                    console.log(result.profile);
                     user = result;
                     user.profile = profile;
                     user.lastLogin = new Date();
@@ -71,7 +59,7 @@ class DataBase {
         });
     }
 
-    createUser(profile, loginProviderType) {
+    static createUser(profile, loginProviderType) {
         console.log('creating passport user');
         console.log(profile);
         return new Promise((resolve, reject) => {
@@ -100,7 +88,7 @@ class DataBase {
         });
     }
 
-    updateUserName(userId, name) {
+    static updateUserName(userId, name) {
         return new Promise((resolve, reject) => {
             Models.User.findByIdAndUpdate(
                 userId,
@@ -119,7 +107,7 @@ class DataBase {
 
     }
 
-    createRoom(request) {
+    static createRoom(request) {
         console.log("Serving API request to create room with name: " + request.name);
         return new Promise((resolve, reject) => {
             let roomRequest = {
@@ -149,7 +137,7 @@ class DataBase {
      * Adds a user to a room
      * @param {roomId, userId} addUserToRoomRequest 
      */
-    addUserToRoom(userId, roomId) {
+    static addUserToRoom(userId, roomId) {
         let self = this;
         return new Promise((resolve, reject) => {
             Models.User.findById(userId, function (err, user) {
@@ -181,7 +169,7 @@ class DataBase {
      * Removes a user from a room
      * @param {roomId, userId} removeUserFromRoomRequest 
      */
-    removeUserFromRoom(userId, roomId) {
+    static removeUserFromRoom(userId, roomId) {
         
         return new Promise((resolve, reject) => {
             Models.User.findById(userId, function (err, user) {
@@ -215,7 +203,7 @@ class DataBase {
      * 
      * @param {url, userId, roomId, trackName, type, lengthSeconds} addQueueItemRequest 
      */
-    addQueueItem(addQueueItemRequest) {
+    static addQueueItem(addQueueItemRequest) {
         var db = this;
         return new Promise((resolve, reject) => {
             const url = addQueueItemRequest.url;
@@ -299,7 +287,7 @@ class DataBase {
     }
 
 
-    getTopStats(roomId, numberOfStats) {
+    static getTopStats(roomId, numberOfStats) {
         return new Promise((resolve, reject) => {
             console.log(`Getting ${numberOfStats} stats for roomId ${roomId}`);
             let query = Models.RoomStat.find({roomId: roomId}).sort({'count': -1}).limit(numberOfStats);
@@ -313,7 +301,7 @@ class DataBase {
         });
     }
 
-    addRoomStat(queueItem, roomId) {
+    static addRoomStat(queueItem, roomId) {
         return new Promise((resolve, reject) => {
             console.log(`Adding stat to roomId ${roomId}`);
             console.log(`queueItem PLAYURL: ${queueItem.playUrl}`);
@@ -354,7 +342,7 @@ class DataBase {
      *   then permanently removes the item from the queue.
      * @param {*} roomId 
      */
-    popAndGetNextQueueItem(roomId) {
+    static popAndGetNextQueueItem(roomId) {
         return new Promise((resolve, reject) => {
             console.log(`grabbing and popping next queue with roomId:${roomId}`);
             Models.Room.findById(roomId, function (err, room) {
@@ -409,7 +397,7 @@ class DataBase {
      * Simply returns the top of the queue
      * @param {the roomId of the room to grab the top of the queue for} roomId 
      */
-    getNextQueueItem(roomId) {
+    static getNextQueueItem(roomId) {
         return new Promise((resolve, reject) => {
             console.log(`grabbing next queue with roomId:${roomId}`);
             Models.Room.findById(roomId, function (err, room) {
@@ -435,7 +423,7 @@ class DataBase {
      * 
      * @param {url, userId, roomId} addQueueItemRequest 
      */
-    addMessageToRoom(roomId, userId, msgString) {
+    static addMessageToRoom(roomId, userId, msgString) {
         if (roomId == null || userId == null || msgString == null) {
             return new Promise((resolve, reject) => { reject('Validate Params') });
         };
@@ -462,7 +450,7 @@ class DataBase {
         });
     }
 
-    getNextSongForRoom(roomId) {
+    static getNextSongForRoom(roomId) {
         console.log(`db lookup for next track in ${roomId}`);
         return new Promise((resolve, reject) => {
             Models.Room.findById(roomId, function (err, room) {
@@ -496,7 +484,7 @@ class DataBase {
 
 
 
-    totalQueueLength(total, queueItem) {
+    static totalQueueLength(total, queueItem) {
         return total + queueItem.lengthSeconds;
     }
 

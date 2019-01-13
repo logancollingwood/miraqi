@@ -1,8 +1,8 @@
 class SocketSession {
     
-    constructor(io, socket) {
-        this.user = socket.request.user;
-        this.room = null;
+    constructor(io, socket, user, room) {
+        this.user = user
+        this.room = room;
         this.socket = socket;
         this._io = io;
     }
@@ -17,7 +17,6 @@ class SocketSession {
 
     emitToRoom(key, data) {
         console.log(`emiting action: '${key}' to room: ${this.room._id}`);
-        // console.log(data);
         this._io.to(this.room._id).emit(key, data);
     }
 

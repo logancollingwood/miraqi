@@ -5,7 +5,7 @@ import DjContainer from "./DjContainer.js";
 import Api from "../components/Api.js";
 import Guilds from "../components/Guilds.js";
 import {UpdateRoomAction, NotAuthorizedAction} from "../actions/action";
-import {connect} from 'react-redux'
+import {connect} from 'react-redux';
 
 const mapStateToProps = (state = {}) => {
 	console.log(state)
@@ -24,10 +24,6 @@ class ChatRoomManager extends React.Component {
 			dispatch(UpdateRoomAction(data));
 		});
 
-		this.socket.on('notauth', function(data) {
-			dispatch(NotAuthorizedAction());
-		});
-
 		this.state = {
 			loading: true,
 			redirect: null,
@@ -44,15 +40,15 @@ class ChatRoomManager extends React.Component {
 			)
 		}
         return (
-			<div className="container-fluid">
-				<div className="row justify-content-center main-content">
-					<div className="col-md-2 no-padding">
+			<div>
+				<div className="row justify-content-center">
+					<div className="col-2 no-padding">
 						<Guilds/>
 					</div>
-					<div className="col-md-7 no-padding">
+					<div className="col-7 no-padding">
 						<DjContainer loading={this.state.loading} room={this.state.room} socket={this.socket}/>
 					</div>
-					<div className="col-md-3 no-padding">
+					<div className="col-3 no-padding">
 						<Chat loading={this.state.loading} user={this.state.user} socket={this.socket} room={this.state.room}/>
 					</div>
 				</div>

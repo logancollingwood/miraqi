@@ -1,6 +1,8 @@
 const fetchVideoInfo = require('youtube-info');
 const TIME_FORMAT = "MM YY / h:mm:ss a";
 const QueueUtil = require('./QueueUtil.js');
+const DB = require('../db/db.js');
+
 
 
 function ytVidId(url) {
@@ -10,28 +12,18 @@ function ytVidId(url) {
 
 class MerakiApi {
 
-
-    constructor(db, socketSession) {
-        this.db = db;
-        this.socketSession = socketSession;
-    }
-
-    getOrCreateUser(userName, profile, loginProviderType) {
-        return new Promise((resolve, reject) => {
-            this.db.createOauthUser(userName, profile, loginProviderType)
-                .then(user => {
-                    resolve(user);
-                })
-                .catch(error => reject(error));
-        })
+    static async getOrCreateUser(userName, profile, loginProviderType) {
+        console.log(DB);
+        let user = await DB.createOauthUser(userName, profile, loginProviderType);
+        return user;
     }
 
 
-    createSocketUserAndAddToRoom(socketId, roomId) {
+    static createSocketUserAndAddToRoom(socketId, roomId) {
         return new Promise((resolve, reject) => {
-            this.db.createUser(socketId)
+            DB.createUser(socketId)
                 .then(newUser => {
-                    db.addUserToRoom(newUser._id, roomId)
+                    DB.addUserToRoom(newUser._id, roomId)
                         .then(data => {
                             const { user, room } = data;
                             resolve(data);
@@ -42,9 +34,9 @@ class MerakiApi {
         });
     }
 
-    setSocketUserName(userId, name) {
+    static setSocketUserName(userId, name) {
         return new Promise((resolve, reject) => {
-            this.db.updateUserName(userId, name)
+            DB.updateUserName(userId, name)
                 .then(user => {
                     this.user = user;
                     resolve(user);
@@ -55,12 +47,11 @@ class MerakiApi {
 
 
 
-    IsUsernameAdmin(userName) {
+    static IsUsernameAdmin(userName) {
         return userName.toUpperCase() === 'logan'.toUpperCase();
     }
 
-    sendMessageToRoom(roomId, userId, message) {
-        let self = this;
+    static sendMessageToRoom(roomId, userId, message) {
         return new Promise((resolve, reject) => {
             const isPlayCommand = message.startsWith("!play");
 
@@ -81,7 +72,7 @@ class MerakiApi {
                                 lengthSeconds: videoInfo.duration,
                                 type: 'yt',
                             }
-                            self.db.addQueueItem(queueItem)
+                            DB.addQueueItem(queueItem)
                                 .then(data => {
                                     resolve({
                                         isPlay: true,
@@ -101,9 +92,9 @@ class MerakiApi {
         });
     }
 
-    getNextTrack(roomId) {
+    static getNextTrack(roomId) {
         return new Promsise((resolve, reject) => {
-            this.db.getFirstQueueItem(roomId)
+            DB.getFirstQueueItem(roomId)
                 .catch(error => {
                     reject(error);
                 })
@@ -111,9 +102,9 @@ class MerakiApi {
     }
 
 
-    removeUserFromRoom(userId, roomId) {
+    static  removeUserFromRoom(userId, roomId) {
         return new Promise((resolve, reject) => {
-            this.db.removeUserFromRoom(userId, roomId)
+            DB.removeUserFromRoom(userId, roomId)
                 .then(usersInRoom => {
                     resolve(usersInRoom.users);
                 })
@@ -121,10 +112,10 @@ class MerakiApi {
         })
     }
 
-    addUserToRoom(userId, roomId) {
+    static addUserToRoom(userId, roomId) {
         const api = this;
         return new Promise((resolve, reject) => {
-            this.db.addUserToRoom(userId, roomId)
+            DB.addUserToRoom(userId, roomId)
                 .then(({user, room}) => {
                     let nowPlaying;
                     if (room.queue.length > 0) {
@@ -140,8 +131,8 @@ class MerakiApi {
         })
     }
 
-    getTopRoomStats(roomId, numStats) {
-        return this.db.getTopStats(roomId, numStats);
+    static getTopRoomStats(roomId, numStats) {
+        return DB.getTopStats(roomId, numStats);
     }
 
 }

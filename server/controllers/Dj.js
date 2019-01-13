@@ -1,11 +1,9 @@
 const fetchVideoInfo = require('youtube-info');
-
+const db = require('../db/db');
 class Dj {
 
-    constructor(socketSession, db) {
-        this.socketSession = socketSession;
-        this.db = db;
-        this.intervalId = -1;
+    constructor(socketSession) {
+        this._socketSession = socketSession;
     }
 
     ytVidId(url) {
@@ -13,8 +11,8 @@ class Dj {
         return (url.match(p)) ? RegExp.$1 : false;
     }
 
-    processQueue(db, socketSession) {
-        db.getNextQueueItem(socketSession.room._id)
+    processQueue() {
+        db.getNextQueueItem()
             .then(data => {
                 console.log(data);
                 let queueItem = data.queueItem;
@@ -33,10 +31,10 @@ class Dj {
         console.log(queueItem);
         // We only need to add the song on the first 
         if (isFirst) {
-            this.addFirstQueueItem(this.db, this.socketSession);
-            this.socketSession.emitToRoom('queue', currentQueue.splice(0));
+            this.addFirstQueueItem(this._socketSession);
+            this._socketSession.emitToRoom('queue', currentQueue.splice(0));
         } else {
-            this.socketSession.emitToRoom('queue', currentQueue);
+            this._socketSession.emitToRoom('queue', currentQueue);
         }
 
     }
@@ -54,11 +52,11 @@ class Dj {
      * 
      */
     handleNextTrack() {
-        this.db.popAndGetNextQueueItem(this.socketSession.room._id)
+        db.popAndGetNextQueueItem(this._socketSession.room._id)
             .then((data) => {
                 // There was nothing left in the queue
                 if(data === null) {
-                    this.socketSession.emitToRoom('no_queue');
+                    this._socketSession.emitToRoom('no_queue');
                     return;
                 }
                 let queueItem = data.queueItem;
@@ -70,19 +68,19 @@ class Dj {
                 }
                 
                 console.log(leftOverQueue);
-                this.socketSession.emitToRoom('play', queueItem);
-                this.socketSession.emitToRoom('queue', leftOverQueue);
+                this._socketSession.emitToRoom('play', queueItem);
+                this._socketSession.emitToRoom('queue', leftOverQueue);
              })
             .catch(err => {
                 console.log('Unable to get next queue item from the db');
             })
     }
 
-    addFirstQueueItem(db, socketSession) {
-        db.getNextQueueItem(socketSession.room._id)
+    addFirstQueueItem() {
+        db.getNextQueueItem(this._socketSession.room._id)
             .then(queueItem => {
                 console.log(`processed queueItem and playing url: ${queueItem.playUrl}`);
-                socketSession.emitToRoom('play', queueItem);
+                this._socketSession.emitToRoom('play', queueItem);
             })
             .catch(error => {
                 console.log(`error processing next queue item `);

@@ -49,10 +49,6 @@ body {
   float: left;
 }
 
-.bg-dark {
-    background-color: #212121!important;
-}
-
 .bg-bright {
     background-color: #BDBDBD!important;
 }
@@ -93,53 +89,11 @@ body {
   margin: 0
 }
 
-nav {
-  min-height: 60px;
-  max-height: 60px;
-}
-
-.profile {
-    height: 99px;
-}
-
-
-.profile .logout {
-    border-left: 1px solid #72D687;
-    border-right: 1px solid #72D687;
-    font-size: 20px;
-    background-color: #424242;
-    padding-top: 15px;
-    padding-left: 1vw;
-}
-
-.profile .logout a {
-    color: #aaa;
-}
-
-.profile .logout .version {
-    font-size: 10px;
-    display: block;
-    position: absolute;
-    bottom: 0px;
-}
-
-.profile .logout a:hover {
-    color: #b0aba0;
-}
-
-.profile .profilePic {
-    padding-top: 15px;
-}
-
-.profile .userName {
-    padding-top: 15px;
-}
-
 .nothing-playing:before {
     content: "\f144";
     font-family: FontAwesome;
     top: 0;
-    font-size: 400px;
+    font-size: 40vh;
     color: #424242;
     z-index: 1;
     height: 50vh;
@@ -192,7 +146,6 @@ nav {
 .container-fluid {
 	padding-left: 0px;
     padding-right: 0px;
-    margin-top: 60px;
 }
 
 .left-half {
@@ -351,24 +304,6 @@ p {
 .navbar-brand {
 	font-family: 'Raleway', sans-serif;
 	font-size: 24px;
-}
-
-p.date {
-	color: #c5c5c5;
-	font-size: 16px;
-}
-
-p.dateTimeSeperator {
-	color: #fff;
-    margin-left: 6px;
-    font-size: 10px;
-}
-
-p.time {
-	color: #fff;
-	font-size: 16px;
-	margin-left: 6px;
-
 }
 
 /* PLAYER */

@@ -4,10 +4,10 @@ import { render } from "react-dom";
 import { Provider } from "react-redux";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import reducer from './reducers/reducer';
-import Home from "./Home";
-import Room from "./Room/Room.js";
+import Index from "./views/index/Index.js";
+import Room from "./views/room/Room.js";
 import PageNotFound from "./views/PageNotFound";
-import UserProfile from "./views/UserProfile.js";
+import UserProfile from "./views/profile/UserProfile.js";
 
 const store = createStore(reducer);
 
@@ -15,7 +15,7 @@ render((
 	<Provider store={store}>
 		<BrowserRouter>
 			<Switch>
-				<Route exact={true} path="/" component={Home}/>
+				<Route exact={true} path="/" component={Index}/>
 				<Route path="/rooms/discord/:id" component={Room}/>
 				<Route path="/home" component={UserProfile} />
 				<Route path="*" component={PageNotFound} />

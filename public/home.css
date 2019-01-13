@@ -122,7 +122,8 @@ background-image: url("https://www.transparenttextures.com/patterns/escheresque-
     -moz-background-size: cover;
     -o-background-size: cover;
 	background-size: cover;
-    height: 80vh;
+		height: 80vh;
+		padding-top: 15em;
 }
 
 .go .fa-spinner {
@@ -192,7 +193,6 @@ h2.degree {
 /* Socials */
 p {
 	color: #fff;
-	font-size: 22px;
 }
 
 

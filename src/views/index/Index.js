@@ -1,11 +1,11 @@
 import React, { Component } from "react";
-import Nav from "./Nav";
-import Api from "./components/Api";
+import Nav from "../../components/nav/Nav";
+import Api from "../../components/Api";
 import {Redirect} from 'react-router';
 import FontAwesome from 'react-fontawesome'
 import ip from "ip";
 
-class Home extends Component {
+class Index extends Component {
 
   constructor(props) {
     super(props);
@@ -89,4 +89,4 @@ class Home extends Component {
   }
 }
 
-export default Home;
+export default Index;

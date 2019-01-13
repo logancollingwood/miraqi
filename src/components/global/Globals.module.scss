@@ -1,0 +1,16 @@
+
+// Brand Colors
+$brand-bright-color: #7dff99;
+$nav-color: #454242;
+
+
+// Layout Specific Properties
+$MAX-CONTENT-HEIGHT: 100;
+
+$nav-height: 5em;
+
+.mainContent {
+    margin-top: $nav-height;
+    max-height: calc(100vh - #{$nav-height});
+    overflow: hidden;
+}
