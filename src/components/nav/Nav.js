@@ -63,7 +63,7 @@ class Nav extends React.Component {
         </div>
     : 
         <div>
-          <Link to={loginLink} href={loginLink} className="nav-link"><i className="fab fa-discord" /> Login </Link>
+          <a href={loginLink} className="nav-link"><i className="fab fa-discord" /> Login </a>
         </div>
     ;
     if (this.props.nowPlaying) {

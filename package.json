@@ -20,6 +20,7 @@
   "dependencies": {
     "@types/jest": "^23.3.12",
     "babel-plugin-transform-class-properties": "6.22.0",
+    "http-proxy-middleware": "^0.19.1",
     "ip": "^1.1.5",
     "moment": "^2.22.2",
     "mongodb": "^3.0.7",

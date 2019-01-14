@@ -367,8 +367,8 @@ p {
 
 .guildQueue {
     overflow-y: scroll;
-    min-height: calc(90vh - 50px);
-    max-height: calc(90vh - 50px);
+    min-height: calc(90vh - 60px);
+    max-height: calc(90vh - 60px);
     background-color: #2f3136;
 }
 
