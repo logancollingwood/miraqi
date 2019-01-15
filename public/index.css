@@ -134,7 +134,7 @@ body {
     border: 1px solid #4e4e4e;
 }
 .form-control:focus {
-    border-color: #72D687;
+    border-color: #a8de82;
     box-shadow: 0 0 0 0.2rem rgba(114,214,135,.25);
 }
 
@@ -149,7 +149,7 @@ body {
 }
 
 .left-half {
-    border-right: 2px solid #72D687;
+    border-right: 2px solid #a8de82;
 }
 
 .dj {
@@ -254,7 +254,7 @@ body {
     color: #fff;
 }
 .message.server {
-	color: #72D687;
+	color: #a8de82;
 }
 
 .message :not(:first-child){
@@ -277,7 +277,7 @@ p {
 	display: inline;
 }
 .skip {
-    color: #72D687;
+    color: #a8de82;
 }
 .skip p {
     padding-left: 1vw;
@@ -381,7 +381,7 @@ p {
     position: absolute;
     bottom: 0px;
     height: 100px;
-    border-top: solid 1px #72D687;
+    border-top: solid 1px #a8de82;
     vertical-align: text-bottom;
     width: 100%;
     background-color: #424242;
@@ -462,7 +462,7 @@ p {
     padding-top: 2vh;
     padding-bottom: 2vh;
     font-family: 'Raleway';
-    border-bottom: 1px solid #72D687;
+    border-bottom: 1px solid #a8de82;
     max-height: 6.5vh;
 }
 

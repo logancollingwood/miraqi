@@ -25,16 +25,17 @@ class SocketConnection {
 
         this._user = socket.request.user;
 
+        this._socket.emit('send_auth', {required: true});
+
         // Register Socket Handlers
-        socket.on('SEND_MESSAGE', this.handleMessageSent.bind(this));
-        socket.on('skip_track', this.handleSkipTrack.bind(this));
-        socket.on('next_track', this.handleNextTrack.bind(this));
-        socket.on('disconnect',  this.handleDisconnect.bind(this));
-        socket.on('join', this.handleJoin.bind(this));
+        this._socket.on('SEND_MESSAGE', this.handleMessageSent.bind(this));
+        this._socket.on('skip_track', this.handleSkipTrack.bind(this));
+        this._socket.on('next_track', this.handleNextTrack.bind(this));
+        this._socket.on('disconnect',  this.handleDisconnect.bind(this));
+        this._socket.on('join', this.handleJoin.bind(this));
     }
 
     disconnect() {
-        this.notAuthorized();
         this._socket.disconnect(true);
     }
 
@@ -124,10 +125,10 @@ class SocketConnection {
     async handleNextTrack(request) {
         const numUsersInRoom = this._io.engine.clientsCount;
         this._numberOfUsersWhoFinishedSong++;
-        let readyToRemoveFromQueueAndPlay = numberOfUsersWhoFinishedSong == numUsersInRoom;
+        let readyToRemoveFromQueueAndPlay = this._numberOfUsersWhoFinishedSong == numUsersInRoom;
         console.log(`numUsers: ${numUsersInRoom}, number who finished song: ${this._numberOfUsersWhoFinishedSong}, so readyToPlay is: ${readyToRemoveFromQueueAndPlay}`);
         if (readyToRemoveFromQueueAndPlay) {
-            dj.handleNextTrack()
+            this._dj.handleNextTrack()
             let topStats = await API.getTopRoomStats(socketSession.room._id, 5)
             socketSession.emitToRoom('stats', topStats);
             numberOfUsersWhoFinishedSong = 0;

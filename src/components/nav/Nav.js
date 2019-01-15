@@ -7,7 +7,7 @@ import styles from "./style/Nav.module.scss";
 
 const DATE_FORMAT = "MM YY";
 const TIME_FORMAT = "h:mm:ss a";
-
+const NAV_ID = "nav"
 
 const mapStateToProps = (state = {}) => {
   console.log('mapping state to nav');
@@ -52,6 +52,10 @@ class Nav extends React.Component {
     clearInterval(this.state.intervalId);
   }
 
+  handleScroll(event) {
+    this.setState({floating: true})
+  }
+
   render() {
     let isCreate = this.props.isCreate;
     let loginLink = Config.WEB_HOST + "login/discord";
@@ -72,7 +76,7 @@ class Nav extends React.Component {
       document.title = '.eden';
     }
     return (
-        <nav className={"navbar fixed-top navbar-expand-lg navbar-dark " + styles.nav} >
+        <nav className={"navbar fixed-top navbar-expand-lg navbar-dark " + styles.nav} id={NAV_ID}>
 		      <Link to="/" className="navbar-brand">miraqi</Link>
           
           <div className="collapse navbar-collapse" id="navbarNav">

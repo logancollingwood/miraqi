@@ -13,7 +13,6 @@ function ytVidId(url) {
 class MerakiApi {
 
     static async getOrCreateUser(userName, profile, loginProviderType) {
-        console.log(DB);
         let user = await DB.createOauthUser(userName, profile, loginProviderType);
         return user;
     }
@@ -131,7 +130,7 @@ class MerakiApi {
         })
     }
 
-    static getTopRoomStats(roomId, numStats) {
+    static async getTopRoomStats(roomId, numStats) {
         return DB.getTopStats(roomId, numStats);
     }
 

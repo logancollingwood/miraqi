@@ -1,0 +1,41 @@
+.logoImg {
+    max-height: 40vh;
+    max-width: 40vh;
+}
+
+.cta {
+    text-align: center;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    height: 80vh;
+    padding-top: 15em;
+    background: rgb(191,222,255);
+    background: linear-gradient(180deg, rgba(191,222,255,1) 0%, rgba(114,138,97,1) 100%);
+}
+
+.banner {
+    float: left!important;
+    padding-left: 5vw;
+}
+
+.logoDescription {
+    float: left!important;
+    font-size: 30px;
+    margin-top: 10vh;
+}
+
+.logoFineDescription {
+    display: inline;
+}
+
+.feature1 {
+    padding-top: 20vh;
+    text-align: center;
+    height: 60vh;
+    background-color: #000614;
+    background-repeat: repeat;
+    background: rgb(120,120,120);
+    background: linear-gradient(180deg, rgba(120,120,120,1) 0%, rgba(79,79,79,1) 100%);
+}

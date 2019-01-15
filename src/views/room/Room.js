@@ -23,14 +23,23 @@ class Room extends Component {
     let roomId = this.props.match.params.id;
     if (!(roomId === null || roomId === undefined)) {
       this.socket = io.connect(Config.SOCKET_API_HOST);
-      let joinRequest = {
-        roomId: this.props.match.params.id
-      }
-      this.socket.emit('join', joinRequest);
+      sendJoinRequest.bind(this)();
     }
 
     this.state = {
       user: null
+    }
+
+    this.socket.on('send_auth', () => {
+      console.log('sever requested auth');
+      sendJoinRequest.bind(this)();
+    });
+
+    function sendJoinRequest() {
+      let joinRequest = {
+        roomId: this.props.match.params.id
+      }
+      this.socket.emit('join', joinRequest);
     }
 
     this.socket.on('not_auth', function() {

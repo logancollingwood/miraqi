@@ -1,5 +1,4 @@
 const MerakiWeb = require('./web/merakiWeb.js');
-const MerakiSocket = require('./socket/merakiSocket.js');
 const mongoose = require('mongoose');
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
@@ -23,7 +22,6 @@ mongoose.connect(uri)
 const sessionStore = new MongoStore({mongooseConnection: mongoose.connection});
 
 SocketService(io, sessionStore);
-MerakiSocket.setup(io, sessionStore);
 MerakiWeb.setup(app, sessionStore);
 
 server.listen(WEB_PORT);
