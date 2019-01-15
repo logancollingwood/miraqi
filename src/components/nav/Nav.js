@@ -77,7 +77,7 @@ class Nav extends React.Component {
     }
     return (
         <nav className={"navbar fixed-top navbar-expand-lg navbar-dark " + styles.nav} id={NAV_ID}>
-		      <Link to="/" className="navbar-brand">miraqi</Link>
+		      <Link to="/" className={"navbar-brand " + styles.brandText}>miraqi</Link>
           
           <div className="collapse navbar-collapse" id="navbarNav">
 
