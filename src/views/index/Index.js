@@ -54,7 +54,7 @@ class Index extends Component {
               <div className="col-3">
                 <img className={styles.logoImg} src="/img/miraqi_vector.png" />
               </div>
-              <div className={"col-6 " + styles.banner} >
+              <div className={"col-6 offset-3 offset-md-1 " + styles.banner} >
                 <div className="row">
                   <h2 className={styles.logoDescription}> Your personalized discord media share room </h2>
                 </div>
