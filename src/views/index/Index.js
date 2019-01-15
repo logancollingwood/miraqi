@@ -37,7 +37,7 @@ class Index extends Component {
   
 
   render() {
-    let displayDiv =  (<div>
+    let displayDiv =  (<div className={styles.loginButton}>
                         <a type="button" className="btn btn-dark" href="/login/discord"><i className="fab fa-discord fa-2x"/> <p>Login</p> </a>
                     </div>);
     
@@ -49,12 +49,16 @@ class Index extends Component {
       <div>
         <Nav isHome={true} loading={this.state.loading}/>
         <div className="container-fluid home">
-          <section className={styles.cta}>
-            <div className="row justify-content-md-center">
+          <section className={styles.ctaSection}>
+            <img src="/img/cloud_1.svg" className={styles.cloud1}/>
+            <img src="/img/cloud_2.svg" className={styles.cloud2}/>
+            <div className={"row justify-content-md-center " + styles.ctaContent }>
               <div className="col-3">
-                <img className={styles.logoImg} src="/img/miraqi_vector.png" />
+                <div className="row">
+                  <h1 className={styles.brandName}> miraqi </h1>
+                </div>
               </div>
-              <div className={"col-6 offset-3 offset-md-1 " + styles.banner} >
+              <div className={"col-4 " + styles.banner} >
                 <div className="row">
                   <h2 className={styles.logoDescription}> Your personalized discord media share room </h2>
                 </div>
@@ -63,26 +67,6 @@ class Index extends Component {
                 </div>
                 <div className="row">
                   { displayDiv }
-                </div>
-              </div>
-            </div>
-            <div className="arrow-container"><div className="arrow bounce"></div></div>
-          </section>
-          <section className={styles.feature1}>
-            <div className="row">
-              <div className="col-6 offset-1">
-                <h1 className="banner"> share music </h1>
-                <p className="flavorText"> Sign in with your discord account, connect to your server's room, and queue up and share songs.</p>
-                <p className="flavorText"> No need for a hosted music bot. Plus, share visual media and keep track of your group's favorite content.</p>
-              </div>
-            </div>
-          </section>
-          <section className="command-section">
-            <div className="row justify-content-md-center">
-              <div className="col-6 offset-3">
-                <div className="commmand">
-                 <p className="commandName"> !play </p>
-                 <p className="commandExample"> <a href="https://youtu.be/pb8vWUDEmxc"> https://youtu.be/pb8vWUDEmxc </a></p>  
                 </div>
               </div>
             </div>
