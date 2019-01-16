@@ -47,21 +47,21 @@ class Index extends Component {
        console.log("attempting redirect");
        return <Redirect to={'/rooms/' + this.state.redirectRoomId} />;
     }
-    let cloudDivs = [];
-    for (var i = 0; i < NUM_CLOUDS; i++) {
-      let cloudSpecificStyles = {
-        top: `${Math.floor(Math.random() * 150)}px`,
-        height: `${Math.floor(Math.random() * 100) + 30}px`,
-        animationDuration: `${Math.floor(Math.random() * 20) + 30}px`
-      }
-      cloudDivs.push(<img src="/img/cloud.svg" style={cloudSpecificStyles} className={styles.cloud1}/>);
-    }
+    // let cloudDivs = [];
+    // for (var i = 0; i < NUM_CLOUDS; i++) {
+    //   let cloudSpecificStyles = {
+    //     top: `${Math.floor(Math.random() * 150)}px`,
+    //     height: `${Math.floor(Math.random() * 100) + 30}px`,
+    //     animationDuration: `${Math.floor(Math.random() * 20) + 30}px`
+    //   }
+    //   cloudDivs.push(<img src="/img/cloud.svg" style={cloudSpecificStyles} className={styles.cloud1}/>);
+    // }
     return (
       <div>
         <Nav isHome={true} loading={this.state.loading}/>
         <div className="container-fluid home">
           <section className={styles.ctaSection}>
-            { cloudDivs }
+            {/* { cloudDivs } */}
             <img src="/img/cloud_1.svg" className={styles.cloud1}/>
             <img src="/img/cloud_2.svg" className={styles.cloud2}/>
             <div className={"row justify-content-md-center " + styles.ctaContent }>
