@@ -5,6 +5,8 @@ const MongoStore = require('connect-mongo')(session);
 const cookieParser = require('cookie-parser');
 const DataBase = require('./db/db.js');
 const SocketService = require('./socket/SocketService');
+const Bull = require('bull');
+const QueueProcessor = require('./worker/QueueProcessor');
 
 
 var app = require('express')();
@@ -20,8 +22,11 @@ mongoose.connect(uri)
 
 
 const sessionStore = new MongoStore({mongooseConnection: mongoose.connection});
+const djQueue = new Bull('dj-queue', process.env.REDIS_URL);
 
-SocketService(io, sessionStore);
+const queue = new QueueProcessor(djQueue, io);
+
+SocketService(io, sessionStore, djQueue);
 MerakiWeb.setup(app, sessionStore);
 
 server.listen(WEB_PORT);

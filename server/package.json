@@ -10,6 +10,7 @@
     "dev-start": "nodemon index.js"
   },
   "dependencies": {
+    "bull": "^3.7.0",
     "connect-mongo": "^2.0.1",
     "cookie-parser": "^1.4.3",
     "cors": "^2.8.4",

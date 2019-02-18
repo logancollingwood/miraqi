@@ -2,8 +2,9 @@ const fetchVideoInfo = require('youtube-info');
 const db = require('../db/db');
 class Dj {
 
-    constructor(socketSession) {
+    constructor(socketSession, queueProcessor) {
         this._socketSession = socketSession;
+        this._queueProcessor = queueProcessor;
     }
 
     ytVidId(url) {
@@ -31,19 +32,13 @@ class Dj {
         console.log(queueItem);
         // We only need to add the song on the first 
         if (isFirst) {
-            this.addFirstQueueItem(this._socketSession);
+            this.addFirstQueueItem(queueItem);
             this._socketSession.emitToRoom('queue', currentQueue.splice(0));
         } else {
             this._socketSession.emitToRoom('queue', currentQueue);
         }
 
     }
-
-
-    // expireQueueItemIfNotExpired() {
-
-    // }
-
 
     /**
      * Handler called when all users in the room have requested the next track via the onEnd event
@@ -76,16 +71,14 @@ class Dj {
             })
     }
 
-    addFirstQueueItem() {
-        db.getNextQueueItem(this._socketSession.room._id)
-            .then(queueItem => {
-                console.log(`processed queueItem and playing url: ${queueItem.playUrl}`);
-                this._socketSession.emitToRoom('play', queueItem);
-            })
-            .catch(error => {
-                console.log(`error processing next queue item `);
-                console.error(error);
-            })
+    addFirstQueueItem(queueItem) {
+        let queueData = {
+            queueItem: queueItem,
+            roomId: this._socketSession.room._id
+        }
+        console.log(`pushing onto queueProcessor`);
+        console.log(queueData);
+        this._queueProcessor.add(queueItem, { delay: 0 })
     }
 
 }

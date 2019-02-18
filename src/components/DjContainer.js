@@ -124,10 +124,6 @@ class DjContainer extends React.Component {
 		});
 	}
 
-	onEnded(isBehind) {
-		this.socket.emit('next_track', {});
-	}
-
 	render() {
 
 		const timeRemainingStyle = {
@@ -145,7 +141,6 @@ class DjContainer extends React.Component {
 								onProgress={this.onProgress.bind(this)}
 								onDuration={this.onDuration.bind(this)}
 								onPause={this.onPause.bind(this)}
-								onEnded={this.onEnded.bind(this)}
 								height='50vh'
 								width='100%' />
 					<div className="player-controls">

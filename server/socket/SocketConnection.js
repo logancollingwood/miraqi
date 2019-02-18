@@ -10,9 +10,10 @@ let LOGIN_PROVIDER_TYPE_DISCORD = 'discord';
 const SKIP_VOTE_PERCENT = 65;
 
 class SocketConnection {
-    constructor(io, socket) {
+    constructor(io, socket, queueProcessor) {
         this._io = io;
         this._socket = socket;
+        this._queueProcessor = queueProcessor;
 
         // Set a timeout to disconnect unless we receive the JOIN event and successfully authenticate
         this._disconnectTimeout = setTimeout(this.disconnect.bind(this), SOCKET_DISCONNECT_TIMEOUT_MS);
@@ -30,7 +31,6 @@ class SocketConnection {
         // Register Socket Handlers
         this._socket.on('SEND_MESSAGE', this.handleMessageSent.bind(this));
         this._socket.on('skip_track', this.handleSkipTrack.bind(this));
-        this._socket.on('next_track', this.handleNextTrack.bind(this));
         this._socket.on('disconnect',  this.handleDisconnect.bind(this));
         this._socket.on('join', this.handleJoin.bind(this));
     }
@@ -60,7 +60,7 @@ class SocketConnection {
         let {userAddedToRoom, room, nowPlaying, stats} = await API.addUserToRoom(getOrCreatedUser._id, request.roomId);
       
         this._socketSession = new SocketSession(this._io, this._socket, userAddedToRoom, room);
-        this._dj = new DJ(this._socketSession);
+        this._dj = new DJ(this._socketSession, this._queueProcessor);
 
         this._socketSession.room = room;
         this._socketSession.user = userAddedToRoom;
@@ -120,19 +120,6 @@ class SocketConnection {
                 message = `voted to skip the currently playing song. ${numUsersRequiredToSkip} more votes to skip`
             }
             this.sendMessageToRoom(true, this._socketSession.user.profile.username, message);
-    }
-
-    async handleNextTrack(request) {
-        const numUsersInRoom = this._io.engine.clientsCount;
-        this._numberOfUsersWhoFinishedSong++;
-        let readyToRemoveFromQueueAndPlay = this._numberOfUsersWhoFinishedSong == numUsersInRoom;
-        console.log(`numUsers: ${numUsersInRoom}, number who finished song: ${this._numberOfUsersWhoFinishedSong}, so readyToPlay is: ${readyToRemoveFromQueueAndPlay}`);
-        if (readyToRemoveFromQueueAndPlay) {
-            this._dj.handleNextTrack()
-            let topStats = await API.getTopRoomStats(socketSession.room._id, 5)
-            socketSession.emitToRoom('stats', topStats);
-            numberOfUsersWhoFinishedSong = 0;
-        }
     }
 
     handleDisconnect(data) {
