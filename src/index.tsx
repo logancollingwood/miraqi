@@ -8,6 +8,7 @@ import Index from "./views/index/Index.js";
 import Room from "./views/room/Room.js";
 import PageNotFound from "./views/PageNotFound";
 import UserProfile from "./views/profile/UserProfile.js";
+import AccountCreation from "./views/account/AccountCreation";
 
 const store = createStore(reducer);
 
@@ -16,6 +17,7 @@ render((
 		<BrowserRouter>
 			<Switch>
 				<Route exact={true} path="/" component={Index}/>
+				<Route path="/account/create" component={AccountCreation} />
 				<Route path="/rooms/discord/:id" component={Room}/>
 				<Route path="/home" component={UserProfile} />
 				<Route path="*" component={PageNotFound} />
