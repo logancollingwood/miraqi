@@ -1,16 +1,20 @@
 import React, { Component } from "react";
 import {connect} from 'react-redux';
-import styles from "../index/styles/Index.module.scss";
-import Nav from "../../components/nav/Nav";
+import {Row} from "react-bootstrap";
 
-const initialState = { accountId: null };
+import styles from "../index/styles/Index.module.scss";
+import loginStyles from "./styles/Account.module.scss";
+import Nav from "../../components/nav/Nav";
+import AccountForm from "./AccountForm";
+
+const initialState = { user: null };
 type State = Readonly<typeof initialState>;
 
 const mapStateToProps = (state = {}) => {
     return {};
 };
 
-class Room extends Component<object, State> {
+class AccountCreation extends Component<object, State> {
     readonly state: State = initialState;
     render() {
         return (
@@ -20,18 +24,13 @@ class Room extends Component<object, State> {
                     <section className={styles.ctaSection}>
                         <img src="/img/cloud_1.svg" className={styles.cloud1}/>
                         <img src="/img/cloud_2.svg" className={styles.cloud2}/>
-                        <div className={"row justify-content-md-center " + styles.ctaContent }>
-                        <div className="col-6">
-                            <div className="row">
-                            <h1 className={styles.brandName}> Account Creation </h1>
+                        <Row>
+                            <div className={"col-6 offset-4 " + styles.banner} >
+                                <div className="row">
+                                <AccountForm />
+                                </div>
                             </div>
-                        </div>
-                        <div className={"col-4 " + styles.banner} >
-                            <div className="row">
-                               
-                            </div>
-                        </div>
-                        </div>
+                        </Row>
                     </section>
                 </div>
             </div>
@@ -39,4 +38,4 @@ class Room extends Component<object, State> {
     }
 }
 
-export default connect(mapStateToProps)(Room);
+export default connect(mapStateToProps)(AccountCreation);

@@ -1,7 +1,7 @@
 import React from "react";
 import ReactPlayer from "react-player";
 import DjQueue from "./DjQueue";
-import Api from "../components/Api.js";
+import Api from "../components/Api";
 import {connect} from 'react-redux'
 import moment from "moment";
 import { create } from "domain";

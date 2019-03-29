@@ -72,6 +72,12 @@ function InitializePassportWeb(app, sessionStore) {
         console.log(req.user);
         res.json({loggedIn: true, user: req.user});
     });
+
+    app.post('/account/create', function(req, res) {
+        console.log('user created info');
+        console.log(req.body.email);
+        
+    });
 }
 
 function InitializePassportSocket(io, sessionStore) {

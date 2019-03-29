@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import ChatRoomManager from "../../components/ChatRoomManager";
-import API from "../../components/Api.js";
+import API from "../../components/Api";
 import Nav from "../../components/nav/Nav";
 import io from "socket.io-client";
 import Config from "../../Config.js";

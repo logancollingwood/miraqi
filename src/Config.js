@@ -1,5 +1,5 @@
 export default {
-    "WEB_HOST": "/",
-    "WEB_API_HOST": "/api/",
+    "WEB_HOST": "localhost:3001/",
+    "WEB_API_HOST": "https://localhost:3001/api/",
     "SOCKET_API_HOST": "/",
 }

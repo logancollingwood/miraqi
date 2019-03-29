@@ -3,7 +3,7 @@ import { Redirect } from "react-router-dom";
 import Config from "../../Config.js";
 import Nav from "../../components/nav/Nav.js";
 import Guilds from "../../components/Guilds.js";
-import Api from "../../components/Api.js";
+import Api from "../../components/Api";
 import GuildProfile from "../../components/guilds/GuildProfile.js";
 import Profile  from "../../components/profile/Profile";
 import Provider from "react-redux";

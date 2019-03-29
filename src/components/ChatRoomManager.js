@@ -2,7 +2,7 @@ import React from "react";
 import { Redirect } from "react-router";
 import Chat from "./chat/Chat";
 import DjContainer from "./DjContainer.js";
-import Api from "../components/Api.js";
+import Api from "../components/Api";
 import Guilds from "../components/Guilds.js";
 import {UpdateRoomAction, NotAuthorizedAction} from "../actions/action";
 import {connect} from 'react-redux';
