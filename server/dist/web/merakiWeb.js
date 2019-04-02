@@ -1,48 +1,26 @@
-'use strict';
-
-var express = require('express');
-var DiscordStrategy = require('passport-discord').Strategy;
-var passport = require('passport');
-var bodyParser = require('body-parser');
-var path = require('path');
-
-var DataBase = require('../db/db.js');
-
-var _require = require('../auth/MerakiAuth.js'),
-    WebAuth = _require.WebAuth,
-    SocketAuth = _require.SocketAuth;
-
-var cors = require('cors');
-var setupWebEndpoints = require('./webEndpoints.js');
-
+const express = require('express');
+const DiscordStrategy = require('passport-discord').Strategy;
+const passport = require('passport');
+const bodyParser = require('body-parser');
+const path = require('path');
+const { WebAuth, SocketAuth } = require('../auth/MerakiAuth.js');
+const cors = require('cors');
+const setupWebEndpoints = require('./webEndpoints.js');
 require('dotenv').config();
-
-function setup(app, dbInstance, sessionStore, cookieParser) {
-    var db = new DataBase(dbInstance);
-
-    var buildFolder = "../../../build";
-    if (process.env.IS_SERVER == true) {
-        buildFolder += "../";
-    }
-    console.log('using buildfolder: ' + buildFolder);
+function setup(app, sessionStore) {
     app.use(bodyParser.json());
     app.use(cors({ credentials: true, origin: 'http://localhost:3000' }));
-
+    app.use(express.static(path.join(__dirname, '../../build')));
     app.get('/', function (req, res) {
-        res.sendFile(path.join(__dirname, buildFolder, 'index.html'));
+        res.sendFile(path.join(__dirname, '../../build', 'index.html'));
     });
-
-    WebAuth(app, db, sessionStore, cookieParser);
-
-    app.use(express.static(path.join(__dirname, buildFolder + 'static')));
-
+    WebAuth(app, sessionStore);
     app.get('*', function (req, res) {
-        res.sendFile(path.join(__dirname, buildFolder, 'index.html'));
+        res.sendFile(path.join(__dirname, '../../build', 'index.html'));
     });
-
-    setupWebEndpoints(app, db);
+    setupWebEndpoints(app);
 }
-
 module.exports = {
     setup: setup
 };
+//# sourceMappingURL=merakiWeb.js.map

@@ -1,25 +1,23 @@
-'use strict';
-
-var MerakiWeb = require('./web/merakiWeb.js');
-var MerakiSocket = require('./socket/merakiSocket.js');
-var mongoose = require('mongoose');
-var session = require('express-session');
-var MongoStore = require('connect-mongo')(session);
-var cookieParser = require('cookie-parser');
-
+const MerakiWeb = require('./web/merakiWeb.js');
+const mongoose = require('mongoose');
+const session = require('express-session');
+const MongoStore = require('connect-mongo')(session);
+const cookieParser = require('cookie-parser');
+const DataBase = require('./db/db.js');
+const SocketService = require('./socket/SocketService');
+const Bull = require('bull');
+const QueueProcessor = require('./worker/QueueProcessor');
 var app = require('express')();
 var server = require('http').createServer(app);
 var io = require('socket.io')(server);
-
-var WEB_PORT = process.env.PORT || 3001;
-
-var uri = process.env.MONGO_CONNECTION_STRING;
+const WEB_PORT = process.env.PORT || 3001;
+const uri = process.env.MONGODB_URI;
 console.log("Connecting to mongodb: " + uri);
-var db = mongoose.connect(uri);
-
-var sessionStore = new MongoStore({ mongooseConnection: mongoose.connection });
-
-MerakiSocket.setup(io, db, sessionStore, cookieParser);
-MerakiWeb.setup(app, db, sessionStore, cookieParser);
-
+mongoose.connect(uri);
+const sessionStore = new MongoStore({ mongooseConnection: mongoose.connection });
+const djQueue = new Bull('dj-queue', process.env.REDIS_URL);
+const queue = new QueueProcessor(djQueue, io);
+SocketService(io, sessionStore, djQueue);
+MerakiWeb.setup(app, sessionStore);
 server.listen(WEB_PORT);
+//# sourceMappingURL=index.js.map
