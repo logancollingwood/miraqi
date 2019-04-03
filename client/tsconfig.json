@@ -16,9 +16,10 @@
     "moduleResolution": "node",
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "preserve"
+    "jsx": "preserve",
+    "resolveJsonModule": true
   },
   "include": [
     "src/**/*"
-  ],
+  ]
 }

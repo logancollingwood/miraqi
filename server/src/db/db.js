@@ -492,4 +492,4 @@ class DataBase {
 
 }
 
-module.exports = DataBase;
+module.exports.DataBase = DataBase;

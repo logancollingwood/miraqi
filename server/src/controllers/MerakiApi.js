@@ -1,7 +1,7 @@
 const fetchVideoInfo = require('youtube-info');
 const TIME_FORMAT = "MM YY / h:mm:ss a";
 const QueueUtil = require('./QueueUtil.js');
-const DB = require('../db/db.js');
+import {DataBase} from "../db/db";
 
 
 
@@ -13,16 +13,16 @@ function ytVidId(url) {
 class MerakiApi {
 
     static async getOrCreateUser(userName, profile, loginProviderType) {
-        let user = await DB.createOauthUser(userName, profile, loginProviderType);
+        let user = await DataBase.createOauthUser(userName, profile, loginProviderType);
         return user;
     }
 
 
     static createSocketUserAndAddToRoom(socketId, roomId) {
         return new Promise((resolve, reject) => {
-            DB.createUser(socketId)
+            DataBase.createUser(socketId)
                 .then(newUser => {
-                    DB.addUserToRoom(newUser._id, roomId)
+                    DataBase.addUserToRoom(newUser._id, roomId)
                         .then(data => {
                             const { user, room } = data;
                             resolve(data);
@@ -35,7 +35,7 @@ class MerakiApi {
 
     static setSocketUserName(userId, name) {
         return new Promise((resolve, reject) => {
-            DB.updateUserName(userId, name)
+            DataBase.updateUserName(userId, name)
                 .then(user => {
                     this.user = user;
                     resolve(user);
@@ -71,7 +71,7 @@ class MerakiApi {
                                 lengthSeconds: videoInfo.duration,
                                 type: 'yt',
                             }
-                            DB.addQueueItem(queueItem)
+                            DataBase.addQueueItem(queueItem)
                                 .then(data => {
                                     resolve({
                                         isPlay: true,
@@ -93,7 +93,7 @@ class MerakiApi {
 
     static getNextTrack(roomId) {
         return new Promsise((resolve, reject) => {
-            DB.getFirstQueueItem(roomId)
+            DataBase.getFirstQueueItem(roomId)
                 .catch(error => {
                     reject(error);
                 })
@@ -103,7 +103,7 @@ class MerakiApi {
 
     static  removeUserFromRoom(userId, roomId) {
         return new Promise((resolve, reject) => {
-            DB.removeUserFromRoom(userId, roomId)
+            DataBase.removeUserFromRoom(userId, roomId)
                 .then(usersInRoom => {
                     resolve(usersInRoom.users);
                 })
@@ -114,7 +114,7 @@ class MerakiApi {
     static addUserToRoom(userId, roomId) {
         const api = this;
         return new Promise((resolve, reject) => {
-            DB.addUserToRoom(userId, roomId)
+            DataBase.addUserToRoom(userId, roomId)
                 .then(({user, room}) => {
                     let nowPlaying;
                     if (room.queue.length > 0) {
@@ -131,7 +131,7 @@ class MerakiApi {
     }
 
     static async getTopRoomStats(roomId, numStats) {
-        return DB.getTopStats(roomId, numStats);
+        return DataBase.getTopStats(roomId, numStats);
     }
 
 }
