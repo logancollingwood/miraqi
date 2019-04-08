@@ -18,10 +18,6 @@ function setup(app, sessionStore) {
     app.use(cors({credentials: true, origin: 'http://localhost:3000'}));
     app.use(express.static(path.join(__dirname, '../../build')));
 
-    app.get('/', function (req, res) {
-        res.sendFile(path.join(__dirname, '../../build', 'index.html'));
-    });
-
     WebAuth(app, sessionStore);
 
     app.get('*', function(req, res) {

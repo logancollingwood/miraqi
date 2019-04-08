@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import {connect} from 'react-redux';
-import loginStyles from "./styles/Account.module.scss";
+const loginStyles = require("./styles/Account.module.scss");
 import {
     HelpBlock,
     FormGroup,

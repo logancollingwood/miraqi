@@ -33,9 +33,12 @@ class SocketConnection {
         this._socket.on('skip_track', this.handleSkipTrack.bind(this));
         this._socket.on('disconnect',  this.handleDisconnect.bind(this));
         this._socket.on('join', this.handleJoin.bind(this));
+        this._socket.on('echo_auth', this.echoAuth.bind(this));
     }
 
     disconnect() {
+        console.log(`booting socket with id: ${this._socket.id}`);
+        this._socket.emit('disconnect');
         this._socket.disconnect(true);
     }
 
@@ -120,6 +123,15 @@ class SocketConnection {
                 message = `voted to skip the currently playing song. ${numUsersRequiredToSkip} more votes to skip`
             }
             this.sendMessageToRoom(true, this._socketSession.user.profile.username, message);
+    }
+
+    async echoAuth() {
+        if (!this._user.logged_in) {
+            console.log('not logged in');
+            this.notAuthorized();
+            this.disconnect();
+        }
+        this._socket.emit('auth_credential', this._user);
     }
 
     handleDisconnect(data) {

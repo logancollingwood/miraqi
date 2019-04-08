@@ -30,7 +30,7 @@ export default class QueueProcessor {
         this.add(nextQueueItemForJob , {delay: nextSongInSeconds * 1000})
     }
 
-    async add(data : JobQueueItem, opts: JobOptions) { 
+    add(data : JobQueueItem, opts: JobOptions) { 
         this._queue.add(data, opts);
     }
 }

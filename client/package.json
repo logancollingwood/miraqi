@@ -20,6 +20,7 @@
   "dependencies": {
     "@types/jest": "^23.3.12",
     "@types/react-bootstrap": "^0.32.17",
+    "@types/socket.io-client": "^1.4.32",
     "babel-plugin-transform-class-properties": "6.22.0",
     "http-proxy-middleware": "^0.19.1",
     "ip": "^1.1.5",

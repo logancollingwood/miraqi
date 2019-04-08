@@ -1,7 +1,7 @@
 let id = 0;
 const initialState = {
     loading: true,
-    authorized: true,
+    authorized: false,
     createdAt: '',
     name: '',
     roomProviderType: 'discord',
@@ -49,6 +49,7 @@ const reducer = (state=initialState, action) => {
         console.log(action);
         return Object.assign({}, state, {
             loading: false,
+            authorized: true,
             user: action.data
         });
     case 'NOW_PLAYING' :

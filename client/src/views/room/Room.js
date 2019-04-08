@@ -19,7 +19,7 @@ class Room extends Component {
     const {dispatch} = this.props;
     let roomId = this.props.match.params.id;
     if (!(roomId === null || roomId === undefined)) {
-      this.socket = io.connect(Config.SOCKET_API_HOST);
+      this.socket = this.props.socket;
       sendJoinRequest.bind(this)();
     }
 

@@ -10,9 +10,6 @@ const TIME_FORMAT = "h:mm:ss a";
 const NAV_ID = "nav"
 
 const mapStateToProps = (state = {}) => {
-  console.log('mapping state to nav');
-  console.log(state);
-
 	return {
     nowPlaying: state.nowPlaying,
     user: state.user
