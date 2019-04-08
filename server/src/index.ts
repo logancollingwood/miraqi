@@ -1,13 +1,14 @@
+import { Mongoose } from "mongoose";
+import { MongoError } from "mongodb";
+import QueueProcessor from "./worker/QueueProcessor";
+
 const MerakiWeb = require('./web/merakiWeb.js');
-const mongoose = require('mongoose');
+const mongoose: Mongoose = require('mongoose');
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
 const cookieParser = require('cookie-parser');
-const DataBase = require('./db/db.js');
 const SocketService = require('./socket/SocketService');
 const Bull = require('bull');
-const QueueProcessor = require('./worker/QueueProcessor');
-
 
 var app = require('express')();
 var server = require('http').createServer(app);
@@ -17,8 +18,8 @@ const WEB_PORT = process.env.PORT || 3001;
 
 
 const uri = process.env.MONGODB_URI;
-console.log("Connecting to mongodb: " + uri);
-mongoose.connect(uri)
+console.log("Connecting to mongodb:");
+mongoose.connect(uri, { useNewUrlParser: true }, (err: MongoError) => { console.log(`connected to mongoose`)});
 
 
 const sessionStore = new MongoStore({mongooseConnection: mongoose.connection});

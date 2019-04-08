@@ -1,0 +1,16 @@
+{
+    "compilerOptions": {
+        "lib": ["es6"],
+        "removeComments": true,
+        "outDir": "dist",
+        "allowJs": true
+    },
+    "include": [
+        "src"
+    ],
+    "exclude": [
+        "node_modules",
+        "dist"
+    ],
+    "compileOnSave": true
+}

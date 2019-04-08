@@ -4,7 +4,7 @@ require('dotenv').config();
 var mongoose = require('mongoose');
 var Models = require('./models/models');
 
-class DataBase {
+export default class DataBase {
 
     static getRoomById(roomId) {
         console.log("Serving API request to find room with id: " + roomId);
@@ -151,7 +151,7 @@ class DataBase {
                     name: 'test',
                     roomProviderId: roomId,
                     roomProviderType: 'discord'
-                }).then(room => {
+                }).then((room: any) => {
                     console.log(`updated room ${room._id} and added user ${user._id}`)
                     Models.Room.findByIdAndUpdate(room._id, {'users': {'$push': user}},{'new': true}, function(err2, room2) {
                         resolve({

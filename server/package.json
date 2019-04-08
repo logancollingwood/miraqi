@@ -7,9 +7,11 @@
     "preinstall": "rimraf dist",
     "build": "\"rimraf dist/\" && \"tsc -p tsconfig.json\"",
     "start": "forever dist/server/src/index.js",
-    "dev-start": "concurrently --kill-others \"tsc -p tsconfig.json -w\" \"nodemon dist/server/src/index.js\""
+    "dev-start": "concurrently --kill-others \"tsc -p tsconfig.json -w\" \"nodemon dist/server/src/index.js\"",
+    "clean": "rimraf dist"
   },
   "dependencies": {
+    "@types/mongoose": "^5.3.24",
     "@types/node": "^11.13.0",
     "@types/socket.io": "^2.1.2",
     "bull": "^3.7.0",

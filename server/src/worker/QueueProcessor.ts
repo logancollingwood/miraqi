@@ -1,12 +1,14 @@
-import { Queue } from "bull";
+import { Queue, JobOptions, Job, DoneCallback } from "bull";
 import { Server } from "socket.io";
 import { QueueItem } from "../../../shared/model/QueueItem";
-import { DataBase } from "../db/db";
+import DataBase  from "../db/db";
+import { JobQueueItem } from "../../../shared/model/JobQueueItem";
 
-class QueueProcessor {
+export default class QueueProcessor {
 
     _queue: Queue;
     _io: Server;
+    _db = DataBase;
 
     constructor(queue: Queue, io: Server) {
         this._queue = queue;
@@ -14,20 +16,21 @@ class QueueProcessor {
         this._queue.process(this.process.bind(this));
     }
 
-    async process(job, done) {
-        const queueItem: QueueItem = job.data;
+    async process(job: Job, done: DoneCallback) {
+        const jobQueueItem: JobQueueItem = job.data;
         console.log(job.data);
         console.log(`processing jobs: ${job.id}`);
-        this._io.to(queueItem.roomId).emit('play', queueItem);
-        const nextSongInSeconds: number = queueItem.lengthSeconds;
-
-
+        this._io.to(jobQueueItem.roomId).emit('play', jobQueueItem);
+        const nextSongInSeconds: number = jobQueueItem.queueItem.lengthSeconds;
+        const nextQueueItem: any = await this._db.getNextQueueItem(jobQueueItem.roomId);
+        const nextQueueItemForJob: JobQueueItem = {
+            roomId: jobQueueItem.roomId,
+            queueItem: nextQueueItem
+        }
+        this.add(nextQueueItemForJob , {delay: nextSongInSeconds * 1000})
     }
 
-    async add(data, opts) { 
+    async add(data : JobQueueItem, opts: JobOptions) { 
         this._queue.add(data, opts);
     }
 }
-
-
-module.exports = QueueProcessor;
