@@ -5,6 +5,11 @@ const fetchVideoInfo = require('youtube-info');
 const db = require('../db/db');
 class Dj {
 
+    constructor(socketSession, queueProcessor) {
+        this._socketSession = socketSession;
+        this._queueProcessor = queueProcessor;
+    }
+    
     _socketSession: any;
     _queueProcessor: QueueProcessor;
 
@@ -31,6 +36,7 @@ class Dj {
         let isFirst = currentQueue.length === 1;
         console.log(`is first: ${isFirst}`);
         console.log(queueItem);
+        console.log(this._socketSession);
         // We only need to add the song on the first 
         if (isFirst) {
             this.addFirstQueueItem(queueItem);

@@ -6,7 +6,7 @@ import Config from "../../Config.js";
 import {connect} from 'react-redux';
 import {NotAuthorizedAction} from "../../actions/action";
 import styles from "../../components/global/Globals.module.scss";
-
+import SocketContext from "../../context/SocketContext";
 
 const mapStateToProps = (state = {}) => {
     return {};
@@ -14,12 +14,14 @@ const mapStateToProps = (state = {}) => {
 
 class Room extends Component {
 
-  constructor(props) {
+  static contextType = SocketContext;
+
+  constructor(props, context) {
     super(props);
     const {dispatch} = this.props;
+    this.socket = context;
     let roomId = this.props.match.params.id;
     if (!(roomId === null || roomId === undefined)) {
-      this.socket = this.props.socket;
       sendJoinRequest.bind(this)();
     }
 

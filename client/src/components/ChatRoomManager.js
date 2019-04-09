@@ -5,18 +5,21 @@ import DjContainer from "./DjContainer.js";
 import Guilds from "../components/Guilds.js";
 import {UpdateRoomAction} from "../actions/action";
 import {connect} from 'react-redux';
+import SocketContext from "../context/SocketContext";
 
 const mapStateToProps = (state = {}) => {
 	console.log(state)
-    return {messages: state.messages, username: state.user.name, authorized: state.authorized};
+    return {messages: state.messages, username: state.user.name, authorized: state.authorized, loading: state.loading};
 };
 
 class ChatRoomManager extends React.Component {
 
-	constructor(props) {
+	static contextType = SocketContext;
+
+	constructor(props, context) {
 		super(props);
 		const {dispatch} = this.props;
-		this.socket = this.props.socket;
+		this.socket = context;
 		this.socket.on('initialize', function(data) {
 			console.log('received room initialize');
 			console.log(data);
@@ -24,7 +27,6 @@ class ChatRoomManager extends React.Component {
 		});
 
 		this.state = {
-			loading: true,
 			redirect: null,
 			room: null,
 			user: null,
@@ -32,7 +34,7 @@ class ChatRoomManager extends React.Component {
 	}
 
     render() {
-		if (!this.props.authorized) {
+		if (!this.props.authorized && !this.props.loading) {
 			console.log(`redirecting to : /`);
 			return (
 				<Redirect to={'/'} />

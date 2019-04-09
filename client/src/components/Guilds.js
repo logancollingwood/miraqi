@@ -25,14 +25,16 @@ class Guilds extends React.Component {
 
         if (this.props.loading) {
             return (
-                <div className="guildQueue left-half">
+                <div>
                     <div className="header">
-                         Guilds loading ...
+                        Guilds
                     </div>
-                    <ul className="songQueue">
-                    </ul>
-                    <div className="about">
-                        Loading ...
+                    <div className="guildQueue left-half">
+                        <ul className="songQueue">
+                        </ul>
+                        <div className="about">
+                            Loading ...
+                        </div>
                     </div>
                 </div>
             );
@@ -59,16 +61,17 @@ class Guilds extends React.Component {
             console.log("guilds list");
             console.log(guildsList);
             return (
-                
-                <div className="guildQueue">
+                <div>
                     <div className="header">
-                         Guilds
+                        Guilds
                     </div>
-                    <ul className="songQueue">
-                        {guildsList}
-                    </ul>
-                    <div className="about">
-                        <GuildProfile user={this.props.user} />
+                    <div className="guildQueue">
+                        <ul className="songQueue">
+                            {guildsList}
+                        </ul>
+                        <div className="about">
+                            <GuildProfile user={this.props.user} />
+                        </div>
                     </div>
                 </div>
             );

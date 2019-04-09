@@ -36,7 +36,7 @@ class GuildProfile extends React.Component {
                 </div>
                 <div className={"col-md-4 no-padding " + style.logout + " left-half"}>
                     <a href={Config.WEB_HOST + "auth/logout"}> logout </a>
-                    <p className="version"> v 1.0 </p>
+                    <span className="version"> v 1.0 </span>
                 </div>
                 </div>
           </div>
