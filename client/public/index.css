@@ -389,13 +389,18 @@ p {
 }
 
 .header {
-    text-align: center;
     font-size: 20px;
     color: #fff;
+    padding-left: 3vw;
     padding-top: 2vh;
     padding-bottom: 2vh;
     font-family: 'Raleway';
     background-color: #57585a;
+}
+
+
+.header i {
+    padding-right: 1vw;
 }
 
 .songQueue li {

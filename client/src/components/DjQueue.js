@@ -74,7 +74,7 @@ class DjQueue extends React.Component {
                         </div>
                         <div className="col-md-1">
                             <div className="type">
-                                <a href={queueItem.playUrl}>
+                                <a href={queueItem.playUrl} target="_blank">
                                     {queueItem.type === 'yt' ? <i className="fab fa-youtube fa-2x pull-right"></i> : ''}
                                 </a>
                             </div>

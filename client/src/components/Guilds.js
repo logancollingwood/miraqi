@@ -27,7 +27,7 @@ class Guilds extends React.Component {
             return (
                 <div>
                     <div className="header">
-                        Guilds
+                        <i class="fas fa-users"></i>Guilds
                     </div>
                     <div className="guildQueue left-half">
                         <ul className="songQueue">
@@ -63,7 +63,7 @@ class Guilds extends React.Component {
             return (
                 <div>
                     <div className="header">
-                        Guilds
+                        <i class="fas fa-users"></i>Guilds
                     </div>
                     <div className="guildQueue">
                         <ul className="songQueue">
