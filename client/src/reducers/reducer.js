@@ -43,6 +43,7 @@ const reducer = (state=initialState, action) => {
         });
     case 'NOT_AUTH': 
         return Object.assign({}, state, {
+            loading: false,
             authorized: false
         });
     case 'SET_USER': 

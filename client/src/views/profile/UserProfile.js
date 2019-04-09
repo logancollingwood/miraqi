@@ -9,64 +9,51 @@ import { SetUserAction, NotAuthorizedAction } from "../../actions/action";
 import styles from "../../components/global/Globals.module.scss";
 import io from "socket.io-client";
 import Config from "../../Config.js";
+import SocketContext from "../../context/SocketContext";
 
 
 const mapStateToProps = (state = {}) => {
-
-    return {loggedIn: false, loading: true, authorized: state.authorized};
+	console.log(state);
+    return {loggedIn: false, loading: state.loading, authorized: state.authorized};
 };
 class UserProfile extends React.Component {
 
-	constructor(props) {
+	static contextType = SocketContext;
+
+	constructor(props, context) {
 		super(props);
-		console.log(this.props);
-		this.dispatch  = this.props.dispatch;
-		this.socket = this.props.socket
-		this.state = {
-			loading: true,
-			loggedIn: false
-		}
-		let self = this;
-		this.socket.emit('echo_auth');
-		this.socket.on('auth_credential', function(data, err) {
-			self.setState({
-				loggedIn: true,
-				loading: false
-			});
-			self.dispatch(SetUserAction(data));
-		})
-		this.socket.on('disconnect', function() {
-			self.dispatch(NotAuthorizedAction());
-		})
-		this.socket.on('not_auth', function() {
-			console.log('not_auth');
-			self.dispatch(NotAuthorizedAction());
-		})
+		console.log(props);
+		// this.dispatch  = this.props.dispatch;
+		// this.socket = this.props.socket
 	}
 
 	render() {
-		if (!this.state.loading && !this.state.loggedIn) {
+		console.log("props");
+		console.log(this.props);
+		if (!this.props.authorized && !this.props.loading) {
 			return (
 				<Redirect to="/" />
 			)
 		} else {
 			return (
-					<div>
-						<Nav isHome={false} isRoom={false}/>
-						<div className={"container-fluid " + styles.mainContent}>
-							<div className="row justify-content-center main-content">
-								<div className="col-2 no-padding">
-									<Guilds />
-								</div>
-								<div className="col-10 no-padding">
-									<Profile />
-								</div>
+				<div>
+					<Nav isHome={false} isRoom={false}/>
+					<div className={"container-fluid " + styles.mainContent}>
+						<div className="row justify-content-center main-content">
+							<div className="col-2 no-padding">
+								<Guilds />
+							</div>
+							<div className="col-10 no-padding">
+								<Profile />
 							</div>
 						</div>
 					</div>
-			)
+				</div>
+			);
 		}
 	}
+					// <Redirect to="/" />
+
 }
 
 

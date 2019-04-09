@@ -32,8 +32,17 @@ class SocketConnection {
         this._socket.on('SEND_MESSAGE', this.handleMessageSent.bind(this));
         this._socket.on('skip_track', this.handleSkipTrack.bind(this));
         this._socket.on('disconnect',  this.handleDisconnect.bind(this));
+        this._socket.on('initialize', this.initialize.bind(this));
         this._socket.on('join', this.handleJoin.bind(this));
         this._socket.on('echo_auth', this.echoAuth.bind(this));
+    }
+
+    initialize() {
+        console.log("got initialize");
+        clearTimeout(this._disconnectTimeout);
+        if (!this._user.logged_in) {
+            this.disconnect();
+        }
     }
 
     disconnect() {

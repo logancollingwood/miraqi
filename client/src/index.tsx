@@ -18,8 +18,8 @@ render((
 				<BrowserRouter>
 					<Switch>
 						<Route exact={true} path="/" component={Index}/>
-						<Route path="/account/create" component={AccountCreation} />
 						<SocketApp>
+							<Route path="/account/create" component={AccountCreation} />
 							<Route path="/rooms/discord/:id" component={Room}/>
 							<Route path="/home" component={UserProfile} />
 						</SocketApp>
