@@ -31,8 +31,8 @@ class GuildProfile extends React.Component {
                 <div className="col-md-4">
                     <img alt="profile" className={style.profileImage} src={url}/>
                 </div>
-                <div className={"col-md-4 no-padding " + style.userName}>
-                    <Link to="/home"><p className='name'>{this.props.user.username}</p></Link>
+                <div className={"col-md-4 no-padding " + style.user_info}>
+                    <Link to="/home"><h1>{this.props.user.username}</h1></Link>
                 </div>
                 <div className={"col-md-4 no-padding " + style.logout + " left-half"}>
                     <a href={Config.WEB_HOST + "auth/logout"}> logout </a>

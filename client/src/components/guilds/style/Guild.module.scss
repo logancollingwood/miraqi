@@ -14,17 +14,10 @@ $guild-profile-height: 110px;
 .profile {
     height: $guild-profile-height;
 }
-
-.profileName {
-    font-size: 1em;
-}
-
-
 .logout {
     border-left: 1px solid #72D687;
     border-right: 1px solid #72D687;
     font-size: 20px;
-    background-color: #424242;
     padding-top: $guild-padding-top;
     padding-left: 1vw;
 }
