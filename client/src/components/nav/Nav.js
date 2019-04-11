@@ -55,7 +55,6 @@ class Nav extends React.Component {
   render() {
     let loginLink = Config.WEB_HOST + "login/discord";
     const isLoggedIn = !(this.props.user.profile === null || this.props.user.profile === undefined);
-    console.log(`IsloggedIn: ${isLoggedIn}`);
     const authHeaderToShow = isLoggedIn ? 
         <div>
           <Link to="/home" className="nav-link">Home</Link>
@@ -72,7 +71,7 @@ class Nav extends React.Component {
     }
     return (
         <nav className={"navbar fixed-top navbar-expand-lg navbar-dark " + styles.nav} id={NAV_ID}>
-		      <Link to="/" className={"navbar-brand " + styles.brandText}>miraqi</Link>
+		      <Link to="/" className={"navbar-brand " + styles.brand_text }>miraqi</Link>
           
           <div className="collapse navbar-collapse" id="navbarNav">
 

@@ -1,5 +1,6 @@
 import React from "react";
-import {connect} from 'react-redux'
+import {connect} from 'react-redux';
+import Style from "./style/Profile.module.scss";
 
 const mapStateToProps = (state = {}) => {
     let profile = state.user ? state.user.profile : null;

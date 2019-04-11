@@ -2,7 +2,8 @@ import React from "react";
 import {connect} from 'react-redux'
 import ChatMessage from "./ChatMessage";
 import ChatInput from "./ChatInput";
-import {AddMessageAction} from '../../actions/action'
+import {AddMessageAction} from '../../actions/action';
+import styles from "./style/Chat.module.scss";
 
 const mapStateToProps = (state = {}) => {
 	return {
@@ -50,7 +51,7 @@ export class Chat extends React.Component {
 		);
 
         return (
-                    <div className="chatRoom">
+                    <div className={"chatRoom " + styles.chat_container}>
 						<div className="chatMessages">
 							{
 								messagesToRender

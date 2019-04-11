@@ -1,0 +1,31 @@
+$brand-dark-1: #444444;
+$brand-dark-2: #57585a;
+$brand-dark-3: #807e72;
+$brand-highlight: #40cc8b;
+$brand-light-1: #eaeaea;
+$brand-gradient: linear-gradient(180deg, #787878 0%, #4f4f4f 100%);
+
+
+// Brand Colors
+$nav-color: $brand-dark-1;
+
+// Layout Specific Properties
+$MAX-CONTENT-HEIGHT: 100;
+
+$MAIN-CONTENT-HEIGHT: calc(100vh - 5em);
+$PROFILE-TOOLTIP-HEIGHT: 110px;
+$SIDEBAR-HEADER-HEIGHT: 4em;
+
+$SCROLLABLE-CONTENT-HEIGHT: calc(#{$MAIN-CONTENT-HEIGHT} - #{$PROFILE-TOOLTIP-HEIGHT} - #{$SIDEBAR-HEADER-HEIGHT} - 1em);
+
+$nav-height: 5em;
+
+.mainContent {
+    margin-top: $nav-height;
+    max-height: calc(100vh - #{$nav-height});
+    overflow: hidden;
+}
+
+.profile_content {
+
+}

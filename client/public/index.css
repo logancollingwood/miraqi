@@ -440,21 +440,6 @@ p {
     display: inline;
 }
 
-.listItem img {
-    height: 40px;
-    width: 40px;
-    border-radius: 5px;
-    -moz-transition: all .3s;
-    -o-transition: all .3s;
-    -webkit-transition: all .3s;
-    transition: all .3s;
-}
-
-.listItem img:hover {
-    border-radius: 15px;
-}
-
-
 .DjQueue {
     text-align: center;
     overflow-y: auto;

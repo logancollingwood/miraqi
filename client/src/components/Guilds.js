@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from 'react-router-dom'
 import GuildProfile from "./guilds/GuildProfile.js";
 import {connect} from 'react-redux'
+import style from "./guilds/style/Guild.module.scss";
 
 const mapStateToProps = (state = {}) => {
     console.log(state)
@@ -47,7 +48,7 @@ class Guilds extends React.Component {
                             { guild.icon ? 
                                 <img alt="guild icon" src={`https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png`} />
                                 :
-                                <div className="guildNoIcon"> {guild.name.charAt(0)} </div>
+                                <div className={style.guild_no_icon}> {guild.name.charAt(0)} </div>
                             }
                         </div>
                     </div>
@@ -62,16 +63,16 @@ class Guilds extends React.Component {
             console.log(guildsList);
             return (
                 <div>
-                    <div className="header">
-                        <i class="fas fa-users"></i>Guilds
+                    <div className={style.guild_header}>
+                        <i class="fas fa-users"></i> Guilds
                     </div>
-                    <div className="guildQueue">
-                        <ul className="songQueue">
+                    <div className={style.guild_container}>
+                        <ul className={style.guild_list}>
                             {guildsList}
                         </ul>
-                        <div className="about">
-                            <GuildProfile user={this.props.user} />
-                        </div>
+                    </div>
+                    <div className={style.guild_profile_container}>
+                        <GuildProfile user={this.props.user} />
                     </div>
                 </div>
             );

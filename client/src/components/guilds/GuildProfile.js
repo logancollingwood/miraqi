@@ -2,7 +2,7 @@ import React from "react";
 import {connect} from 'react-redux'
 import Config from "../../Config.js";
 import { Link } from 'react-router-dom';
-import style from "./style/GuildProfile.module.scss";
+import style from "./style/Guild.module.scss";
 
 const mapStateToProps = (state = {}) => {
     if (state.loading) {
@@ -26,7 +26,7 @@ class GuildProfile extends React.Component {
         }
 
         return (
-            <div className={"container no-padding " + style.guildProfile}>
+            <div className="container no-padding ">
                 <div className={"row " + style.profile} >
                 <div className="col-md-4">
                     <img alt="profile" className={style.profileImage} src={url}/>
@@ -36,7 +36,7 @@ class GuildProfile extends React.Component {
                 </div>
                 <div className={"col-md-4 no-padding " + style.logout + " left-half"}>
                     <a href={Config.WEB_HOST + "auth/logout"}> logout </a>
-                    <span className="version"> v 1.0 </span>
+                    <span className={style.app_version}> v 1.0 </span>
                 </div>
                 </div>
           </div>

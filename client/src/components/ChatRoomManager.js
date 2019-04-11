@@ -1,7 +1,7 @@
 import React from "react";
 import { Redirect } from "react-router";
 import Chat from "./chat/Chat";
-import DjContainer from "./DjContainer.js";
+import DjContainer from "./dj/DjContainer";
 import Guilds from "../components/Guilds.js";
 import {UpdateRoomAction} from "../actions/action";
 import {connect} from 'react-redux';
@@ -41,7 +41,6 @@ class ChatRoomManager extends React.Component {
 			)
 		}
         return (
-			<div>
 				<div className="row justify-content-center">
 					<div className="col-2 no-padding">
 						<Guilds/>
@@ -53,7 +52,6 @@ class ChatRoomManager extends React.Component {
 						<Chat loading={this.state.loading} user={this.state.user} socket={this.socket} room={this.state.room}/>
 					</div>
 				</div>
-			</div>
         );
     }
 }

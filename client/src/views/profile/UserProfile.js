@@ -39,7 +39,7 @@ class UserProfile extends React.Component {
 				<div>
 					<Nav isHome={false} isRoom={false}/>
 					<div className={"container-fluid " + styles.mainContent}>
-						<div className="row justify-content-center main-content">
+						<div className="row justify-content-center">
 							<div className="col-2 no-padding">
 								<Guilds />
 							</div>

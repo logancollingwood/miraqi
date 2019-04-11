@@ -2,9 +2,9 @@ import React from "react";
 import ReactPlayer from "react-player";
 import {connect} from 'react-redux'
 import { VolumeSlider, ControlDirection } from "react-player-controls";
-import {NowPlayingAction} from '../actions/action'
-import RoomInfo  from "./roomInfo/RoomInfo.js";
-
+import {NowPlayingAction} from '../../actions/action'
+import RoomInfo  from "../roomInfo/RoomInfo.js";
+import styles from "./style/Dj.module.scss";
 
 function secondsToString(seconds) {
 	return {
@@ -148,7 +148,7 @@ class DjContainer extends React.Component {
 			;
 		let queue = this.props.room ? this.props.room.queue : null;
 		return (
-			<div className="dj">
+			<div className={"dj " + styles.dj_container} >
 				{ playerOrNothing }
 				<div className="row time">
 					<div className="progress position-relative timeRemainingBar">

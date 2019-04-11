@@ -1,4 +1,4 @@
-@import '../../global/Globals.module.scss';
+@import '../../../styles/main.module.scss';
 
 $date-time-size: 1em; 
 $date-clock-size: 1.2em;
@@ -26,6 +26,9 @@ $date-clock-size: 1.2em;
 	min-height: $nav-height;
 }
 
-.brandText {
+.brand_text {
 	font-family: 'Raleway', serif;
+	:hover {
+		color: $brand-highlight;
+	}
 }

@@ -1,0 +1,114 @@
+@import '../../../styles/main.module.scss';
+
+$guild-padding-top: 15px;
+$guild-profile-height: 110px;
+
+
+.profileImage {
+    border-radius: 45px;
+    height: 90px;
+    width: 90px;
+    padding: 10px;
+}
+
+.profile {
+    height: $guild-profile-height;
+}
+
+.profileName {
+    font-size: 1em;
+}
+
+
+.logout {
+    border-left: 1px solid #72D687;
+    border-right: 1px solid #72D687;
+    font-size: 20px;
+    background-color: #424242;
+    padding-top: $guild-padding-top;
+    padding-left: 1vw;
+}
+
+.profile .logout a {
+    color: #aaa;
+}
+
+.profile .logout .version {
+    font-size: 10px;
+    display: block;
+    position: absolute;
+    bottom: 0px;
+}
+
+.profile .logout a:hover {
+    color: #b0aba0;
+}
+
+.app_version {
+    font-size: 12px;
+    position: absolute;
+    bottom: 3px;
+    right: 8px;
+    text-align: right;
+    color: $brand-dark-3;
+    display: block;
+}
+
+.guild_header {
+    font-size: 20px;
+    color: #fff;
+    padding-left: 3vw;
+    padding-top: 2vh;
+    padding-bottom: 2vh;
+    font-family: 'Raleway';
+    background-color: $brand-dark-2;
+    height: $SIDEBAR-HEADER-HEIGHT;
+}
+
+.guild_container {
+    overflow-y: scroll;
+    height: $SCROLLABLE-CONTENT-HEIGHT;
+    background-color: #2f3136;
+
+    .guild_list { 
+        padding-top: 15px;
+        padding-left: 0px;
+        color: #ffffff;
+
+        li {
+            padding-top: 10px;
+            font-family: 'Open Sans';
+            padding-bottom: 10px;
+
+            img {
+                height: 40px;
+                width: 40px;
+                border-radius: 5px;
+                -moz-transition: all .3s;
+                -o-transition: all .3s;
+                -webkit-transition: all .3s;
+                transition: all .3s;
+            }
+        }
+        li:not(:last-child) {
+            border-bottom: 2px solid $brand-dark-2;
+        }
+        li .active {
+            background-color: $brand-dark-2;
+        }
+
+        .guild_no_icon {
+            font-size: 25px;
+            padding-left: 0.5vw;
+        }
+        
+    }
+}
+
+.guild_profile_container {
+    position: absolute;
+    bottom: 0px;
+    height: 110px;
+    width: 100%;
+    background-color: #424242;
+}

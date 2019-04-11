@@ -1,8 +1,8 @@
 import { JobQueueItem } from "../../../shared/model/JobQueueItem";
 import QueueProcessor  from "../worker/QueueProcessor";
+import db from "../db/db";
 
 const fetchVideoInfo = require('youtube-info');
-const db = require('../db/db');
 class Dj {
 
     constructor(socketSession, queueProcessor) {
@@ -19,8 +19,8 @@ class Dj {
     }
 
     processQueue() {
-        db.getNextQueueItem()
-            .then(data => {
+        db.getNextQueueItem(this._socketSession.room._id)
+            .then((data: any) => {
                 console.log(data);
                 let queueItem = data.queueItem;
                 console.log(`processed queueItem and playing url: ${queueItem.playUrl}`);
@@ -36,7 +36,6 @@ class Dj {
         let isFirst = currentQueue.length === 1;
         console.log(`is first: ${isFirst}`);
         console.log(queueItem);
-        console.log(this._socketSession);
         // We only need to add the song on the first 
         if (isFirst) {
             this.addFirstQueueItem(queueItem);
@@ -55,7 +54,7 @@ class Dj {
      */
     handleNextTrack() {
         db.popAndGetNextQueueItem(this._socketSession.room._id)
-            .then((data) => {
+            .then((data: any) => {
                 // There was nothing left in the queue
                 if(data === null) {
                     this._socketSession.emitToRoom('no_queue');
