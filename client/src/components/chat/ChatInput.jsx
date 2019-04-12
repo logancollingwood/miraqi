@@ -2,6 +2,7 @@ import React from "react";
 import moment from "moment";
 import {connect} from 'react-redux'
 import { withRouter } from "react-router";
+import SocketContext from './../../context/SocketContext';
 
 let TIME_FORMAT = "MM YY / h:mm:ss a";
 
@@ -14,12 +15,16 @@ const mapStateToProps = (state = {}) => {
 };
 
 class ChatInput extends React.Component {
-    constructor(props) {
-        super(props);
+    
+    static contextType = SocketContext;
+    
+	constructor(props, context) {
+		super(props);
+        this.socket = context;
+
         this.state = {
             message: '',
         }
-        this.socket = this.props.socket;
         this.processSend = () => {
             if(this.state.message === null || this.state.message === '' || this.props.userName === null) {
                 return;

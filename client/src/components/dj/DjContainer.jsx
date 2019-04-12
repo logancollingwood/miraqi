@@ -6,6 +6,7 @@ import { VolumeSlider, ControlDirection } from "react-player-controls";
 import {NowPlayingAction} from '../../actions/action'
 import RoomInfo  from "../roomInfo/RoomInfo.js";
 import styles from "./style/Dj.module.scss";
+import SocketContext from './../../context/SocketContext';
 
 function secondsToString(seconds) {
 	return {
@@ -30,8 +31,10 @@ const VOLUME_LOCAL_STORAGE_KEY = "PLAYER_VOLUME";
 
 class DjContainer extends React.Component {
 
-	constructor(props) {
+	static contextType = SocketContext;
+	constructor(props, context) {
 		super(props);
+		this.socket = context;
 		let self = this;
 		const {dispatch} = this.props
 		
@@ -49,7 +52,6 @@ class DjContainer extends React.Component {
 			playing: true
 		}
 
-		this.socket = this.props.socket;
 
 		this.socket.on('play', function (data) {
 			dispatch(NowPlayingAction(data))

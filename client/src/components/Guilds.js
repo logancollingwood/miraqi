@@ -7,14 +7,14 @@ import style from "./guilds/style/Guild.module.scss";
 
 const mapStateToProps = (state = {}) => {
     console.log(state)
-    if (state.loading) {
-        return {loading: true}
-    }
+
+    let guilds = state.user.profile ? state.user.profile.guilds : [];
 
     return {
-        guilds: state.user.profile.guilds, 
+        guilds: guilds, 
         user: state.user, 
-        room: state.room
+        room: state.room,
+        loading: state.loading
     };
 };
 
@@ -22,14 +22,14 @@ class Guilds extends React.Component {
 
     render() {
         let guildsList;
-        let currentRoomId = this.props.room != null ? this.props.room.roomProviderId : -1;
+        let currentRoomId = this.props.room ? this.props.room.roomProviderId : -1;
         console.log(`currentRoomId: ${currentRoomId}`);
 
         if (this.props.loading) {
             return (
                 <div>
-                    <div className="header">
-                        <i className="fas fa-users"></i>Guilds
+                    <div className={style.guild_header}>
+                        <i className="fas fa-users"></i> Guilds
                     </div>
                     <div className="guildQueue left-half">
                         <ul className="songQueue">

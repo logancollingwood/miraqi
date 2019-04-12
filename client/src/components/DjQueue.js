@@ -2,6 +2,7 @@ import React from "react";
 import {UpdateQueueAction, SetSkippingAction} from "../actions/action";
 import {connect} from 'react-redux'
 import { withRouter } from "react-router";
+import SocketContext from './../context/SocketContext';
 
 const mapStateToProps = (state = {}) => {
     return {
@@ -12,10 +13,12 @@ const mapStateToProps = (state = {}) => {
 
 class DjQueue extends React.Component {
 
-    constructor(props) {
-        super(props);
-
-        this.socket = this.props.socket;
+    static contextType = SocketContext;
+    
+	constructor(props, context) {
+		super(props);
+        this.socket = context;
+        
         const {dispatch} = this.props
         
         const newQueue = queue => {

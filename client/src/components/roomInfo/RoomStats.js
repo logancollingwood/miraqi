@@ -3,6 +3,7 @@ import {connect} from 'react-redux';
 import {SetStatsAction} from "../../actions/action";
 import moment from "moment";
 import { withRouter } from 'react-router-dom';
+import SocketContext from './../../context/SocketContext';
 
 
 const mapStateToProps = (state = {}) => {
@@ -17,9 +18,11 @@ let PLAY_PREFIX = "!play";
 
 class RoomStats extends React.Component {
 
-	constructor(props) {
+    static contextType = SocketContext;
+    
+	constructor(props, context) {
 		super(props);
-		this.socket = this.props.socket;
+		this.socket = context;
 		const {dispatch} = this.props;
 
 		this.socket.on('stats', function(data) {

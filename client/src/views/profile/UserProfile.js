@@ -21,14 +21,9 @@ class UserProfile extends React.Component {
 
 	constructor(props, context) {
 		super(props);
-		console.log(props);
-		// this.dispatch  = this.props.dispatch;
-		// this.socket = this.props.socket
 	}
 
 	render() {
-		console.log("props");
-		console.log(this.props);
 		return (
 			<SocketApp>
 				<Nav isHome={false} isRoom={false}/>

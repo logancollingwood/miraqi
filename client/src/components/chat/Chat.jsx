@@ -5,6 +5,7 @@ import ChatMessage from "./ChatMessage";
 import ChatInput from "./ChatInput";
 import {AddMessageAction} from '../../actions/action';
 import styles from "./style/Chat.module.scss";
+import SocketContext from './../../context/SocketContext';
 
 const mapStateToProps = (state = {}) => {
 	return {
@@ -17,10 +18,14 @@ const mapStateToProps = (state = {}) => {
 };
 
 class Chat extends React.Component {
-	constructor(props){
-        super(props);
+	
+	static contextType = SocketContext;
+    
+	constructor(props, context) {
+		super(props);
+		this.socket = context;
+
 		const {dispatch} = this.props
-		this.socket = this.props.socket;
 
 		this.socket.on('message', function(data){
 			console.log('got message');
