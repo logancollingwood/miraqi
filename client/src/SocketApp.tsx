@@ -3,6 +3,7 @@ import Config from "./Config";
 import {SetUserAction, NotAuthorizedAction} from "./actions/action";
 import React from "react";
 import SocketContext from "./context/SocketContext";
+import { withRouter } from 'react-router';
 
 
 const mapStateToProps = (state = {}) => {
@@ -55,4 +56,4 @@ class SocketApp extends React.Component {
 
 }
 
-export default connect(null)(SocketApp);    
+export default withRouter(connect()(SocketApp) as any);

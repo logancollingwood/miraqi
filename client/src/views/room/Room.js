@@ -1,9 +1,8 @@
 import React, { Component } from "react";
 import ChatRoomManager from "../../components/ChatRoomManager";
 import Nav from "../../components/nav/Nav";
-import io from "socket.io-client";
-import Config from "../../Config.js";
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
+import { withRouter } from "react-router";
 import {NotAuthorizedAction} from "../../actions/action";
 import styles from "../../components/global/Globals.module.scss";
 import SocketContext from "../../context/SocketContext";
@@ -59,4 +58,4 @@ class Room extends Component {
   }
 }
 
-export default connect(mapStateToProps)(Room);
+export default withRouter(connect(mapStateToProps)(Room));

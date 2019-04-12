@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from 'react-router-dom'
-import GuildProfile from "./guilds/GuildProfile.js";
+import GuildProfile from "./guilds/GuildProfile";
+import { withRouter } from "react-router";
 import {connect} from 'react-redux'
 import style from "./guilds/style/Guild.module.scss";
 
@@ -28,7 +29,7 @@ class Guilds extends React.Component {
             return (
                 <div>
                     <div className="header">
-                        <i class="fas fa-users"></i>Guilds
+                        <i className="fas fa-users"></i>Guilds
                     </div>
                     <div className="guildQueue left-half">
                         <ul className="songQueue">
@@ -42,7 +43,7 @@ class Guilds extends React.Component {
         } else {
             console.log(this.props);
             guildsList = this.props.guilds.slice(0).map((guild, i) => 
-                <li className={`row listItem ${currentRoomId === guild.id ? 'active' : ''}`} key={i}>
+                <li className={`${currentRoomId === guild.id ? 'active ' : ''}row`} key={i}>
                     <div className="col-md-2">
                         <div className="name"> 
                             { guild.icon ? 
@@ -64,7 +65,7 @@ class Guilds extends React.Component {
             return (
                 <div>
                     <div className={style.guild_header}>
-                        <i class="fas fa-users"></i> Guilds
+                        <i className="fas fa-users"></i> Guilds
                     </div>
                     <div className={style.guild_container}>
                         <ul className={style.guild_list}>
@@ -80,4 +81,4 @@ class Guilds extends React.Component {
     }
 }
 
-export default connect(mapStateToProps)(Guilds);
+export default withRouter(connect(mapStateToProps)(Guilds));

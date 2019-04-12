@@ -1,9 +1,9 @@
 const fetchVideoInfo = require('youtube-info');
 const TIME_FORMAT = "MM YY / h:mm:ss a";
 const QueueUtil = require('./QueueUtil.js');
-import {DataBase} from "../db/db";
-
-
+import {
+    DataBase
+} from "../db/db";
 
 function ytVidId(url) {
     var p = /^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
@@ -17,17 +17,21 @@ class MerakiApi {
         return user;
     }
 
-
     static createSocketUserAndAddToRoom(socketId, roomId) {
         return new Promise((resolve, reject) => {
             DataBase.createUser(socketId)
                 .then(newUser => {
                     DataBase.addUserToRoom(newUser._id, roomId)
                         .then(data => {
-                            const { user, room } = data;
+                            const {
+                                user,
+                                room
+                            } = data;
                             resolve(data);
                         })
-                        .catch(err => { reject(err) });
+                        .catch(err => {
+                            reject(err)
+                        });
                 })
                 .catch(error => reject(error));
         });
@@ -42,9 +46,6 @@ class MerakiApi {
                 });
         });
     }
-
-
-
 
     static IsUsernameAdmin(userName) {
         return userName.toUpperCase() === 'logan'.toUpperCase();
@@ -85,7 +86,10 @@ class MerakiApi {
                     }
                 }
             } else {
-                resolve({isPlay: false, message: message});
+                resolve({
+                    isPlay: false,
+                    message: message
+                });
                 io.to(roomModel._id).emit('RECEIVE_MESSAGE', data);
             }
         });
@@ -101,7 +105,7 @@ class MerakiApi {
     }
 
 
-    static  removeUserFromRoom(userId, roomId) {
+    static removeUserFromRoom(userId, roomId) {
         return new Promise((resolve, reject) => {
             DataBase.removeUserFromRoom(userId, roomId)
                 .then(usersInRoom => {
@@ -115,18 +119,28 @@ class MerakiApi {
         const api = this;
         return new Promise((resolve, reject) => {
             DataBase.addUserToRoom(userId, roomId)
-                .then(({user, room}) => {
+                .then(({
+                    user,
+                    room
+                }) => {
                     let nowPlaying;
                     if (room.queue.length > 0) {
                         nowPlaying = room.queue[0];
                     }
                     api.getTopRoomStats(room._id, 5)
                         .then(stats => {
-                            resolve({userAddedToRoom: user, room: room, nowPlaying: nowPlaying, stats: stats});
+                            resolve({
+                                userAddedToRoom: user,
+                                room: room,
+                                nowPlaying: nowPlaying,
+                                stats: stats
+                            });
                         })
                         .catch(err => reject(err));
                 })
-                .catch(err => {reject(err)});
+                .catch(err => {
+                    reject(err)
+                });
         })
     }
 

@@ -1,11 +1,10 @@
-
 class QueueUtil {
 
     getSecondsSinceTimestamp(timestamp) {
         var currentTimeSeconds = new Date().getTime() / 1000;
         var timstampSeconds = timestamp / 1000;
         return currentTimeSeconds - timestampSeconds;
-    } 
+    }
 
     getStartTimeForTimeInQueue(queue, durationInSeconds) {
         let timeUntilPlay = 0;

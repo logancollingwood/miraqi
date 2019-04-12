@@ -1,6 +1,7 @@
 import React from "react";
 import moment from "moment";
 import {connect} from 'react-redux'
+import { withRouter } from "react-router";
 
 let TIME_FORMAT = "MM YY / h:mm:ss a";
 
@@ -63,4 +64,4 @@ class ChatInput extends React.Component {
     }
 }
 
-export default connect(mapStateToProps)(ChatInput);
+export default withRouter(connect(mapStateToProps)(ChatInput));

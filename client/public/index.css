@@ -417,10 +417,6 @@ p {
     border-bottom: 1px solid #ffffff;
 }
 
-.listItem.active {
-    background-color: rgba(79,84,92,.6);
-}
-
 .listItem .name {
     display: inline;
     font-size: 20px;
@@ -470,4 +466,9 @@ i.fas {
 }
 i.fas:hover {
   color: #ccc;
+}
+
+
+#app > div > div > div > div.col-2.no-padding > div > div.Guild_guild_container__3UoDU > ul > li.active.row {
+    background-color: #807e72;
 }

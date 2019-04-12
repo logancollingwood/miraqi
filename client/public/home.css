@@ -63,20 +63,6 @@ h1.side-banner {
 	padding-bottom: 2vh;
 }
 
-h1 {
-
-}
-
-
-h2 {
-	color: #fff;
-	font-family: 'Montserrat', sans-serif;
-}
-
-h2.title {
-
-}
-
 h2.previous-1 {
 	font-size: 1.4rem;
 }
@@ -84,17 +70,6 @@ h2.previous-1 {
 h2.previous-2 {
 	font-size: 1.2rem
 }
-
-h2.degree {
-
-}
-
-
-/* Socials */
-p {
-	color: #fff;
-}
-
 
 a:hover {
 	text-decoration: none;

@@ -1,6 +1,7 @@
 import React from "react";
 import {UpdateQueueAction, SetSkippingAction} from "../actions/action";
 import {connect} from 'react-redux'
+import { withRouter } from "react-router";
 
 const mapStateToProps = (state = {}) => {
     return {
@@ -74,7 +75,7 @@ class DjQueue extends React.Component {
                         </div>
                         <div className="col-md-1">
                             <div className="type">
-                                <a href={queueItem.playUrl} target="_blank">
+                                <a href={queueItem.playUrl} target="_blank" rel="noopener noreferrer">
                                     {queueItem.type === 'yt' ? <i className="fab fa-youtube fa-2x pull-right"></i> : ''}
                                 </a>
                             </div>
@@ -107,4 +108,4 @@ class DjQueue extends React.Component {
     }
 }
 
-export default connect(mapStateToProps)(DjQueue);
+export default withRouter(connect(mapStateToProps)(DjQueue));

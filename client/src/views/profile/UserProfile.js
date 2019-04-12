@@ -1,15 +1,14 @@
 import React from "react";
 import { Redirect } from "react-router-dom";
-import Nav from "../../components/nav/Nav.js";
-import Guilds from "../../components/Guilds.js";
-import API from "../../components/Api";
+import Nav from "../../components/nav/Nav";
+import Guilds from "../../components/Guilds";
 import Profile  from "../../components/profile/Profile";
 import {connect} from 'react-redux';
-import { SetUserAction, NotAuthorizedAction } from "../../actions/action";
 import styles from "../../components/global/Globals.module.scss";
-import io from "socket.io-client";
-import Config from "../../Config.js";
 import SocketContext from "../../context/SocketContext";
+import { withRouter } from "react-router";
+import SocketApp from "../../SocketApp";
+
 
 
 const mapStateToProps = (state = {}) => {
@@ -30,31 +29,23 @@ class UserProfile extends React.Component {
 	render() {
 		console.log("props");
 		console.log(this.props);
-		if (!this.props.authorized && !this.props.loading) {
-			return (
-				<Redirect to="/" />
-			)
-		} else {
-			return (
-				<div>
-					<Nav isHome={false} isRoom={false}/>
-					<div className={"container-fluid " + styles.mainContent}>
-						<div className="row justify-content-center">
-							<div className="col-2 no-padding">
-								<Guilds />
-							</div>
-							<div className="col-10 no-padding">
-								<Profile />
-							</div>
+		return (
+			<SocketApp>
+				<Nav isHome={false} isRoom={false}/>
+				<div className={"container-fluid " + styles.mainContent}>
+					<div className="row justify-content-center">
+						<div className="col-2 no-padding">
+							<Guilds />
+						</div>
+						<div className="col-10 no-padding">
+							<Profile />
 						</div>
 					</div>
 				</div>
-			);
-		}
+			</SocketApp>
+		);
 	}
-					// <Redirect to="/" />
-
 }
 
 
-export default connect(mapStateToProps)(UserProfile);
+export default withRouter(connect(mapStateToProps)(UserProfile));

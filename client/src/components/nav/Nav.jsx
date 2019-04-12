@@ -1,9 +1,9 @@
 import React from 'react';
 import moment from "moment";
 import { Link } from 'react-router-dom';
-import Config from "../../Config.js";
 import {connect} from 'react-redux';
 import styles from "./style/Nav.module.scss";
+import { withRouter } from 'react-router';
 
 const DATE_FORMAT = "MM YY";
 const TIME_FORMAT = "h:mm:ss a";
@@ -40,11 +40,12 @@ class Nav extends React.Component {
   
   componentDidMount() {
     const intervalId = setInterval(this.tick.bind(this), 1000);
-    console.log(`setting interval id: ${intervalId}`);
+    this.setState({
+      intervalId: intervalId
+    })
   }
 
   componentWillUnmount() {
-    console.log(`clearing interval id: ${this.state.intervalId}`);
     clearInterval(this.state.intervalId);
   }
 
@@ -53,17 +54,6 @@ class Nav extends React.Component {
   }
 
   render() {
-    let loginLink = Config.WEB_HOST + "login/discord";
-    const isLoggedIn = !(this.props.user.profile === null || this.props.user.profile === undefined);
-    const authHeaderToShow = isLoggedIn ? 
-        <div>
-          <Link to="/home" className="nav-link">Home</Link>
-        </div>
-    : 
-        <div>
-          <a href={loginLink} className="nav-link"><i className="fab fa-discord" /> Login </a>
-        </div>
-    ;
     if (this.props.nowPlaying) {
       document.title = '.eden - ' + this.props.nowPlaying.trackName;
     } else {
@@ -77,7 +67,9 @@ class Nav extends React.Component {
 
             <ul className="navbar-nav mr-auto">
               <li className="nav-item">
-                { authHeaderToShow }
+                <div>
+                  <Link to="/home" className="nav-link">Home</Link>
+                </div>
               </li>
               <li className="nav-item">
                 <div> <a href="https://twitter.com/miraqiapp" className="nav-link"><i className="fab fa-twitter" /> bugs? </a> </div>
@@ -99,4 +91,4 @@ class Nav extends React.Component {
   }
 }
 
-export default connect(mapStateToProps)(Nav);
+export default withRouter(connect(mapStateToProps)(Nav));

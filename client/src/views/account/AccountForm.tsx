@@ -9,6 +9,7 @@ import {
     Row
 } from "react-bootstrap";
 import API from "../../components/Api"
+import { withRouter } from 'react-router-dom';
 
 const initialState = { email: "", password: "", error_message: null, error_code: null};
 type State = Readonly<typeof initialState>;
@@ -103,4 +104,4 @@ class AccountForm extends Component<object, State> {
     }
 }
 
-export default connect(mapStateToProps)(AccountForm);
+export default withRouter(connect(mapStateToProps)(AccountForm) as any);

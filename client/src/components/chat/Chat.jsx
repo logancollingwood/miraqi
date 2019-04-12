@@ -1,5 +1,6 @@
 import React from "react";
 import {connect} from 'react-redux'
+import { withRouter } from "react-router";
 import ChatMessage from "./ChatMessage";
 import ChatInput from "./ChatInput";
 import {AddMessageAction} from '../../actions/action';
@@ -15,7 +16,7 @@ const mapStateToProps = (state = {}) => {
 	};
 };
 
-export class Chat extends React.Component {
+class Chat extends React.Component {
 	constructor(props){
         super(props);
 		const {dispatch} = this.props
@@ -76,4 +77,4 @@ export class Chat extends React.Component {
     }
 }
 
-export default connect(mapStateToProps)(Chat);
+export default withRouter(connect(mapStateToProps)(Chat));

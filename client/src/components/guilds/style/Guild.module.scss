@@ -3,48 +3,8 @@
 $guild-padding-top: 15px;
 $guild-profile-height: 110px;
 
-
-.profileImage {
-    border-radius: 45px;
-    height: 90px;
-    width: 90px;
-    padding: 10px;
-}
-
 .profile {
     height: $guild-profile-height;
-}
-.logout {
-    border-left: 1px solid #72D687;
-    border-right: 1px solid #72D687;
-    font-size: 20px;
-    padding-top: $guild-padding-top;
-    padding-left: 1vw;
-}
-
-.profile .logout a {
-    color: #aaa;
-}
-
-.profile .logout .version {
-    font-size: 10px;
-    display: block;
-    position: absolute;
-    bottom: 0px;
-}
-
-.profile .logout a:hover {
-    color: #b0aba0;
-}
-
-.app_version {
-    font-size: 12px;
-    position: absolute;
-    bottom: 3px;
-    right: 8px;
-    text-align: right;
-    color: $brand-dark-3;
-    display: block;
 }
 
 .guild_header {
@@ -54,14 +14,15 @@ $guild-profile-height: 110px;
     padding-top: 2vh;
     padding-bottom: 2vh;
     font-family: 'Raleway';
-    background-color: $brand-dark-2;
+    background-color: $brand-dark-1;
+    border-top: 1px solid $brand-dark-3;
     height: $SIDEBAR-HEADER-HEIGHT;
 }
 
 .guild_container {
     overflow-y: scroll;
     height: $SCROLLABLE-CONTENT-HEIGHT;
-    background-color: #2f3136;
+    background-color: $brand-dark-2;
 
     .guild_list { 
         padding-top: 15px;
@@ -84,10 +45,7 @@ $guild-profile-height: 110px;
             }
         }
         li:not(:last-child) {
-            border-bottom: 2px solid $brand-dark-2;
-        }
-        li .active {
-            background-color: $brand-dark-2;
+            border-bottom: 2px solid $brand-dark-1;
         }
 
         .guild_no_icon {
@@ -103,5 +61,52 @@ $guild-profile-height: 110px;
     bottom: 0px;
     height: 110px;
     width: 100%;
-    background-color: #424242;
+    background-color: $brand-dark-1;
+
+    .user_info {
+        padding-top: 1em;
+
+        span {
+            display: block;
+            font-size: 13px;
+            left: 15%;
+        }
+        span.user_name {
+            font-size: 30px;
+        }
+        span.user_discriminator {
+            margin-top: 10px;
+        }
+    }
+
+    a:hover {
+        color: $brand-hover;
+    }
+    
+    .logout {
+        a {
+            font-size: 20px;
+        }
+
+        padding-top: $guild-padding-top;
+        padding-left: 1vw;
+        font-size: 12px;
+        position: absolute;
+        bottom: 3px;
+        right: 8px;
+        text-align: right;
+    }
+
+    .app_version {
+        color: $brand-dark-3;
+        display: block;
+    }
+
+    .profile_image {
+        border-radius: 45px;
+        height: 90px;
+        width: 90px;
+        padding: 10px;
+        margin-top: 10px;
+    }
 }

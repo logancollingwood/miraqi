@@ -1,6 +1,7 @@
 import React from "react";
 import ReactPlayer from "react-player";
-import {connect} from 'react-redux'
+import {connect} from 'react-redux';
+import { withRouter } from "react-router";
 import { VolumeSlider, ControlDirection } from "react-player-controls";
 import {NowPlayingAction} from '../../actions/action'
 import RoomInfo  from "../roomInfo/RoomInfo.js";
@@ -162,4 +163,4 @@ class DjContainer extends React.Component {
 	}
 }
 
-export default connect(mapStateToProps)(DjContainer);
+export default withRouter(connect(mapStateToProps)(DjContainer));

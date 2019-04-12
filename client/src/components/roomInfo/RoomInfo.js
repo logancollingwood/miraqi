@@ -3,6 +3,7 @@ import DjQueue from "../DjQueue";
 import {connect} from 'react-redux'
 import RoomStats from "./RoomStats";
 import TopSongs from "./TopSongs";
+import { withRouter } from 'react-router';
 
 const mapStateToProps = (state = {}) => {
 	return {
@@ -29,4 +30,4 @@ class RoomInfo extends React.Component {
 	}
 }
 
-export default connect(mapStateToProps)(RoomInfo);
+export default withRouter(connect(mapStateToProps)(RoomInfo));

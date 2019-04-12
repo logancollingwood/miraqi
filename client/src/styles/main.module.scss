@@ -3,6 +3,8 @@ $brand-dark-2: #57585a;
 $brand-dark-3: #807e72;
 $brand-highlight: #40cc8b;
 $brand-light-1: #eaeaea;
+$brand-hover: #d4d4d4;
+$brand-white: #FFFFFF;
 $brand-gradient: linear-gradient(180deg, #787878 0%, #4f4f4f 100%);
 
 
@@ -28,4 +30,12 @@ $nav-height: 5em;
 
 .profile_content {
 
+}
+
+a {
+    color: $brand-white;
+}
+
+a:hover {
+    color: $brand-dark-3;
 }

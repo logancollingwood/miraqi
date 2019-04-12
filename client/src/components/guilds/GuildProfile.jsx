@@ -1,7 +1,7 @@
 import React from "react";
 import {connect} from 'react-redux'
 import Config from "../../Config.js";
-import { Link } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 import style from "./style/Guild.module.scss";
 
 const mapStateToProps = (state = {}) => {
@@ -29,13 +29,18 @@ class GuildProfile extends React.Component {
             <div className="container no-padding ">
                 <div className={"row " + style.profile} >
                 <div className="col-md-4">
-                    <img alt="profile" className={style.profileImage} src={url}/>
+                    <img alt="profile" className={style.profile_image} src={url}/>
                 </div>
                 <div className={"col-md-4 no-padding " + style.user_info}>
-                    <Link to="/home"><h1>{this.props.user.username}</h1></Link>
+                    <h1>
+                        <Link to="/home">
+                            <span className={style.user_name}>{this.props.user.username}</span>
+                            <span className={style.user_discriminator}>#{this.props.user.discriminator}</span>
+                        </Link>
+                    </h1>
                 </div>
-                <div className={"col-md-4 no-padding " + style.logout + " left-half"}>
-                    <a href={Config.WEB_HOST + "auth/logout"}> logout </a>
+                <div className={"col-md-4 no-padding " + style.logout}>
+                    <a href={Config.WEB_HOST + "auth/logout"}> <p>logout</p> </a>
                     <span className={style.app_version}> v 1.0 </span>
                 </div>
                 </div>
@@ -44,4 +49,4 @@ class GuildProfile extends React.Component {
     }
 }
 
-export default connect(mapStateToProps)(GuildProfile);
+export default withRouter(connect(mapStateToProps)(GuildProfile));

@@ -2,6 +2,7 @@ import React from "react";
 import {connect} from 'react-redux';
 import {SetStatsAction} from "../../actions/action";
 import moment from "moment";
+import { withRouter } from 'react-router-dom';
 
 
 const mapStateToProps = (state = {}) => {
@@ -80,4 +81,4 @@ class RoomStats extends React.Component {
 	}
 }
 
-export default connect(mapStateToProps)(RoomStats);
+export default withRouter(connect(mapStateToProps)(RoomStats));

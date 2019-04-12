@@ -5,6 +5,7 @@ import DjContainer from "./dj/DjContainer";
 import Guilds from "../components/Guilds.js";
 import {UpdateRoomAction} from "../actions/action";
 import {connect} from 'react-redux';
+import { withRouter } from "react-router";
 import SocketContext from "../context/SocketContext";
 
 const mapStateToProps = (state = {}) => {
@@ -56,4 +57,4 @@ class ChatRoomManager extends React.Component {
     }
 }
 
-export default connect(mapStateToProps)(ChatRoomManager);
+export default withRouter(connect(mapStateToProps)(ChatRoomManager));

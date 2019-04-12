@@ -1,6 +1,6 @@
 import React from "react";
 import {connect} from 'react-redux';
-import Style from "./style/Profile.module.scss";
+import { withRouter } from 'react-router';
 
 const mapStateToProps = (state = {}) => {
     let profile = state.user ? state.user.profile : null;
@@ -53,4 +53,4 @@ class ProfileSidebar extends React.Component {
     }
 }
 
-export default connect(mapStateToProps)(ProfileSidebar);
+export default withRouter(connect(mapStateToProps)(ProfileSidebar));

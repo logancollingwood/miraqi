@@ -1,7 +1,7 @@
 import { Queue, JobOptions, Job, DoneCallback } from "bull";
 import { Server } from "socket.io";
 import { QueueItem } from "../../../shared/model/QueueItem";
-import DataBase  from "../db/db";
+import DataBase from "../db/db";
 import { JobQueueItem } from "../../../shared/model/JobQueueItem";
 
 export default class QueueProcessor {
@@ -27,10 +27,10 @@ export default class QueueProcessor {
             roomId: jobQueueItem.roomId,
             queueItem: nextQueueItem
         }
-        this.add(nextQueueItemForJob , {delay: nextSongInSeconds * 1000})
+        this.add(nextQueueItemForJob, { delay: nextSongInSeconds * 1000 })
     }
 
-    add(data : JobQueueItem, opts: JobOptions) { 
+    add(data: JobQueueItem, opts: JobOptions) {
         this._queue.add(data, opts);
     }
 }
