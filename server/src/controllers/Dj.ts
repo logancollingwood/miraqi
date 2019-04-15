@@ -35,8 +35,6 @@ class Dj {
 
   addQueueItem(queueItem, currentQueue) {
     let isFirst = currentQueue.length === 1;
-    console.log(`is first: ${isFirst}`);
-    console.log(queueItem);
     // We only need to add the song on the first
     if (isFirst) {
       this.addFirstQueueItem(queueItem);
@@ -82,9 +80,9 @@ class Dj {
       queueItem: queueItem,
       roomId: this._socketSession.room._id
     };
+
     console.log(`pushing onto queueProcessor`);
-    console.log(queueData);
-    this._queueProcessor.add(queueItem, {
+    this._queueProcessor.add(queueData, {
       delay: 0
     });
   }

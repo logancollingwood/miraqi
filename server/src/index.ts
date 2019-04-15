@@ -31,7 +31,7 @@ const djQueue: Queue = new Bull('dj-queue', process.env.REDIS_URL);
 
 const queue = new QueueProcessor(djQueue, io);
 
-SocketService(io, sessionStore, djQueue);
+SocketService(io, sessionStore, queue);
 MerakiWeb(app, sessionStore);
 
 server.listen(WEB_PORT);

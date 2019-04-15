@@ -261,16 +261,9 @@ export default class DataBase {
                         });
                     } else {
                         firstQueueItem.playTime = new Date();
-                        console.log('model');
-                        console.log(model);
                         model.queue[0] = firstQueueItem;
-                        console.log('new model');
-                        console.log(model);
                         model.save(function(error, room) {
-                            console.log(`added new queueItem which will be played in ${timeTillPlay}`);
-                            console.log(room);
                             let newQueueItem = room.queue[0];
-                            console.log(newQueueItem);
                             resolve({
                                 queue: model.queue,
                                 isFirstSong: isFirstSong,
@@ -289,7 +282,6 @@ export default class DataBase {
 
     static getTopStats(roomId, numberOfStats) {
         return new Promise((resolve, reject) => {
-            console.log(`Getting ${numberOfStats} stats for roomId ${roomId}`);
             let query = Models.RoomStat.find({roomId: roomId}).sort({'count': -1}).limit(numberOfStats);
             query.exec(function(error, stats) {
                 if (error) {
@@ -303,15 +295,11 @@ export default class DataBase {
 
     static addRoomStat(queueItem, roomId) {
         return new Promise((resolve, reject) => {
-            console.log(`Adding stat to roomId ${roomId}`);
-            console.log(`queueItem PLAYURL: ${queueItem.playUrl}`);
             Models.RoomStat.find({roomId: roomId, playUrl: queueItem.playUrl}, function(err, roomStat) {
                 if (err) {
                     console.log(err);
                     resolve();
                 }
-                console.log("found roomStat");
-                console.log(roomStat);
                 if (roomStat.length === 0) {
                     roomStat = new Models.RoomStat({
                         roomId: roomId,
@@ -443,7 +431,6 @@ export default class DataBase {
                     if (err) {
                         reject(err);
                     }
-                    console.log(model);
                     resolve(model);
                 }
             );
