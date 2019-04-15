@@ -6,7 +6,6 @@ import { withRouter } from "react-router";
 import {NotAuthorizedAction} from "../../actions/action";
 import styles from "../../components/global/Globals.module.scss";
 import SocketContext from "../../context/SocketContext";
-import SocketApp from "../../SocketApp";
 
 const mapStateToProps = (state = {}) => {
     return {};
@@ -49,12 +48,12 @@ class Room extends Component {
 
   render() {
     return (
-        <SocketApp>
+        <div>
           <Nav />
           <div className={"container-fluid " + styles.mainContent}>
             <ChatRoomManager id={this.props.match.params.id} />
           </div>
-        </SocketApp>
+        </div>
     );
   }
 }

@@ -7,7 +7,6 @@ import {connect} from 'react-redux';
 import styles from "../../components/global/Globals.module.scss";
 import SocketContext from "../../context/SocketContext";
 import { withRouter } from "react-router";
-import SocketApp from "../../SocketApp";
 
 
 
@@ -25,7 +24,7 @@ class UserProfile extends React.Component {
 
 	render() {
 		return (
-			<SocketApp>
+			<div>
 				<Nav isHome={false} isRoom={false}/>
 				<div className={"container-fluid " + styles.mainContent}>
 					<div className="row justify-content-center">
@@ -37,7 +36,7 @@ class UserProfile extends React.Component {
 						</div>
 					</div>
 				</div>
-			</SocketApp>
+			</div>
 		);
 	}
 }

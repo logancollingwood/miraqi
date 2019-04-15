@@ -15,31 +15,15 @@ class ProfileSidebar extends React.Component {
         let connectedAccounts;
         if (this.props.profile) {
             connectedAccounts = (
-                <div className="container-fluid connected-account">
-                    <div className="row info">
-                        <div className="col-md-4">
-                            <img alt="discord-logo" className="brand" src="/img/Discord_Logo_Wordmark_White.png" />
-                        </div>
-                        <div className="col-md-8">
-                            <p>{this.props.profile.username}#{this.props.profile.discriminator}</p>
-                        </div>
+                <div class="card border-dark mb-3">
+                    <h5 class="card-header">Discord</h5>
+                    <div class="card-body">
+                        <h5 class="card-title">{this.props.profile.username} #{this.props.profile.discriminator}</h5>
+                        <a href="#" class="btn btn-dark"><i className="fas fa-sync-alt"></i>  refresh</a>
+                        <a href="#" class="btn btn-dark"><i className="fas fa-trash-alt"></i>  delink</a>
                     </div>
-                    <div className="row options">
-                        <div className="col-1">
-                            <i className="fas fa-cogs"></i>
-                        </div>
-                        <div className="col-6">
-                            <button className="btn btn-primary">
-                                <i className="fas fa-sync-alt"></i>
-                                refresh
-                            </button>
-                        </div>
-                        <div className="col-4">
-                            <button className="btn btn-primary">
-                                <i className="fas fa-trash-alt"></i>
-                                delink
-                            </button>
-                        </div>
+                    <div class="card-footer">
+                        last synced: 3 mins ago
                     </div>
                 </div>
             )

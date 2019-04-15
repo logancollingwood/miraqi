@@ -17,8 +17,10 @@ const AppWithRouter = withRouter(() => (
 	<Switch>
 		<Route exact={true} path="/" component={Home}/>
 		<Route path="/account/create" component={AccountCreation} />
-		<Route path="/rooms/discord/:id" component={Room}/>
-		<Route path="/home" component={UserProfile} />
+		<SocketApp>
+			<Route path="/rooms/discord/:id" component={Room}/>
+			<Route path="/home" component={UserProfile} />
+		</SocketApp>
 		<Route path="*" component={PageNotFound} />
 	</Switch>
 ));

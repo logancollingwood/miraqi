@@ -5,7 +5,6 @@ import { withRouter } from "react-router";
 import styles from "../index/styles/Index.module.scss";
 import Nav from "../../components/nav/Nav";
 import AccountForm from "./AccountForm";
-import SocketApp from "../../SocketApp";
 
 const initialState = { user: null };
 
@@ -17,7 +16,7 @@ class AccountCreation extends Component {
     state = initialState;
     render() {
         return (
-            <SocketApp>
+            <div>
                 <Nav/>
                 <div className="container-fluid home">
                     <section className={styles.ctaSection}>
@@ -32,7 +31,7 @@ class AccountCreation extends Component {
                         </Row>
                     </section>
                 </div>
-            </SocketApp>
+            </div>
         )
     }
 }
