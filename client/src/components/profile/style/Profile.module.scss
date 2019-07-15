@@ -1,0 +1,25 @@
+@import '../../../styles/main.module.scss';
+
+$profile-panel-color:  $brand-dark-1;
+
+
+.profile_content {
+    background-color: $brand-dark-2;
+    background-repeat: repeat;
+    padding: 5vh;
+    text-align: center;
+    height: $MAIN-CONTENT-HEIGHT;
+    background: $brand-gradient;
+
+    .profile_sidebar {
+        background-color: $profile-panel-color;
+    }
+
+    .profile_main {
+        background-color: $profile-panel-color;
+    }
+}
+
+.profile_sidebar {
+    font-size: 10px;
+}

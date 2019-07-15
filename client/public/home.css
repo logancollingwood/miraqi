@@ -1,0 +1,84 @@
+.container-fluid.home {
+	overflow: hidden;
+}
+
+section {
+	position: relative;
+}
+.btn {
+	padding: 20px;
+}
+
+.btn .fab {
+	padding-right: 15px;
+}
+.btn a {
+	font-size: 24px;
+	color: #fff;
+}
+
+.fab {
+	vertical-align: middle;
+}
+
+.fas {
+	vertical-align: middle;
+}
+
+
+.go .fa-spinner {
+	color: #ffffff;
+	font-size: 60px;
+}
+
+/* Row Dividers */
+.row.go {
+	padding-top: 5vh;
+}
+
+.row.education {
+	padding-top: 10vh;
+}
+
+.row.socials {
+	padding-top: 15vh;
+}
+
+/* Font Selectors */
+
+h1.banner {
+	text-align: center;
+	color: #fff;
+	font-family: 'Raleway', sans-serif;
+	font-size: 60px;
+}
+
+h1.side-banner {
+	text-align: center;
+	color: #fff;
+	font-family: 'Raleway', sans-serif;
+	font-size: 30px;
+	padding-top: 5vh;
+	border-bottom: 1px solid #fff;
+	padding-bottom: 2vh;
+}
+
+h2.previous-1 {
+	font-size: 1.4rem;
+}
+
+h2.previous-2 {
+	font-size: 1.2rem
+}
+
+a:hover {
+	text-decoration: none;
+}
+
+.commandName {
+	font-size: 24px;
+}
+
+.commandExample a{
+	color: #aaa;
+}

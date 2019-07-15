@@ -1,0 +1,37 @@
+$brand-color: #454242;
+$button-padding: 10px;
+
+.card {
+    padding: 50px;
+    min-height: 30vh;
+    border-radius: 30px;
+    margin-top: 10vh;
+}
+
+.loginBanner {
+    margin: 0 auto;
+    font-size: 30px;
+    color: $brand-color;
+    margin-bottom: 40px;
+}
+
+.label {
+    display: block;
+    min-width: 95px;
+}
+
+
+.loginButton {
+    padding: $button-padding;
+    width: 100px;
+}
+
+.registerButton {
+    padding: $button-padding;
+    width: 100px;
+}
+
+.errorMessage {
+    color: #000000;
+    font-size: 15px;
+}
