@@ -22,12 +22,13 @@ export default function setup(app, sessionStore) {
         credentials: true,
         origin: 'http://localhost:3000'
     }));
-    app.use(express.static(path.join(__dirname, '../../build')));
+    app.use(express.static(path.join(__dirname, '../../../../../client/build')));
 
     WebAuth(app, sessionStore);
 
     app.get('*', function (req, res) {
-        res.sendFile(path.join(__dirname, '../../../client/build', 'index.html'));
+        console.log((path.join(__dirname, '../../../../../client/build', 'index.html')));
+        res.sendFile(path.join(__dirname, '../../../../../client/build', 'index.html'));
     });
 
     setupWebEndpoints(app);

@@ -5,7 +5,7 @@
   "author": "logan collingwood",
   "license": "",
   "scripts": {
-    "build": "\"rimraf dist/\" && \"tsc -p tsconfig.json\"",
+    "build": "rimraf dist && tsc -p tsconfig.json",
     "start": "forever dist/server/src/index.js",
     "dev": "concurrently --kill-others \"tsc -p tsconfig.json -w\" \"nodemon dist/server/src/index.js\"",
     "clean": "rimraf dist"
