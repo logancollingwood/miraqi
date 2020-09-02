@@ -8,6 +8,7 @@
   },
   "scripts": {
     "postinstall": "concurrently \"cd client && npm i\" \"cd server && npm i\"",
+    "heroku-prebuild": "npm i -g react-scripts",
     "build": "concurrently \"cd client && npm run build\" \"cd server &&  npm run build\"",
     "start": "cd server && npm run start",
     "test": "echo \"Error: no test specified\" && exit 1"
