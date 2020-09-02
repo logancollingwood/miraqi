@@ -3,7 +3,8 @@
         "lib": ["es6", "dom"],
         "removeComments": true,
         "outDir": "dist",
-        "allowJs": true
+        "allowJs": true,
+        "types":["node"]
     },
     "include": [
         "src"

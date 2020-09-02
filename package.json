@@ -9,7 +9,7 @@
   "scripts": {
     "heroku-prebuild": "npm i -g react-scripts rimraf typescript@3.5.3",
     "postinstall": "concurrently \"cd client && npm i\" \"cd server && npm i\"",
-    "build": "concurrently \"cd client && npm run build\" \"cd server &&  npm run build\"",
+    "build": "concurrently \"cd client && npm i typescript@3.5.3 && npm run build\" \"cd server && npm run build\"",
     "start": "cd server && npm run start",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
