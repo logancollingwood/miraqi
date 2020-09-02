@@ -7,7 +7,7 @@
     "doc": "docs"
   },
   "scripts": {
-    "heroku-prebuild": "npm i -g react-scripts rimraf",
+    "heroku-prebuild": "npm i -g react-scripts rimraf typescript",
     "postinstall": "concurrently \"cd client && npm i\" \"cd server && npm i\"",
     "build": "concurrently \"cd client && npm run build\" \"cd server &&  npm run build\"",
     "start": "cd server && npm run start",
