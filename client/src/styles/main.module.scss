@@ -14,13 +14,13 @@ $nav-color: $brand-dark-1;
 // Layout Specific Properties
 $MAX-CONTENT-HEIGHT: 100;
 
-$MAIN-CONTENT-HEIGHT: calc(100vh - 5em);
+$MAIN-CONTENT-HEIGHT: calc(100vh - 3em);
 $PROFILE-TOOLTIP-HEIGHT: 110px;
 $SIDEBAR-HEADER-HEIGHT: 4em;
 
 $SCROLLABLE-CONTENT-HEIGHT: calc(#{$MAIN-CONTENT-HEIGHT} - #{$PROFILE-TOOLTIP-HEIGHT} - #{$SIDEBAR-HEADER-HEIGHT} - 1em);
 
-$nav-height: 5em;
+$nav-height: 3em;
 
 .mainContent {
     margin-top: $nav-height;
