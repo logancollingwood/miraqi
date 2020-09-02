@@ -1,4 +1,4 @@
-const fetchVideoInfo = require('youtube-info');
+const fetchVideoInfo = require('updated-youtube-info');
 const TIME_FORMAT = "MM YY / h:mm:ss a";
 const QueueUtil = require('./QueueUtil.js');
 import {
@@ -59,11 +59,16 @@ class MerakiApi {
                 const playUrl = message.split(" ")[1];
                 const vidId = ytVidId(playUrl);
                 if (vidId) {
+                    console.log(`found vidId: ${vidId}`)
                     if (roomId && userId) {
                         fetchVideoInfo(vidId, function (err, videoInfo) {
+                            if (err != null) {
+                                console.log(err)
+                            }
                             if (videoInfo == null) {
                                 return;
                             }
+                            console.log(`found vidInfo: ${videoInfo}`)
                             let queueItem = {
                                 url: playUrl,
                                 userId: userId,

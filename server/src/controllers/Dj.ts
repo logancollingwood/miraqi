@@ -2,7 +2,6 @@ import { JobQueueItem } from "../../../shared/model/JobQueueItem";
 import QueueProcessor from "../worker/QueueProcessor";
 import db from "../db/db";
 
-const fetchVideoInfo = require("youtube-info");
 class Dj {
   constructor(socketSession, queueProcessor) {
     this._socketSession = socketSession;

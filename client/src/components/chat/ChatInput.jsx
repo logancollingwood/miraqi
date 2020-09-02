@@ -35,6 +35,7 @@ class ChatInput extends React.Component {
                 message: this.state.message,
                 timestamp: moment().format(TIME_FORMAT)
             });
+            console.log(`sent message`);
             this.setState({message: ''});
         }
 
