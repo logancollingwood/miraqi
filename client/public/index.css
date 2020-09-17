@@ -90,8 +90,6 @@ body {
 }
 
 .nothing-playing:before {
-    content: "\f144";
-    font-family: FontAwesome;
     top: 0;
     font-size: 40vh;
     color: #424242;
@@ -175,8 +173,6 @@ body {
   flex: 1 1 40px;
   background-color: #36393e;
   background-image: linear-gradient(to bottom, #51545b, #484b51, #404248, #37393f, #2f3136);
-  min-height: 30vh;
-  max-height: 42vh;
 }
 
 .youtubeContainer {

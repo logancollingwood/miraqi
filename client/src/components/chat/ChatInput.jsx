@@ -7,7 +7,6 @@ import SocketContext from './../../context/SocketContext';
 let TIME_FORMAT = "MM YY / h:mm:ss a";
 
 const mapStateToProps = (state = {}) => {
-	console.log(state)
 	return {
         userName: state.user.profile.username,
         userId: state.user._id

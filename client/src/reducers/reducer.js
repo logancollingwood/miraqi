@@ -65,7 +65,7 @@ const reducer = (state=initialState, action) => {
         })
     case 'IS_SKIPPING' : 
         return Object.assign({}, state, {
-            skipping: action.data
+            skipping: action.data,
         })
     case 'NEW_STATS' : 
         return Object.assign({}, state, {

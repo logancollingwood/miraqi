@@ -7,6 +7,7 @@ import {NowPlayingAction} from '../../actions/action'
 import RoomInfo  from "../roomInfo/RoomInfo.js";
 import styles from "./style/Dj.module.scss";
 import SocketContext from './../../context/SocketContext';
+import { moment } from 'moment';
 
 function secondsToString(seconds) {
 	return {
@@ -20,10 +21,9 @@ function secondsToString(seconds) {
 
 const mapStateToProps = (state = {}) => {
 	console.log("dj state");
-	console.log(state);
-	let nowPlaying = state.queue[0] ? state.queue[0] : null;
+	console.log(state);	
 	return {
-		nowPlaying: nowPlaying
+		nowPlaying: state.nowPlaying
 	};
 };
 
@@ -51,19 +51,22 @@ class DjContainer extends React.Component {
 			volume: Number.parseFloat(initialVolume),
 			playing: true
 		}
+		this.player = null;
 
 
 		this.socket.on('play', function (data) {
+			console.log("Got play");
 			dispatch(NowPlayingAction(data))
 		});
 		
-		this.socket.on('no_queue', function() {
+		this.socket.on('NO_QUEUE', function() {
 			dispatch(NowPlayingAction(null))
 			self.setState({
 				songPlayed: 0,
 				songLength: 0,
 			});
 		});
+
 
 
 		this.handleVolumeChange = function(event) {
@@ -74,6 +77,11 @@ class DjContainer extends React.Component {
 		}
 	}
 
+	seekTo(timestamp) {
+		if (this.player !== undefined) {
+			this.player.seekTo(timestamp)
+		}
+	}
 
 	getNowPlayingUrl(optionalRoom) {
 		let nowPlayingUrl = null;
@@ -104,6 +112,7 @@ class DjContainer extends React.Component {
 			totalLength: timeLeft.numminutes + "m" + timeLeft.numseconds + "s",
 			songLength: seconds
 		})
+		this.player.seekTo(0);
 	}
 
 	onPause() {
@@ -122,6 +131,13 @@ class DjContainer extends React.Component {
 			width: this.props.nowPlaying ? (this.state.songPlayed / this.state.songLength) * 100 + '%' : 0
 		}
 
+		const config = {
+			youtube: {
+				playerVars: {
+					start: 0
+				}
+			}
+		}
 		const playerOrNothing = this.props.nowPlaying ?
 				<div className="row video">
 					<ReactPlayer ref={(input) => { this.player = input; }}
@@ -133,6 +149,7 @@ class DjContainer extends React.Component {
 								onProgress={this.onProgress.bind(this)}
 								onDuration={this.onDuration.bind(this)}
 								onPause={this.onPause.bind(this)}
+								config={config}
 								height='50vh'
 								width='100%' />
 					<div className="player-controls">
@@ -146,7 +163,7 @@ class DjContainer extends React.Component {
 				</div>
 			: 
 				<div className="row video nothing-playing">
-					<div className="nothing"> n / a </div>
+					<div className="nothing"> n o t h i n g </div>
 				</div>
 			;
 		let queue = this.props.room ? this.props.room.queue : null;

@@ -7,6 +7,7 @@ import {UpdateRoomAction} from "../actions/action";
 import {connect} from 'react-redux';
 import { withRouter } from "react-router";
 import SocketContext from "../context/SocketContext";
+import globals from "../styles/main.module.scss"
 
 const mapStateToProps = (state = {}) => {
 	console.log(state)
@@ -43,13 +44,13 @@ class ChatRoomManager extends React.Component {
 		}
         return (
 				<div className="row justify-content-center">
-					<div className="col-2 no-padding">
+					<div className={"d-none d-md-block col-md-2 no-padding " + globals.guilds_container}>
 						<Guilds/>
 					</div>
-					<div className="col-7 no-padding">
+					<div className="col-md-7 no-padding">
 						<DjContainer loading={this.state.loading} room={this.state.room} socket={this.socket}/>
 					</div>
-					<div className="col-3 no-padding">
+					<div className="d-none d-md-block col-md-3 no-padding">
 						<Chat loading={this.state.loading} user={this.state.user} socket={this.socket} room={this.state.room}/>
 					</div>
 				</div>

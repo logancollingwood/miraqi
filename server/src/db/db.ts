@@ -325,6 +325,26 @@ export default class DataBase {
         });
     }
 
+    static getQueue(roomId) {
+        return new Promise((resolve, reject) => {
+            Models.Room.findById(roomId, function (err, room) {
+                if (err) {
+                    reject(err);
+                }
+
+                if (!room) {
+                    console.log('uh oh, no room found');
+                }
+                const queue = room.queue;
+                // if queue is empty, return empty queue
+                if (queue.length == 0) { 
+                    resolve({queue: []}); 
+                }
+                resolve({queue: queue})
+            });
+        });
+    }
+
     /**
      * Returns the top of the queue and
      *   then permanently removes the item from the queue.
@@ -341,10 +361,12 @@ export default class DataBase {
                 if (!room) {
                     console.log('uh oh, no room found');
                 }
-
                 const queue = room.queue;
                 // if queue is empty, return empty queue
-                if (queue.length === 0) { resolve({queue: queue}); }
+                if (queue.length === 0) { 
+
+                    resolve({queueItem: null, queue: []}); 
+                }
                
                 // Pop the queue, and then save the room
                 queue.shift();
@@ -356,7 +378,7 @@ export default class DataBase {
 
                         // We just popped the last item off the queue
                         if (queueItem === undefined || queueItem === null) {
-                            resolve(null);
+                            resolve({queueItem: null, queue: []});
                             return;
                         }
                         queueItem.playTime = new Date();

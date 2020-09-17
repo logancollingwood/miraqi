@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import Nav from "../../components/nav/Nav";
 import styles from "./styles/Index.module.scss";
+import globals from "../../styles/main.module.scss"
 import { withRouter } from 'react-router';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
@@ -19,7 +20,7 @@ class Home extends Component {
 
   render() {
     return (
-      <div>
+      <div className={globals.root_container}>
         <Nav />
         <div className="container-fluid home">
           <section className={styles.ctaSection}>

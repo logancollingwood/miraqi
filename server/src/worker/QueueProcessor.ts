@@ -20,18 +20,17 @@ export default class QueueProcessor {
     async process(job: Job) {
         console.log(`processing queue`);
         const jobQueueItem: JobQueueItem = job.data;
-        console.log(job.data);
-        console.log(`processing job: ${job.id}`);
-        console.log(jobQueueItem);
-        this._io.to(jobQueueItem.roomId).emit('play', jobQueueItem);
-        const nextSongInSeconds: number = jobQueueItem.queueItem.lengthSeconds;
-        const nextQueueItem: any = await this._db.popAndGetNextQueueItem(jobQueueItem.roomId);
-        if (nextQueueItem) {
+        const { queueItem, queue }: any = await this._db.popAndGetNextQueueItem(jobQueueItem.roomId);
+
+        console.log(queueItem);
+        if (queueItem !== null) {
+            this._io.to(jobQueueItem.roomId).emit(SocketMessageType.NEW_QUEUE, queue);
+            this._io.to(jobQueueItem.roomId).emit('play', queueItem);
             const nextQueueItemForJob: JobQueueItem = {
                 roomId: jobQueueItem.roomId,
-                queueItem: nextQueueItem
+                queueItem: queueItem
             }
-            this.add(nextQueueItemForJob, { delay: nextSongInSeconds * 1000 })
+            this.add(nextQueueItemForJob, { delay: queueItem.lengthSeconds * 1000 })
         } else {
             this._io.to(jobQueueItem.roomId).emit(SocketMessageType.NO_QUEUE, {});
             this._io.to(jobQueueItem.roomId).emit(SocketMessageType.NOW_PLAYING, {})
@@ -42,7 +41,7 @@ export default class QueueProcessor {
     add(data: JobQueueItem, opts: JobOptions) {
         console.log(`adding in processor`);
         console.log(data);
-        console.log(`adding queueItem ${data.queueItem.trackName} to room: ${data.roomId} to be played in ${opts.delay/1000} seconds`);
+        console.log(`adding queueItem ${data.queueItem.trackName} to room: ${data.roomId} to be played in ${opts.delay} seconds`);
         this._queue.add(data, opts);
     }
 }

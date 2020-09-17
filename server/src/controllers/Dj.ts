@@ -1,6 +1,9 @@
 import { JobQueueItem } from "../../../shared/model/JobQueueItem";
 import QueueProcessor from "../worker/QueueProcessor";
 import db from "../db/db";
+import { QueueItem } from './../../../shared/model/QueueItem';
+import SocketMessageType from './../../../shared/model/entity/SocketMessageType';
+var moment = require('moment')
 
 class Dj {
   constructor(socketSession, queueProcessor) {
@@ -33,13 +36,16 @@ class Dj {
   }
 
   addQueueItem(queueItem, currentQueue) {
-    let isFirst = currentQueue.length === 1;
-    // We only need to add the song on the first
-    if (isFirst) {
-      this.addFirstQueueItem(queueItem);
-      this._socketSession.emitToRoom("queue", currentQueue.splice(0));
+    // on the first item in the queue, we trigger an immediate play and
+    // set a delayed timer at the end of the item to drain the queue and play next
+    // on second or more items, we just add it to the queue and wait for the prior triggered delay
+    if (currentQueue.length === 1) {
+      this._socketSession.emitToRoom(SocketMessageType.NEW_QUEUE, currentQueue.splice(0));
+      this._socketSession.emitToRoom("play", queueItem)
+
+      this.addItemToDelayQueue(queueItem, (queueItem.lengthSeconds*1000) + 1000);
     } else {
-      this._socketSession.emitToRoom("queue", currentQueue);
+      this._socketSession.emitToRoom(SocketMessageType.NEW_QUEUE, currentQueue.splice(0));
     }
   }
 
@@ -53,8 +59,8 @@ class Dj {
     db.popAndGetNextQueueItem(this._socketSession.room._id)
       .then((data: any) => {
         // There was nothing left in the queue
-        if (data === null) {
-          this._socketSession.emitToRoom("no_queue");
+        if (data === null || data.queue === null || data.queue.length === 0) {
+          this._socketSession.emitToRoom(SocketMessageType.NO_QUEUE);
           return;
         }
         let queueItem = data.queueItem;
@@ -67,14 +73,15 @@ class Dj {
 
         console.log(leftOverQueue);
         this._socketSession.emitToRoom("play", queueItem);
-        this._socketSession.emitToRoom("queue", leftOverQueue);
+        this._socketSession.emitToRoom(SocketMessageType.NEW_QUEUE, leftOverQueue);
       })
       .catch(err => {
         console.log("Unable to get next queue item from the db");
+        console.log(err);
       });
   }
 
-  addFirstQueueItem(queueItem) {
+  addItemToDelayQueue(queueItem, delay) {
     let queueData: JobQueueItem = {
       queueItem: queueItem,
       roomId: this._socketSession.room._id
@@ -82,7 +89,7 @@ class Dj {
 
     console.log(`pushing onto queueProcessor`);
     this._queueProcessor.add(queueData, {
-      delay: 0
+      delay: delay
     });
   }
 }

@@ -28,6 +28,17 @@ $nav-height: 3em;
     overflow: hidden;
 }
 
+.root_container { 
+
+}
+
+.guilds_container { 
+    display: inline;
+    &__collapse_icon { 
+        display: none;
+    }
+}
+
 .profile_content {
 
 }

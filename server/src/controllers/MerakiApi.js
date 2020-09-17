@@ -59,7 +59,6 @@ class MerakiApi {
                 const playUrl = message.split(" ")[1];
                 const vidId = ytVidId(playUrl);
                 if (vidId) {
-                    console.log(`found vidId: ${vidId}`)
                     if (roomId && userId) {
                         fetchVideoInfo(vidId, function (err, videoInfo) {
                             if (err != null) {
@@ -68,9 +67,8 @@ class MerakiApi {
                             if (videoInfo == null) {
                                 return;
                             }
-                            console.log(`found vidInfo: ${videoInfo}`)
                             let queueItem = {
-                                url: playUrl,
+                                url: playUrl + "&t=0s",
                                 userId: userId,
                                 roomId: roomId,
                                 trackName: videoInfo.title,
@@ -82,7 +80,7 @@ class MerakiApi {
                                     resolve({
                                         isPlay: true,
                                         first: data.isFirstSong,
-                                        queueItem: queueItem,
+                                        queueItem: data.queueItem,
                                         queue: data.queue,
                                     })
                                 })

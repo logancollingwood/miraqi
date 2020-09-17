@@ -28,9 +28,7 @@ const AppWithRouter = withRouter(() => (
 render((
 		<Provider store={store}>
 				<BrowserRouter>
-					<Switch>
-						<AppWithRouter />
-					</Switch>
+					<AppWithRouter />
 				</BrowserRouter>
 		</Provider>
 

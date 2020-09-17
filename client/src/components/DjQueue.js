@@ -29,13 +29,13 @@ class DjQueue extends React.Component {
             dispatch(SetSkippingAction(false));
         }
 
-        this.socket.on('queue', function(queue){
+        this.socket.on("NEW_QUEUE", function(queue){
             console.log('got new queue');
             console.log(queue);
 			newQueue(queue);
         });
         
-        this.socket.on('no_queue', function() {
+        this.socket.on('NO_QUEUE', function() {
             newQueue([]);
         });
         
@@ -68,6 +68,7 @@ class DjQueue extends React.Component {
                 } else {
                     numberToRender = <div className="queue-number"> #{i+1} </div>;
                 }
+                if (queueItem === null) return <></>;
                 return (
                     <li className="row queue-item" key={i}>
                         <div className="col-md-3">
@@ -96,10 +97,10 @@ class DjQueue extends React.Component {
         return (
             <div className="DjQueue">
                 <div className="row justify-content-end header">
-                    <div className="col-md-7">
+                    <div className="col-6 col-sm-5 col-md-6">
                         On Deck
                     </div>
-                    <div className="col-md-3" >
+                    <div className="col-6 col-sm-7 col-md-6" >
                         {skipOrNot}
                     </div>
                 </div>

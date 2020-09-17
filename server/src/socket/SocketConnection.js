@@ -94,7 +94,6 @@ class SocketConnection {
         const message = data.message;
         let sendMessageReturned = await API.sendMessageToRoom(this._socketSession.room._id, this._socketSession.user._id, message)
         let broadcastMessage;
-        console.log(sendMessageReturned)
         if (sendMessageReturned.isPlay) {
             console.log("Playing a message")
             this._dj.addQueueItem(sendMessageReturned.queueItem, sendMessageReturned.queue);

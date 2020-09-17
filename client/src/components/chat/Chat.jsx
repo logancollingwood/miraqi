@@ -28,8 +28,6 @@ class Chat extends React.Component {
 		const {dispatch} = this.props
 
 		this.socket.on('message', function(data){
-			console.log('got message');
-			console.log(data);
 			dispatch(AddMessageAction(data))
 		});
 
@@ -43,8 +41,6 @@ class Chat extends React.Component {
 	}
 
     render(){
-		console.log(this.props);
-
 		if (this.props.loading) {
 			return (
 				<div className="col-md-4 chatRoom h-100 bg-bright">
