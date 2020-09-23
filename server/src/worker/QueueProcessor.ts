@@ -20,15 +20,31 @@ export default class QueueProcessor {
     async process(job: Job) {
         console.log(`processing queue`);
         const jobQueueItem: JobQueueItem = job.data;
+        const currentQueue: any = await this._db.getQueue(jobQueueItem.roomId)
+        if (currentQueue.queue.length === 1) {
+            if (jobQueueItem.queueItemThatHasBeenPlayed.trackName !== currentQueue[0].trackName) {
+                console.log("Queue item was skipped before next pop, continuing");
+                return;
+            }
+        }
+
         const { queueItem, queue }: any = await this._db.popAndGetNextQueueItem(jobQueueItem.roomId);
+        // somehow handle skipped case, in case our skip pops ahead
+        
 
         console.log(queueItem);
-        if (queueItem !== null) {
+
+        // if our next item is not null
+        // and (for the skipped item case) the next queue item has a different ID then what is currently being played 
+        // because the case exists where we enter this function when the next item has already been played(jobQueueItem) (because it was skipped since registering the queue item skipped)
+        // so the paremeter to this function and the current top of the queue are different
+        console.log(`${queueItem._id}  queueItemId: callbackParameter Id :${jobQueueItem.queueItemThatHasBeenPlayed.id}`);
+        if (queueItem !== null && queueItem._id !== jobQueueItem.queueItemThatHasBeenPlayed.id) {
             this._io.to(jobQueueItem.roomId).emit(SocketMessageType.NEW_QUEUE, queue);
             this._io.to(jobQueueItem.roomId).emit('play', queueItem);
             const nextQueueItemForJob: JobQueueItem = {
                 roomId: jobQueueItem.roomId,
-                queueItem: queueItem
+                queueItemThatHasBeenPlayed: queueItem
             }
             this.add(nextQueueItemForJob, { delay: queueItem.lengthSeconds * 1000 })
         } else {

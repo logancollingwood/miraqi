@@ -1,6 +1,6 @@
 import { QueueItem } from "./QueueItem";
 
 export interface JobQueueItem {
-    queueItem: QueueItem,
+    queueItemThatHasBeenPlayed: QueueItem,
     roomId: string
 }

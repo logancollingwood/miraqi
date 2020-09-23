@@ -3,3 +3,51 @@
 .chat_container {
     height: $MAIN-CONTENT-HEIGHT;
 }
+
+.chat_message.server_message { 
+    background: $brand-light-1;
+    text-align: center;
+}
+
+.chat_message {
+    position: relative;
+	background: $brand-highlight;
+    border-radius: .4em;
+    margin-bottom: 2vh;
+    padding: 5px;
+    padding-left: 10px;
+
+    .my_message { 
+        text-align: right;
+        &::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border: 21px solid transparent;
+            border-top-color: #00aabb;
+            border-bottom: 0;
+            margin-left: -21px;
+            margin-bottom: -21px;
+        }
+    }
+}
+
+.is_sent_by_me { 
+    text-align: right;
+    &::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border: 21px solid transparent;
+        border-top-color: $brand-highlight;
+        border-bottom: 0;
+        margin-left: 5vw;
+        margin-bottom: -21px;
+    }
+}

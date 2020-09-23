@@ -13,7 +13,8 @@ const mapStateToProps = (state = {}) => {
 		username: state.user.name, 
 		roomId: state.id, 
 		users: state.users, 
-		loading: state.loading
+		loading: state.loading,
+		user: state.user
 	};
 };
 
@@ -48,9 +49,14 @@ class Chat extends React.Component {
 				</div>
 			)
 		}
-		const messagesToRender = this.props.messages.slice(0).reverse().map((message, i) => 
-			<ChatMessage key={i} message={message} />
-		);
+		const messagesToRender = this.props.messages.slice(0).reverse().map((message, i) => {
+			console.log("message")
+			console.log(message);
+			console.log("user")
+			console.log(this.props.user);
+			const isSentByMe = this.props.user.profile.username === message.author;
+			return (<ChatMessage key={i} message={message} isSentByMe={isSentByMe}/>);
+		});
 
         return (
                     <div className={"chatRoom " + styles.chat_container}>
